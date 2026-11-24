@@ -1,0 +1,9 @@
+{
+  "name": "worldbullet-servidor",
+  "version": "1.0.0",
+  "description": "Servidor do WorldBullet: entrega o jogo e liga os jogadores (multiplayer)",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=18" },
+  "license": "UNLICENSED"
+}
