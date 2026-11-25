@@ -7705,6 +7705,26 @@
     }
   }
 
+  .ctMini {
+    gap: 14px;
+    font-size: 12px;
+  }
+  .ctMini a {
+    cursor: pointer;
+    text-decoration: underline;
+    opacity: 0.8;
+  }
+  .ctDel {
+    color: #c62828;
+  }
+  .ctOkRed {
+    background: linear-gradient(180deg, #ff6a5a, #c62828) !important;
+    color: #fff !important;
+  }
+  .ctNote a {
+    color: #ffc928;
+  }
+
   /* ===================== SPLASH (abre antes de tudo) ===================== */
   #splash {
     position: fixed;
@@ -8069,6 +8089,15 @@
     color: #00000022;
     font-style: normal;
   }
+
+  body.hudedit #emoBtn,
+  body.hudedit #invBtn {
+    display: block !important;
+    opacity: 1 !important;
+    outline: 2px dashed #ffd54f;
+    touch-action: none;
+    cursor: move;
+  }
 </style>
 </head>
 <body>
@@ -8082,7 +8111,7 @@
     <div class="spLoad"><div class="spTip" id="spTip">Preparando a ilha...</div><div class="spBar"><i id="spFill"></i></div><div class="spPct"><span id="spStep">Carregando</span><b id="spPct">0%</b></div></div>
     <div class="spTap" id="spTap"><b>TOQUE PARA JOGAR</b><div class="spWho" id="spWho"></div></div>
     <div class="spGate" id="spGate"></div>
-    <div class="spVer">v110b · Feito no Amapá 🇧🇷</div>
+    <div class="spVer">v111 · Feito no Amapá 🇧🇷</div>
   </div>
 </div>
 <!-- ===== GIRE O CELULAR: o jogo é só deitado ===== -->
@@ -8853,6 +8882,8 @@ const HUD_IDS = [
   ['hp', 'Barra de vida'],
   ['healBtn', 'Kit médico'],
   ['minimap', 'Minimapa'],
+  ['emoBtn', 'Emotes'],
+  ['invBtn', 'Mochila'],
 ];
 
 /* ======================================================================
@@ -21283,6 +21314,18 @@ function invDrop(id, extra) {
   updateAmmo();
   renderInv();
 }
+// troca as armas de lugar (slot 1 <-> slot 2); a que está na mão continua na mão
+function invSwapSlots() {
+  if (knock) return toast('Caído não dá para mexer nas armas');
+  const a = loadout.w1;
+  loadout.w1 = loadout.w2;
+  loadout.w2 = a;
+  slot = slot === 1 ? 2 : 1;
+  placeGuns();
+  updateAmmo();
+  sfx('swap', 0.5);
+  renderInv();
+}
 function renderInv() {
   if (!invOpen) return;
   const B = document.getElementById('invBody');
@@ -21313,8 +21356,9 @@ function renderInv() {
     if (!id) return row('<span class="ie">—</span>', 'Espaço ' + n + ' vazio', '#9aa3ad', 'Pegue uma arma no chão ou num espólio', []);
     const W = WEAPONS[id],
       cur = !holstered && slot === n;
-    row(gunSVG(id), W.name, itemCol(id), W.tag + ' · ' + ammo[id] + '/' + W.mag + (cur ? ' · na mão' : ''), [
+    row(gunSVG(id), W.name, itemCol(id), 'Slot ' + n + ' · ' + W.tag + ' · ' + ammo[id] + '/' + W.mag + (cur ? ' · na mão' : ''), [
       cur ? ['✓', () => {}] : ['Usar', () => (equipSlot(n), renderInv())],
+      ['⇅ Slot ' + (n === 1 ? 2 : 1), invSwapSlots],
       [
         'Largar',
         () =>
@@ -31443,7 +31487,14 @@ async function contaSalvaJa() {
   if (!CONTA.tk || !CONTA.sujo) return;
   CONTA.sujo = false;
   try {
-    await contaApi('salvar', { perfil: PROF, stats: STATS });
+    const j = await contaApi('salvar', { perfil: PROF, stats: STATS });
+    if (j && j.ajuste) {
+      // o servidor achou números impossíveis e cortou: o aparelho fica igual ao servidor
+      for (const k in j.ajuste) if (typeof j.ajuste[k] === 'number') STATS[k] = j.ajuste[k];
+      try {
+        localStorage.setItem('br3d_stats', JSON.stringify(STATS));
+      } catch (e) {}
+    }
     CONTA.ultSalvo = Date.now();
     const s = document.getElementById('ctSync');
     if (s) s.textContent = '☁️ Salvo na nuvem agora';
@@ -31591,12 +31642,13 @@ function contaAbre(aba, convite) {
       'p',
       'ctNote',
       cri
-        ? 'Usuário: letras minúsculas, números, _ ou . (é com ele que você entra). O progresso deste aparelho vai junto pra conta. <b>Anote a senha!</b>'
+        ? 'Usuário: letras minúsculas, números, _ ou . (é com ele que você entra). O progresso deste aparelho vai junto pra conta. <b>Anote a senha!</b><br>Ao criar a conta você aceita a <a href="#" class="ctPriv">Política de Privacidade e as regras</a>.'
         : contaTemProgresso()
           ? '⚠️ O progresso deste aparelho (sem conta) vai ser trocado pelo da sua conta.'
           : 'Entre com o usuário e a senha que você criou.',
     ),
   );
+  f.querySelectorAll('.ctPriv').forEach((a) => (a.onclick = (e) => (e.preventDefault(), contaPrivacidade())));
   u.addEventListener('input', () => {
     const v = u.value.toLowerCase().replace(/[^a-z0-9_.]/g, '');
     if (v !== u.value) u.value = v;
@@ -31677,6 +31729,72 @@ function contaRender() {
   r.appendChild(ctEl('button', 'ctBtn sair', 'Sair')).onclick = () => {
     if (confirm('Sair da conta? Seu progresso fica guardado nela e este aparelho volta a ser de convidado.')) contaSair();
   };
+  const r2 = B.appendChild(ctEl('div', 'ctRow ctMini'));
+  r2.appendChild(ctEl('a', '', '🔒 Privacidade e regras')).onclick = contaPrivacidade;
+  if (!d.admin) r2.appendChild(ctEl('a', 'ctDel', '🗑️ Excluir conta')).onclick = contaExcluirUI;
+}
+function contaPrivacidade() {
+  const base = contaBase();
+  if (base) window.open(base + '/privacidade', '_blank');
+  else toast('A política de privacidade fica no site do jogo.');
+}
+// excluir a conta de vez: pede a senha e uma confirmação
+function contaExcluirUI() {
+  let P = document.getElementById('delP');
+  if (!P) {
+    P = ctEl('div', 'ctBg');
+    P.id = 'delP';
+    document.body.appendChild(P);
+    P.addEventListener('keydown', (e) => e.stopPropagation());
+  }
+  P.innerHTML = '';
+  const box = P.appendChild(ctEl('div', 'ctBox'));
+  box.appendChild(ctEl('button', 'ctX', '✕')).onclick = () => P.classList.remove('open');
+  box.appendChild(ctEl('div', 'ctLogo', '🗑️ EXCLUIR CONTA'));
+  box.appendChild(
+    ctEl(
+      'p',
+      'ctInfo',
+      'Isso apaga <b>para sempre</b> a conta <b>@' +
+        String(CONTA.d.usuario).replace(/[<>&]/g, '') +
+        '</b>: progresso, moedas, itens, patentes e amigos. <b>Não tem como desfazer.</b>',
+    ),
+  );
+  const f = box.appendChild(ctEl('form', 'ctForm'));
+  const s1 = f.appendChild(ctEl('input'));
+  s1.type = 'password';
+  s1.placeholder = 'Sua senha';
+  s1.autocomplete = 'current-password';
+  const s2 = f.appendChild(ctEl('input'));
+  s2.placeholder = 'Digite EXCLUIR para confirmar';
+  s2.setAttribute('autocapitalize', 'characters');
+  const er = f.appendChild(ctEl('p', 'ctErr'));
+  const ok = f.appendChild(ctEl('button', 'ctOk ctOkRed', 'EXCLUIR MINHA CONTA'));
+  ok.type = 'submit';
+  f.onsubmit = async (e) => {
+    e.preventDefault();
+    er.textContent = '';
+    if (s2.value.trim().toUpperCase() !== 'EXCLUIR') return (er.textContent = 'Digite EXCLUIR no segundo campo para confirmar.');
+    ok.disabled = true;
+    try {
+      await contaApi('excluir', { senha: s1.value });
+      CONTA.tk = null;
+      CONTA.d = null;
+      contaGuarda();
+      try {
+        localStorage.removeItem('br3d_profile');
+        localStorage.removeItem('br3d_stats');
+      } catch (x) {}
+      P.classList.remove('open');
+      toast('🗑️ Conta excluída. Até mais!');
+      setTimeout(() => location.reload(), 900);
+    } catch (x) {
+      er.textContent = x.message;
+      ok.disabled = false;
+    }
+  };
+  P.classList.add('open');
+  setTimeout(() => s1.focus(), 60);
 }
 // selo de verificado que vem do servidor (presença carimbada lá)
 function verDaPres(ch) {
@@ -32063,7 +32181,7 @@ function admRender() {
   nm.textContent = a.nome;
   verMark(nm, a.vf > 0);
   tx.appendChild(ctEl('small')).textContent =
-    '@' + a.usuario + ' · ID ' + fmtId(a.uid) + (a.on ? ' · 🟢 online' : '') + (a.banido ? ' · ⛔ BANIDO' : '') + (a.acesso && a.acesso.length ? ' · 🔑 ' + a.acesso.join(', ') : '');
+    '@' + a.usuario + ' · ID ' + fmtId(a.uid) + (a.on ? ' · 🟢 online' : '') + (a.banido ? ' · ⛔ BANIDO' : '') + (a.acesso && a.acesso.length ? ' · 🔑 ' + a.acesso.join(', ') : '') + (a.sus ? ' · ⚠️ anti-trapaça cortou ' + a.sus + 'x' : '');
   const msg = out.appendChild(ctEl('input', 'admMsg'));
   msg.placeholder = 'Mensagem junto (opcional)';
   msg.maxLength = 200;

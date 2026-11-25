@@ -46,6 +46,10 @@ const server = http.createServer((req, res) => {
     return res.end(gz ? gameGz : gameHtml);
   }
   if (url.startsWith('/api/')) return apiHttp(req, res, url);
+  if (url === '/privacidade' || url === '/privacidade/') {
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-cache' });
+    return res.end(paginaPrivacidade());
+  }
   if (url === '/status') {
     return testaBanco().then((d) => {
       res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8', 'Access-Control-Allow-Origin': '*' });
@@ -262,6 +266,9 @@ function bancoSupabase() {
     async update(uid, patch) {
       return (await sbReq('PATCH', '?uid=eq.' + enc(uid), patch, 'return=representation'))[0] || null;
     },
+    async remove(uid) {
+      await sbReq('DELETE', '?uid=eq.' + enc(uid));
+    },
     async ranking() {
       return sbReq('GET', '?select=uid,nome,vf,banido,rp:stats->rp,st4:stats->st4,wins:stats->wins,kills:stats->kills&limit=5000');
     },
@@ -317,6 +324,10 @@ function bancoLocal() {
       Object.assign(r, cp(patch));
       save();
       return cp(r);
+    },
+    async remove(uid) {
+      M.delete(uid);
+      save();
     },
     async ranking() {
       return [...M.values()].map((r) => ({ uid: r.uid, nome: r.nome, vf: r.vf, banido: r.banido, rp: (r.stats || {}).rp, st4: (r.stats || {}).st4, wins: (r.stats || {}).wins, kills: (r.stats || {}).kills }));
@@ -477,6 +488,58 @@ async function daPresente(r, item, de) {
   avisa(r.uid, { t: 'ct' });
 }
 
+// ---- anti-trapaça: o servidor confere se os números que o jogo mandou são possíveis ----
+// (moedas, partidas, abates, pontos do ranqueado e estrelas do 4v4). O que passar do limite é cortado.
+const PRESENTE_MOEDAS = new Map(); // moedas que o Criador deu e ainda não apareceram no salvamento
+const n0 = (v) => Math.max(0, Math.floor(+v || 0));
+const obj = (v) => (v && typeof v === 'object' && !Array.isArray(v) ? v : {});
+function confereStats(old, n, seg, uid) {
+  const o = obj(old),
+    sus = [];
+  n.rk = obj(n.rk);
+  n.rk4 = obj(n.rk4);
+  const rkO = obj(o.rk),
+    r4O = obj(o.rk4),
+    maxM = Math.ceil(Math.max(0, seg) / 20) + 3; // no máximo 1 partida a cada 20 s (+ folga)
+  const corta = (alvo, k, base, max, nome) => {
+    if (n0(alvo[k]) - n0(base) > max) {
+      alvo[k] = n0(base) + Math.max(0, max);
+      sus.push(nome);
+    }
+  };
+  corta(n, 'matches', o.matches, maxM, 'partidas');
+  corta(n.rk, 'm', rkO.m, maxM, 'partidas ranqueadas');
+  corta(n.rk4, 'm', r4O.m, maxM, 'partidas 4v4');
+  const dm = Math.max(1, n0(n.matches) - n0(o.matches)),
+    dr = Math.max(0, n0(n.rk.m) - n0(rkO.m)),
+    d4 = Math.max(0, n0(n.rk4.m) - n0(r4O.m));
+  corta(n, 'rp', o.rp, dr * 100 + 5, 'pontos do ranqueado'); // no máximo ~98 RP por partida
+  corta(n, 'st4', o.st4, d4 * 2, 'estrelas do 4v4'); // no máximo 2 estrelas por vitória
+  corta(n, 'kills', o.kills, dm * 40, 'abates');
+  corta(n, 'wins', o.wins, dm, 'vitórias');
+  const presente = PRESENTE_MOEDAS.get(uid) || 0;
+  corta(n, 'coins', o.coins, 6000 + dm * 2500 + presente, 'moedas');
+  PRESENTE_MOEDAS.delete(uid);
+  if (n0(n.wins) > n0(n.matches)) n.wins = n0(n.matches);
+  n._sus = n0(o._sus) + (sus.length ? 1 : 0); // quantas vezes já foi cortado (o Criador vê)
+  if (sus.length) console.warn('anti-trapaça', uid, sus.join(', '));
+  return sus;
+}
+// conta nova que já traz progresso de convidado: números precisam bater com as partidas jogadas
+function confereNovo(st) {
+  st.rk = obj(st.rk);
+  st.rk4 = obj(st.rk4);
+  const m = n0(st.matches);
+  if (n0(st.rk.m) > m) st.rk.m = m;
+  if (n0(st.rk4.m) > m) st.rk4.m = m;
+  st.rp = Math.min(n0(st.rp), n0(st.rk.m) * 100);
+  st.st4 = Math.min(n0(st.st4), n0(st.rk4.m) * 2);
+  st.kills = Math.min(n0(st.kills), m * 40);
+  st.wins = Math.min(n0(st.wins), m);
+  st.coins = Math.min(n0(st.coins), 20000 + m * 2500);
+  st._sus = 0;
+  return st;
+}
 const RANK = { t: 0, br: null, cs: null, p: null }; // ranking guardado por 45 s (não pesa no banco)
 const API = {
   async registrar(b, ip) {
@@ -486,7 +549,7 @@ const API = {
     if (!okUser(usuario)) throw new Erro(400, 'Usuário: 3 a 16 letras minúsculas, números, _ ou .');
     if (senha.length < 6 || senha.length > 64) throw new Erro(400, 'A senha precisa ter de 6 a 64 caracteres.');
     const perfil = objOk(b.perfil, 65536) ? b.perfil : {},
-      stats = objOk(b.stats, 65536) ? b.stats : {};
+      stats = confereNovo(objOk(b.stats, 65536) ? b.stats : {});
     if (await DB.byUser(usuario)) throw new Erro(409, 'Esse nome de usuário já existe.');
     const h = await hashSenha(senha),
       adm = !!ADMIN && usuario === ADMIN;
@@ -530,8 +593,10 @@ const API = {
     if (estourou('sv:' + r.uid, 30, 60e3)) throw new Erro(429, 'Calma: salvando rápido demais.');
     if (!objOk(b.perfil, 65536) || !objOk(b.stats, 65536)) throw new Erro(400, 'Progresso grande demais.');
     b.perfil.uid = r.uid;
+    const seg = (Date.now() - (Date.parse(r.visto) || 0)) / 1000,
+      cortou = confereStats(r.stats, b.stats, seg, r.uid);
     await DB.update(r.uid, { perfil: b.perfil, stats: b.stats, nome: limpaNome(b.perfil.name), visto: agora() });
-    return { ok: true };
+    return { ok: true, ajuste: cortou.length ? { rp: b.stats.rp, st4: b.stats.st4, coins: b.stats.coins, matches: b.stats.matches, kills: b.stats.kills, wins: b.stats.wins } : null };
   },
   async jogador(b) {
     const a = await alvo(String(b.uid || '').replace(/\D/g, ''));
@@ -607,7 +672,28 @@ const API = {
       pega = b.id === '*' ? cx : cx.filter((x) => x.id === b.id);
     if (!pega.length) return { itens: [] };
     await DB.update(r.uid, { caixa: cx.filter((x) => !pega.includes(x)) });
+    const mo = pega.reduce((t, x) => t + (x.tipo === 'moedas' ? n0(x.n) : 0), 0);
+    if (mo) PRESENTE_MOEDAS.set(r.uid, (PRESENTE_MOEDAS.get(r.uid) || 0) + mo);
     return { itens: pega };
+  },
+  // excluir a conta de vez (pede a senha). Também sai da lista de amigos de todo mundo.
+  async excluir(b, ip) {
+    const r = await quem(b);
+    if (estourou('ex:' + ip, 10, 3600e3)) throw new Erro(429, 'Muitas tentativas. Tente mais tarde.');
+    if (!(await confereSenha(String(b.senha || '').slice(0, 64), r.senha))) throw new Erro(401, 'Senha errada.');
+    if (r.admin) throw new Erro(400, 'A conta do Criador não pode ser excluída pelo jogo (tire o ADMIN no Render antes).');
+    const outros = new Set(arr(r.amigos).concat(arr(r.pedidos), arr(r.enviados)));
+    for (const f of outros) {
+      const a = await DB.get(f).catch(() => null);
+      if (a) await DB.update(f, { amigos: sem(a.amigos, r.uid), pedidos: sem(a.pedidos, r.uid), enviados: sem(a.enviados, r.uid) });
+    }
+    await DB.remove(r.uid);
+    const S = porConta.get(r.uid);
+    if (S) for (const c of S) (c.uid = null), (c.vf = 0);
+    porConta.delete(r.uid);
+    RANK.t = 0;
+    console.log('conta excluída', r.uid);
+    return { ok: true };
   },
   async admin(b) {
     const r = await quem(b);
@@ -616,7 +702,10 @@ const API = {
       ac = String(b.acao || ''),
       de = r.nome,
       msg = limpaTxt(b.msg, 200);
-    if (ac === 'ver') return { jogador: Object.assign(publico(a), { usuario: a.usuario, admin: !!a.admin, banido: !!a.banido, acesso: arr(a.acesso), criado: a.criado, visto: a.visto }) };
+    if (ac === 'ver')
+      return {
+        jogador: Object.assign(publico(a), { usuario: a.usuario, admin: !!a.admin, banido: !!a.banido, acesso: arr(a.acesso), criado: a.criado, visto: a.visto, sus: n0(obj(a.stats)._sus) }),
+      };
     if (ac === 'verificar') {
       if (a.admin) throw new Erro(400, 'Essa conta é de Criador.');
       const vf = b.on ? 1 : 0;
@@ -662,6 +751,30 @@ const API = {
     return { ok: true, jogador: publico(await DB.get(a.uid)) };
   },
 };
+// ---- Política de privacidade e regras (link no jogo e para a Play Store) ----
+const CONTATO = envLimpo('CONTATO'); // seu e-mail ou @ para contato (variável no Render)
+function paginaPrivacidade() {
+  const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+  const ct = CONTATO ? esc(CONTATO) : 'o Criador do jogo (pelo próprio jogo)';
+  return `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>WorldBullet · Privacidade e regras</title><style>body{font:16px/1.6 system-ui,sans-serif;max-width:760px;margin:0 auto;padding:24px 18px 60px;background:#120c26;color:#eee}
+h1{color:#ffc928;font-style:italic}h2{color:#ffc928;margin-top:28px;font-size:19px}a{color:#ffc928}li{margin:4px 0}small{color:#aaa}</style></head><body>
+<h1>WorldBullet — Privacidade e regras</h1><small>Última atualização: novembro de 2026</small>
+<h2>O que guardamos</h2><p>Só quando você cria uma conta:</p><ul>
+<li><b>Nome de usuário e apelido</b> que você escolheu (o apelido e o ID aparecem para outros jogadores, no ranking e na lista de amigos).</li>
+<li><b>Senha</b> — guardada embaralhada (hash scrypt). Ninguém consegue ler, nem o Criador.</li>
+<li><b>Progresso do jogo</b>: moedas, itens, personagens, patentes, partidas, abates e vitórias.</li>
+<li><b>Amigos, pedidos de amizade e presentes</b> recebidos.</li>
+<li>Datas de criação da conta e do último acesso.</li></ul>
+<p>Não pedimos e-mail, telefone, nome verdadeiro, localização nem fotos. Não tem anúncios nem rastreamento de terceiros. Sem conta, o progresso fica só no seu aparelho.</p>
+<h2>Para que usamos</h2><ul><li>Salvar seu progresso e deixar você entrar em qualquer aparelho.</li><li>Mostrar o ranking, os amigos online e os convites para sala.</li><li>Evitar trapaça (o servidor confere se os números do jogo são possíveis).</li></ul>
+<p>Seus dados <b>não são vendidos nem passados</b> para ninguém. Eles ficam guardados nos serviços que hospedam o jogo (Render, servidor do jogo, e Supabase, banco de dados).</p>
+<h2>Menores de idade</h2><p>Se você tem menos de 12 anos, crie a conta junto com seu pai, mãe ou responsável. Nunca use seu nome completo, endereço ou telefone como nome de usuário ou apelido.</p>
+<h2>Excluir sua conta</h2><p>No jogo: toque no seu nome lá em cima → <b>Perfil</b> → <b>Excluir conta</b> → digite sua senha. A conta, o progresso e as amizades são apagados <b>na hora e para sempre</b>. Se não conseguir entrar, fale com ${ct} informando seu nome de usuário.</p>
+<h2>Seus direitos (LGPD)</h2><p>Você pode pedir para ver, corrigir ou apagar seus dados a qualquer momento: fale com ${ct}.</p>
+<h2>Regras do jogo</h2><ul><li>Proibido usar trapaça, programas ou alterar o jogo para ganhar moedas, pontos ou vantagem.</li><li>Respeite os outros jogadores: nada de apelidos ofensivos, preconceito ou ameaças.</li><li>Não compartilhe sua senha. Não tente entrar na conta dos outros.</li><li>Quem quebrar as regras pode ter os pontos cortados ou a conta <b>banida</b>.</li></ul>
+<h2>Contato</h2><p>${ct}</p></body></html>`;
+}
 const CORS = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Content-Type', 'Access-Control-Allow-Methods': 'POST, OPTIONS' };
 function responde(res, st, o) {
   res.writeHead(st, Object.assign({ 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' }, CORS));
