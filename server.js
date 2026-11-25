@@ -47,8 +47,10 @@ const server = http.createServer((req, res) => {
   }
   if (url.startsWith('/api/')) return apiHttp(req, res, url);
   if (url === '/status') {
-    res.writeHead(200, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
-    return res.end(JSON.stringify({ ok: true, jogadores: clients.size, salas: roomCount(), contas: DB.nome, enviadoMB: +(sentBytes / 1e6).toFixed(1) }));
+    return testaBanco().then((d) => {
+      res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8', 'Access-Control-Allow-Origin': '*' });
+      res.end(JSON.stringify({ ok: true, jogadores: clients.size, salas: roomCount(), contas: DB.nome, banco: d.msg, enderecoBanco: SB_URL || null, admin: ADMIN || null, enviadoMB: +(sentBytes / 1e6).toFixed(1) }, null, 1));
+    });
   }
   res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
   res.end('Não encontrado');
@@ -199,9 +201,20 @@ function onMessage(c, text) {
 //  As contas ficam num banco de dados grátis (Supabase). Sem ele, ficam num
 //  arquivo aqui do lado (bom para testar, mas o Render grátis apaga ao reiniciar).
 // =====================================================================
-const SB_URL = (process.env.SUPABASE_URL || '').trim().replace(/\/+$/, '').replace(/\/rest\/v1$/, '');
-const SB_KEY = (process.env.SUPABASE_KEY || '').trim();
-const ADMIN = (process.env.ADMIN || '').toLowerCase().trim(); // seu nome de usuário: vira o Criador
+// tira aspas e espaços que vêm junto quando cola no celular
+const envLimpo = (k) => String(process.env[k] || '').trim().replace(/^["'`]+|["'`]+$/g, '').trim();
+function arrumaUrl(u) {
+  u = u.replace(/\/+$/, '').replace(/\/rest\/v1$/, '');
+  // colou o link do painel (supabase.com/dashboard/project/XXXX)? vira o endereço certo
+  const m = u.match(/supabase\.com\/dashboard\/project\/([a-z0-9]+)/i);
+  if (m) return 'https://' + m[1] + '.supabase.co';
+  if (/^[a-z0-9]{15,}$/i.test(u)) return 'https://' + u + '.supabase.co'; // colou só o código do projeto
+  if (u && !/^https?:\/\//.test(u)) u = 'https://' + u;
+  return u;
+}
+const SB_URL = arrumaUrl(envLimpo('SUPABASE_URL'));
+const SB_KEY = envLimpo('SUPABASE_KEY');
+const ADMIN = envLimpo('ADMIN').toLowerCase(); // seu nome de usuário: vira o Criador
 const SEGREDO = process.env.SEGREDO || (SB_KEY ? crypto.createHash('sha256').update('wb-token|' + SB_KEY).digest('hex') : crypto.randomBytes(32).toString('hex'));
 const DADOS = path.join(__dirname, 'dados', 'contas.json');
 const PUB_COLS = 'uid,usuario,nome,vf,admin,banido,acesso,visto';
@@ -305,6 +318,32 @@ function bancoLocal() {
 }
 const DB = SB_URL && SB_KEY ? bancoSupabase() : bancoLocal();
 if (DB.nome === 'arquivo') console.log('⚠️  Contas num arquivo local (sem SUPABASE_URL/SUPABASE_KEY): no Render grátis elas somem quando ele reinicia.');
+// diagnóstico do banco: explica em português o que está errado (aparece em /status e no Log)
+let DIAG = { ok: DB.nome !== 'supabase', msg: DB.nome === 'supabase' ? 'testando...' : 'sem Supabase: contas num arquivo (somem quando o Render reinicia)' };
+function explicaErro(e) {
+  const t = String((e && e.message) || e);
+  if (/fetch is not defined/i.test(t)) return 'Node antigo no Render. Crie a variável NODE_VERSION com o valor 20 e salve.';
+  if (/Invalid API key|Invalid JWT|No API key|apikey|JWS|JWT|401/.test(t) && !/PGRST205|relation/.test(t))
+    return 'A SUPABASE_KEY está errada. Copie de novo a chave Secret (sb_secret_...) em Project Settings > API Keys, sem espaço.';
+  if (/PGRST205|Could not find the table|relation .* does not exist|404/.test(t)) return 'A tabela "contas" não existe. Rode o arquivo contas.sql no SQL Editor do Supabase (tem que aparecer Success).';
+  if (/permission denied|42501|403/.test(t)) return 'Falta permissão na tabela. Rode o contas.sql de novo no SQL Editor (as linhas do final dão a permissão).';
+  if (/ENOTFOUND|EAI_AGAIN|Invalid URL|fetch failed|ECONNREFUSED|getaddrinfo/.test(t))
+    return 'A SUPABASE_URL está errada (ou o projeto está pausado). Tem que ser tipo https://abcdxyz.supabase.co — e confira no supabase.com se o projeto não está "Paused".';
+  if (/PGRST|column/.test(t)) return 'A tabela "contas" está diferente do esperado. Rode o contas.sql de novo. Detalhe: ' + t.slice(0, 160);
+  return 'Erro do banco: ' + t.slice(0, 200);
+}
+async function testaBanco() {
+  if (DB.nome !== 'supabase') return DIAG;
+  try {
+    await sbReq('GET', '?select=uid&limit=1');
+    DIAG = { ok: true, msg: 'Supabase funcionando ✅' };
+  } catch (e) {
+    DIAG = { ok: false, msg: explicaErro(e) };
+  }
+  console.log('Contas (banco):', DIAG.msg, '| URL usada:', SB_URL);
+  return DIAG;
+}
+testaBanco();
 
 // ---- senha (scrypt com sal: nem quem abrir o banco vê a senha) ----
 const scryptP = (s, salt) => new Promise((ok, no) => crypto.scrypt(s, salt, 32, { N: 16384, r: 8, p: 1 }, (e, k) => (e ? no(e) : ok(k))));
@@ -633,7 +672,9 @@ function apiHttp(req, res, url) {
     } catch (e) {
       if (e instanceof Erro) return responde(res, e.st, { erro: e.message });
       console.warn('api', nome, e.message);
-      responde(res, 503, { erro: 'O banco de contas não respondeu. Tente de novo.' });
+      DIAG = { ok: false, msg: explicaErro(e) };
+      console.warn('Contas (banco):', DIAG.msg);
+      responde(res, 503, { erro: 'O banco de contas não respondeu. (Dono do jogo: abra /status para ver o motivo.)' });
     }
   });
 }
