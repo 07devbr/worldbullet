@@ -7433,9 +7433,355 @@
     border-color: #8f6bff;
     color: #3a2180;
   }
+
+  /* ===================== SPLASH (abre antes de tudo) ===================== */
+  #splash {
+    position: fixed;
+    inset: 0;
+    z-index: 9000;
+    background: #07040f;
+    color: #fff;
+    font-family: 'Arial Black', 'Segoe UI', system-ui, sans-serif;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: opacity 0.5s;
+  }
+  #splash.fora {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .spStudio {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #000;
+    z-index: 3;
+    transition: opacity 0.6s;
+  }
+  #splash:not(.st) .spStudio {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .spStB {
+    font: 900 italic clamp(34px, 9vw, 64px) / 1 'Arial Black', system-ui;
+    letter-spacing: 0.12em;
+    animation: spIn 1s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+  }
+  .spStB b {
+    color: #ffc928;
+  }
+  .spStS {
+    margin-top: 10px;
+    font: 600 13px system-ui;
+    letter-spacing: 0.5em;
+    color: #fff8;
+    text-transform: uppercase;
+    animation: spFade 0.8s 0.5s both;
+  }
+  @keyframes spIn {
+    from {
+      transform: scale(1.6);
+      opacity: 0;
+      filter: blur(8px);
+    }
+  }
+  @keyframes spFade {
+    from {
+      opacity: 0;
+    }
+  }
+  .spGame {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 120%, #ff8a1f 0%, #b23a48 22%, #3a1d5c 52%, #0b0720 85%);
+  }
+  .spGame.bg {
+    background-size: cover;
+    background-position: center;
+  }
+  .spRays {
+    position: absolute;
+    left: 50%;
+    top: 100%;
+    width: 260vmax;
+    height: 260vmax;
+    margin: -130vmax 0 0 -130vmax;
+    background: repeating-conic-gradient(from 0deg, #ffffff10 0 6deg, #0000 6deg 18deg);
+    animation: spRot 40s linear infinite;
+    -webkit-mask: radial-gradient(circle, #000 0, #0000 55%);
+    mask: radial-gradient(circle, #000 0, #0000 55%);
+  }
+  @keyframes spRot {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  .spGlow {
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 40%;
+    background: linear-gradient(0deg, #ffb30033, #0000);
+  }
+  .spLogo {
+    position: absolute;
+    left: 50%;
+    top: 30%;
+    transform: translate(-50%, -50%);
+    font: 900 italic clamp(42px, 11vw, 96px) / 1 'Arial Black', system-ui;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+    text-shadow: 0 6px 0 #0006;
+    overflow: hidden;
+    padding: 0.08em 0.12em;
+    animation: spLogo 0.9s cubic-bezier(0.2, 1.3, 0.4, 1) both;
+  }
+  #splash.st .spLogo {
+    animation: none;
+    opacity: 0;
+  }
+  .spB {
+    color: #ffc928;
+    -webkit-text-stroke: 1px #b36b00;
+  }
+  .spShine {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg, #0000 40%, #fff9 50%, #0000 60%);
+    transform: translateX(-120%);
+    animation: spShine 2.8s 1s ease-in-out infinite;
+    mix-blend-mode: overlay;
+  }
+  @keyframes spShine {
+    60%,
+    100% {
+      transform: translateX(120%);
+    }
+  }
+  @keyframes spLogo {
+    from {
+      transform: translate(-50%, -50%) scale(0.4);
+      opacity: 0;
+    }
+  }
+  .spSub {
+    position: absolute;
+    left: 50%;
+    top: calc(30% + clamp(30px, 7vw, 62px));
+    transform: translateX(-50%);
+    font: 800 clamp(11px, 2.4vw, 16px) system-ui;
+    letter-spacing: 0.6em;
+    color: #ffe9a8;
+    white-space: nowrap;
+  }
+  .spLoad {
+    position: absolute;
+    left: 8%;
+    right: 8%;
+    bottom: 9%;
+  }
+  .spTip {
+    font: 600 12px system-ui;
+    color: #fffb;
+    margin-bottom: 6px;
+    text-align: center;
+  }
+  .spBar {
+    height: 8px;
+    background: #0008;
+    border: 1px solid #ffffff30;
+    transform: skewX(-20deg);
+    overflow: hidden;
+  }
+  .spBar i {
+    display: block;
+    height: 100%;
+    width: 0;
+    background: linear-gradient(90deg, #ffb300, #ffe35a);
+    box-shadow: 0 0 12px #ffc928;
+    transition: width 0.25s;
+  }
+  .spPct {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+    font: 700 12px system-ui;
+    color: #fffc;
+  }
+  .spPct b {
+    color: #ffc928;
+  }
+  .spTap {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 12%;
+    text-align: center;
+    display: none;
+    cursor: pointer;
+  }
+  .spTap b {
+    display: inline-block;
+    font: 900 italic clamp(18px, 4vw, 28px) 'Arial Black', system-ui;
+    letter-spacing: 0.08em;
+    color: #fff;
+    text-shadow: 0 0 18px #ffc928;
+    animation: spPulse 1.4s ease-in-out infinite;
+  }
+  @keyframes spPulse {
+    50% {
+      opacity: 0.45;
+      transform: scale(0.96);
+    }
+  }
+  .spWho {
+    margin-top: 10px;
+    font: 600 13px system-ui;
+    color: #fffc;
+  }
+  .spWho a {
+    color: #ffc928;
+    margin-left: 8px;
+    text-decoration: underline;
+  }
+  #splash.tap .spLoad,
+  #splash.gate .spLoad {
+    display: none;
+  }
+  #splash.tap .spTap {
+    display: block;
+  }
+  #splash.tap {
+    cursor: pointer;
+  }
+  .spGate {
+    display: none;
+  }
+  #splash.gate .spGate {
+    display: flex;
+    position: absolute;
+    inset: 0;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 6vw;
+    background: linear-gradient(90deg, #0000 30%, #07040fcc 62%);
+  }
+  #splash.gate .spLogo {
+    left: 25%;
+    top: 44%;
+    font-size: clamp(28px, 5vw, 64px);
+  }
+  #splash.gate .spSub {
+    left: 25%;
+    top: calc(44% + clamp(22px, 3.6vw, 44px));
+    font-size: clamp(9px, 1.6vw, 14px);
+  }
+  .spGate .ctBox {
+    max-height: 92vh;
+  }
+  .spVer {
+    position: absolute;
+    right: 12px;
+    bottom: 8px;
+    font: 600 11px system-ui;
+    color: #fff7;
+  }
+  @media (orientation: portrait) {
+    #splash.gate .spGate {
+      justify-content: center;
+      align-items: flex-end;
+      padding-bottom: 6vh;
+      background: linear-gradient(0deg, #07040fee 45%, #0000 75%);
+    }
+    #splash.gate .spLogo {
+      left: 50%;
+      top: 18%;
+    }
+    #splash.gate .spSub {
+      left: 50%;
+      top: calc(18% + clamp(26px, 6vw, 50px));
+    }
+  }
+
+  /* celular em pé: pede para deitar (o jogo é só na horizontal) */
+  #rotar {
+    position: fixed;
+    inset: 0;
+    z-index: 9500;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    background: radial-gradient(ellipse at 50% 110%, #b23a48, #3a1d5c 45%, #0b0720 80%);
+    color: #fff;
+    text-align: center;
+    padding: 24px;
+    font-family: 'Arial Black', system-ui, sans-serif;
+  }
+  #rotar b {
+    font: 900 italic 24px 'Arial Black', system-ui;
+    color: #ffc928;
+    letter-spacing: 0.06em;
+  }
+  #rotar span {
+    font: 600 14px system-ui;
+    color: #fffc;
+  }
+  .rtPhone {
+    width: 58px;
+    height: 100px;
+    border: 4px solid #fff;
+    border-radius: 12px;
+    position: relative;
+    animation: rtGira 2.2s ease-in-out infinite;
+  }
+  .rtPhone i {
+    position: absolute;
+    left: 50%;
+    bottom: 6px;
+    width: 12px;
+    height: 4px;
+    margin-left: -6px;
+    border-radius: 2px;
+    background: #fff;
+  }
+  @keyframes rtGira {
+    0%,
+    25% {
+      transform: rotate(0);
+    }
+    55%,
+    100% {
+      transform: rotate(-90deg);
+    }
+  }
+  @media (orientation: portrait) and (pointer: coarse) {
+    #rotar {
+      display: flex;
+    }
+  }
 </style>
 </head>
 <body>
+<!-- ===== SPLASH: estúdio -> logo carregando -> entrar/criar conta ou "toque para jogar" ===== -->
+<div id="splash" class="st">
+  <div class="spStudio"><div class="spStB">07DEV<b>BR</b></div><div class="spStS">apresenta</div></div>
+  <div class="spGame">
+    <div class="spRays"></div><div class="spGlow"></div>
+    <div class="spLogo"><span class="spW">WORLD</span><span class="spB">BULLET</span><i class="spShine"></i></div>
+    <div class="spSub">BATTLE ROYALE</div>
+    <div class="spLoad"><div class="spTip" id="spTip">Preparando a ilha...</div><div class="spBar"><i id="spFill"></i></div><div class="spPct"><span id="spStep">Carregando</span><b id="spPct">0%</b></div></div>
+    <div class="spTap" id="spTap"><b>TOQUE PARA JOGAR</b><div class="spWho" id="spWho"></div></div>
+    <div class="spGate" id="spGate"></div>
+    <div class="spVer">v109 · Feito no Amapá 🇧🇷</div>
+  </div>
+</div>
+<!-- ===== GIRE O CELULAR: o jogo é só deitado ===== -->
+<div id="rotar"><div class="rtPhone"><i></i></div><b>GIRE O CELULAR</b><span>O WorldBullet é jogado com o celular deitado</span></div>
 <!-- ===== HUD DA PARTIDA — dicas, contadores, mira, minimapa, vida, avisos e abates ===== -->
 <div id="hud" class="box fade">🎮 <b>Analógico</b> move · arraste a tela gira a câmera · segure 🔫 pra atirar (arraste nele pra mirar) · <b>CORRER</b> liga a corrida</div>
 <div id="score" class="box">⭐ 0</div>
@@ -30683,11 +31029,14 @@ function contaAplica(d) {
   amgBadge();
 }
 // ---------- começo: confere a sessão e, se não tem conta, oferece criar ----------
-async function contaInit(de) {
-  if (!contaPode()) return;
-  if (!de && CONTA.ini) return contaAuthWs(); // já começou (a conexão do jogo chegou depois)
-  CONTA.ini = true;
-  if (CONTA.tk) {
+function contaInit(de) {
+  if (!contaPode()) return Promise.resolve();
+  if (!de && CONTA.iniP) {
+    contaAuthWs(); // a conexão do jogo chegou depois
+    return CONTA.iniP;
+  }
+  CONTA.iniP = (async () => {
+    if (!CONTA.tk) return;
     try {
       const j = await contaApi('eu', {});
       contaAplica(j.conta);
@@ -30695,21 +31044,8 @@ async function contaInit(de) {
     } catch (e) {
       if (CONTA.tk) setTimeout(() => contaInit(1), 15000); // servidor acordando: tenta de novo
     }
-    return;
-  }
-  let vi = false;
-  try {
-    vi = sessionStorage.getItem('wb_ctPop') === '1';
-  } catch (e) {}
-  if (!vi)
-    setTimeout(() => {
-      if (!CONTA.tk && inLobby && !document.querySelector('.sheetBg.open,#modeSel.open,#charSel.open')) {
-        try {
-          sessionStorage.setItem('wb_ctPop', '1');
-        } catch (e) {}
-        contaAbre('criar', true);
-      }
-    }, 3500);
+  })();
+  return CONTA.iniP;
 }
 // ---------- salvar na nuvem (alguns segundos depois de mudar algo) ----------
 function contaSync() {
@@ -30749,6 +31085,9 @@ async function contaEntrar(usuario, senha) {
   try {
     localStorage.setItem('br3d_profile', JSON.stringify(P));
     if (c.stats && Object.keys(c.stats).length) localStorage.setItem('br3d_stats', JSON.stringify(c.stats));
+  } catch (e) {}
+  try {
+    sessionStorage.setItem('wb_entrou', '1');
   } catch (e) {}
   toast('✅ Bem-vindo de volta, ' + c.nome + '!');
   setTimeout(() => location.reload(), 600);
@@ -30813,7 +31152,14 @@ function ctEl(tag, cls, html) {
   return e;
 }
 function contaAbre(aba, convite) {
-  let P = document.getElementById('contaP');
+  const porta = convite === 'porta' && splashAberta();
+  if (convite === 'porta' && !porta) convite = false;
+  let P = porta ? document.getElementById('spGate') : document.getElementById('contaP');
+  if (porta && !P._ok) {
+    P._ok = 1;
+    P.addEventListener('keydown', (e) => e.stopPropagation());
+    P.addEventListener('click', (e) => e.stopPropagation());
+  }
   if (!P) {
     P = ctEl('div', 'ctBg');
     P.id = 'contaP';
@@ -30827,9 +31173,9 @@ function contaAbre(aba, convite) {
   const box = ctEl('div', 'ctBox');
   P.appendChild(box);
   const cri = aba !== 'entrar';
-  box.appendChild(ctEl('button', 'ctX', '✕')).onclick = () => P.classList.remove('open');
-  box.appendChild(ctEl('div', 'ctLogo', 'WORLD<b>BULLET</b>'));
-  if (convite) box.appendChild(ctEl('p', 'ctCall', '☁️ Crie sua conta pra nunca perder seu progresso — e jogar com amigos pelo ID!'));
+  if (!porta) box.appendChild(ctEl('button', 'ctX', '✕')).onclick = () => P.classList.remove('open');
+  box.appendChild(ctEl('div', 'ctLogo', porta ? (cri ? 'CRIAR CONTA' : 'BEM-VINDO') : 'WORLD<b>BULLET</b>'));
+  if (convite) box.appendChild(ctEl('p', 'ctCall', cri ? '☁️ Seu progresso fica salvo na nuvem — e você joga com amigos pelo ID!' : 'Entre na sua conta pra continuar de onde parou.'));
   const tabs = box.appendChild(ctEl('div', 'ctTabs'));
   const t1 = tabs.appendChild(ctEl('button', cri ? '' : 'on', 'ENTRAR')),
     t2 = tabs.appendChild(ctEl('button', cri ? 'on' : '', 'CRIAR CONTA'));
@@ -30882,7 +31228,8 @@ function contaAbre(aba, convite) {
     try {
       if (cri) {
         await contaCriar(us, s1.value, n.value.trim().slice(0, 14));
-        P.classList.remove('open');
+        if (porta) splashSai();
+        else P.classList.remove('open');
       } else await contaEntrar(us, s1.value);
     } catch (x) {
       er.textContent = x.message;
@@ -30890,7 +31237,8 @@ function contaAbre(aba, convite) {
       ok.textContent = cri ? 'CRIAR CONTA' : 'ENTRAR';
     }
   };
-  if (convite) box.appendChild(ctEl('button', 'ctLater', 'Agora não, jogar como convidado')).onclick = () => P.classList.remove('open');
+  if (porta) box.appendChild(ctEl('button', 'ctLater', 'Jogar como convidado (sem salvar na nuvem)')).onclick = () => splashSai();
+  else if (convite) box.appendChild(ctEl('button', 'ctLater', 'Agora não, jogar como convidado')).onclick = () => P.classList.remove('open');
   P.classList.add('open');
   setTimeout(() => u.focus(), 60);
 }
@@ -33287,9 +33635,165 @@ function setupTouch() {
   });
 }
 
+/* ======================================================================
+   SPLASH — abre antes de tudo, como nos jogos de celular:
+   1) logo do estúdio  2) logo do jogo carregando  3) entrar/criar conta
+   (ou "toque para jogar" se já tem conta)  4) lobby
+   ====================================================================== */
+const SPL = { p: 0, alvo: 0, timer: 0, fim: false };
+const SPL_DICAS = [
+  'Dica: pule do avião longe da rota pra lotear em paz.',
+  'Dica: a zona fecha rápido no final, fique perto do centro.',
+  'Dica: com conta, seu progresso fica salvo na nuvem.',
+  'Dica: adicione amigos pelo ID e chame pra sua sala.',
+  'Dica: na Fortaleza de São José dá pra subir nas muralhas.',
+];
+function splashIni() {
+  const S = document.getElementById('splash');
+  let visto = false;
+  try {
+    visto = sessionStorage.getItem('wb_splash') === '1';
+    sessionStorage.setItem('wb_splash', '1');
+  } catch (e) {}
+  // o logo do estúdio só na primeira vez que abre (não quando recarrega depois de entrar)
+  setTimeout(() => S && S.classList.remove('st'), visto ? 0 : 1500);
+  const tip = document.getElementById('spTip');
+  if (tip) tip.textContent = SPL_DICAS[Math.floor(Math.random() * SPL_DICAS.length)];
+  splashPct(0.08, 'Abrindo o jogo');
+  SPL.timer = setInterval(() => {
+    // a barra anda sozinha devagar até o próximo ponto (nunca para de mexer)
+    SPL.p += Math.max(0.002, (SPL.alvo - SPL.p) * 0.12);
+    if (SPL.p > SPL.alvo) SPL.p = SPL.alvo;
+    const f = document.getElementById('spFill'),
+      t = document.getElementById('spPct');
+    if (f) f.style.width = (SPL.p * 100).toFixed(1) + '%';
+    if (t) t.textContent = Math.round(SPL.p * 100) + '%';
+  }, 50);
+}
+function splashPct(p, txt) {
+  SPL.alvo = Math.max(SPL.alvo, p);
+  const s = document.getElementById('spStep');
+  if (s && txt) s.textContent = txt;
+}
+const spDorme = (ms) => new Promise((r) => setTimeout(r, ms));
+// o jogo terminou de montar: confere a conta e decide a próxima tela
+async function splashPronto() {
+  const S = document.getElementById('splash');
+  if (!S) return;
+  splashPct(0.82, contaPode() ? 'Conectando ao servidor' : 'Quase lá');
+  try {
+    const art = FF_ART && (FF_ART.rank || FF_ART.casual);
+    if (art) {
+      const G = S.querySelector('.spGame');
+      G.style.backgroundImage = 'linear-gradient(0deg,#07040fcc,#07040f55 55%,#07040faa),url(' + art + ')';
+      G.classList.add('bg');
+    }
+  } catch (e) {}
+  if (contaPode() && CONTA.tk) await Promise.race([CONTA.iniP || contaInit(), spDorme(7000)]);
+  splashPct(1, 'Pronto!');
+  await spDorme(Math.max(450, (1 - SPL.p) * 900));
+  while (S.classList.contains('st')) await spDorme(100); // espera o logo do estúdio acabar
+  let entrou = false;
+  try {
+    entrou = sessionStorage.getItem('wb_entrou') === '1';
+    sessionStorage.removeItem('wb_entrou');
+  } catch (e) {}
+  if (contaPode() && !CONTA.tk) splashPorta('entrar');
+  else if (entrou && contaLogada()) splashSai(); // acabou de entrar na conta: vai direto
+  else splashToque();
+}
+// "TOQUE PARA JOGAR" (já tem conta, ou está no link do Claude)
+function splashToque() {
+  const S = document.getElementById('splash'),
+    W = document.getElementById('spWho');
+  S.classList.add('tap');
+  if (W) {
+    W.innerHTML = '';
+    const d = CONTA.d;
+    const n = W.appendChild(document.createElement('span'));
+    n.textContent = d ? '👤 ' + d.nome + ' · @' + d.usuario : '👤 ' + (PROF.name || 'Jogador') + (contaPode() ? '' : ' · convidado');
+    if (d) verMark(n, d.vf > 0);
+    if (d || contaPode()) {
+      const a = W.appendChild(document.createElement('a'));
+      a.textContent = 'Trocar conta';
+      a.onclick = (e) => {
+        e.stopPropagation();
+        if (CONTA.tk) {
+          contaSair();
+          return;
+        }
+        S.classList.remove('tap');
+        splashPorta('entrar');
+      };
+    }
+  }
+  S.onclick = () => {
+    if (S.classList.contains('tap')) splashSai();
+  };
+}
+// tela de entrar / criar conta antes do lobby
+function splashPorta(aba) {
+  const S = document.getElementById('splash');
+  S.onclick = null;
+  S.classList.remove('tap');
+  S.classList.add('gate');
+  contaAbre(aba, 'porta');
+}
+function splashSai() {
+  const S = document.getElementById('splash');
+  if (!S || SPL.fim) return;
+  SPL.fim = true;
+  clearInterval(SPL.timer);
+  try {
+    audio();
+  } catch (e) {}
+  deitaTela();
+  S.classList.add('fora');
+  setTimeout(() => S.remove(), 600);
+  if (contaLogada()) setTimeout(() => toast('👋 Bem-vindo, ' + CONTA.d.nome + '!'), 700);
+}
+const splashAberta = () => !!document.getElementById('splash') && !SPL.fim;
+
+// tela cheia e travada deitada (no Android funciona; no iPhone fica o aviso "gire o celular")
+function deitaTela() {
+  if (!(navigator.maxTouchPoints > 0)) return;
+  try {
+    const d = document.documentElement,
+      fs = d.requestFullscreen || d.webkitRequestFullscreen;
+    const trava = () => {
+      try {
+        const p = screen.orientation && screen.orientation.lock && screen.orientation.lock('landscape');
+        if (p && p.catch) p.catch(() => {});
+      } catch (e) {}
+    };
+    if (fs && !document.fullscreenElement) {
+      const p = fs.call(d, { navigationUI: 'hide' });
+      if (p && p.then) p.then(trava, () => {});
+      else trava();
+    } else trava();
+  } catch (e) {}
+}
 /* ############################## PARTE 3 — INÍCIO DO JOGO ################ */
-init();
-animate();
+// no navegador: mostra a splash primeiro e monta o jogo logo depois (assim ela aparece na hora)
+if (typeof location !== 'undefined' && document.getElementById('splash')) {
+  splashIni();
+  let foi = false;
+  const boot = () => {
+    if (foi) return;
+    foi = true;
+    splashPct(0.25, 'Montando a ilha');
+    setTimeout(() => {
+      init();
+      animate();
+      splashPronto();
+    }, 30);
+  };
+  requestAnimationFrame(() => requestAnimationFrame(boot));
+  setTimeout(boot, 400);
+} else {
+  init();
+  animate();
+}
 // temporada nova? baú do dia? (um pouquinho depois de abrir o jogo)
 setTimeout(() => {
   try {
