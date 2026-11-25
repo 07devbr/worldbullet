@@ -6996,6 +6996,443 @@
   #espHud .t {
     color: #8ee08e;
   }
+
+  /* ===================== CONTA / AMIGOS / PRESENTES / PAINEL ===================== */
+  .ctBg {
+    position: fixed;
+    inset: 0;
+    z-index: 120;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: #05030dcc;
+    backdrop-filter: blur(3px);
+    padding: max(8px, env(safe-area-inset-top)) 10px 8px;
+  }
+  .ctBg.open {
+    display: flex;
+  }
+  .ctBox {
+    position: relative;
+    width: min(420px, 96vw);
+    max-height: 94vh;
+    overflow-y: auto;
+    background: linear-gradient(160deg, #241a46, #120c26 70%);
+    border: 2px solid #ffc92855;
+    box-shadow: 0 0 0 1px #000, 0 18px 50px #000c;
+    padding: 16px 18px 14px;
+    color: #fff;
+    font-family: var(--ffF, system-ui);
+    clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
+  }
+  .ctBox.amg,
+  .ctBox.adm {
+    width: min(560px, 96vw);
+  }
+  .ctX {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    background: none;
+    border: none;
+    color: #fff9;
+    font-size: 18px;
+    z-index: 2;
+  }
+  .ctLogo {
+    font: 900 italic 22px var(--ffF, system-ui);
+    letter-spacing: 1px;
+    text-align: center;
+    margin-bottom: 6px;
+  }
+  .ctLogo b {
+    color: #ffc928;
+  }
+  .ctCall {
+    text-align: center;
+    font-size: 13px;
+    color: #ffe9a8;
+    margin: 0 0 10px;
+  }
+  .ctTabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 10px;
+  }
+  .ctTabs button {
+    flex: 1;
+    padding: 8px 4px;
+    border: none;
+    background: #ffffff14;
+    color: #fffa;
+    font: 900 italic 13px var(--ffF, system-ui);
+    position: relative;
+  }
+  .ctTabs button.on {
+    background: #ffc928;
+    color: #2a1a00;
+  }
+  .ctTabs button.dot::after {
+    content: '';
+    position: absolute;
+    top: 4px;
+    right: 6px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ff4d4d;
+  }
+  .ctForm {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .ctForm input,
+  .amgAdd input,
+  .admMsg,
+  .admLine input,
+  .admLine select {
+    padding: 10px 12px;
+    border: 1px solid #ffffff30;
+    background: #0a0716;
+    color: #fff;
+    font: 600 15px system-ui;
+    border-radius: 2px;
+    outline: none;
+    min-width: 0;
+  }
+  .ctForm input:focus,
+  .amgAdd input:focus,
+  .admMsg:focus {
+    border-color: #ffc928;
+  }
+  .ctErr {
+    min-height: 16px;
+    margin: 0;
+    color: #ff7b7b;
+    font-size: 13px;
+  }
+  .ctOk {
+    padding: 11px;
+    border: none;
+    background: linear-gradient(180deg, #ffe35a, #ffb300);
+    color: #3a2500;
+    font: 900 italic 17px var(--ffF, system-ui);
+    clip-path: polygon(4% 0, 100% 0, 96% 100%, 0 100%);
+  }
+  .ctOk:disabled {
+    filter: grayscale(0.6);
+  }
+  .ctNote {
+    font-size: 11.5px;
+    color: #fff9;
+    margin: 2px 0 0;
+    line-height: 1.35;
+  }
+  .ctLater {
+    display: block;
+    margin: 10px auto 0;
+    background: none;
+    border: none;
+    color: #fffa;
+    text-decoration: underline;
+    font-size: 13px;
+  }
+  .ctInfo {
+    font-size: 13px;
+    color: #fffc;
+    margin: 6px 0;
+    line-height: 1.4;
+  }
+  .ctRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 6px 0;
+  }
+  .ctRow.c {
+    justify-content: center;
+  }
+  .ctBtn {
+    padding: 8px 12px;
+    border: 1px solid #ffffff38;
+    background: #ffffff12;
+    color: #fff;
+    font: 800 13px var(--ffF, system-ui);
+    border-radius: 2px;
+    white-space: nowrap;
+  }
+  .ctBtn.y {
+    background: #ffc928;
+    border-color: #ffc928;
+    color: #2a1a00;
+  }
+  .ctBtn.adm {
+    background: linear-gradient(90deg, #6d3bff, #2a7bff);
+    border-color: #8f6bff;
+  }
+  .ctBtn.red {
+    background: #b3261e;
+    border-color: #e53935;
+  }
+  .ctBtn.sair {
+    margin-left: auto;
+    opacity: 0.8;
+  }
+  .ctBtn.sm {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+  .ctBtn.ghost {
+    background: none;
+    border-color: transparent;
+    color: #fff8;
+  }
+  .ctBtn:disabled {
+    opacity: 0.5;
+  }
+  #contaBox {
+    margin: 8px 0;
+    padding: 8px 10px;
+    border: 1px solid #ffc92844;
+    background: #ffc9280d;
+  }
+  .ctMe {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .ctMe b {
+    font-size: 15px;
+  }
+  .ctMe span {
+    font-size: 12px;
+    color: #8fe3a1;
+  }
+  .ctTags span {
+    display: inline-block;
+    margin: 4px 4px 0 0;
+    padding: 2px 8px;
+    background: #6d3bff55;
+    border: 1px solid #8f6bff;
+    font-size: 11.5px;
+  }
+  /* amigos */
+  .amgTop {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 26px 10px 0;
+    flex-wrap: wrap;
+  }
+  .amgTop > b {
+    font: 900 italic 20px var(--ffF, system-ui);
+    color: #ffc928;
+  }
+  .amgId {
+    margin-left: auto;
+    padding: 5px 10px;
+    background: #0a0716;
+    border: 1px dashed #ffc92888;
+    color: #fff;
+    font: 700 12.5px system-ui;
+  }
+  .amgList {
+    min-height: 120px;
+  }
+  .amgSub {
+    margin: 10px 0 4px;
+    font: 900 11px var(--ffF, system-ui);
+    color: #ffc928;
+    letter-spacing: 1px;
+  }
+  .amgRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 8px;
+    margin-bottom: 5px;
+    background: #ffffff0b;
+    border-left: 3px solid #ffffff22;
+  }
+  .amgRow.on {
+    border-left-color: #3ddc84;
+  }
+  .amgAv {
+    flex: 0 0 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(160deg, #ffc928, #d8860b);
+    color: #2a1a00;
+    font: 900 17px var(--ffF, system-ui);
+    clip-path: polygon(20% 0, 100% 0, 80% 100%, 0 100%);
+  }
+  .amgTx {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .amgTx b {
+    font-size: 14.5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .amgTx small {
+    font-size: 11.5px;
+    color: #fffa;
+  }
+  .amgEu {
+    font-size: 12px;
+    color: #8fe3a1;
+  }
+  .amgAdd {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  .amgAdd input {
+    flex: 1;
+    letter-spacing: 1px;
+  }
+  .amgN {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 9px;
+    background: #ff3b30;
+    color: #fff;
+    font: 900 11px/18px system-ui;
+    font-style: normal;
+    text-align: center;
+  }
+  #lbNet {
+    position: relative;
+  }
+  /* convite */
+  #convPop {
+    position: fixed;
+    top: 12px;
+    left: 50%;
+    transform: translate(-50%, -160%);
+    z-index: 130;
+    width: min(380px, 92vw);
+    padding: 10px 12px;
+    background: linear-gradient(120deg, #2a1d52, #15102b);
+    border: 2px solid #ffc928;
+    color: #fff;
+    box-shadow: 0 10px 30px #000a;
+    transition: transform 0.35s cubic-bezier(0.2, 1.3, 0.4, 1);
+    font-family: var(--ffF, system-ui);
+  }
+  #convPop.on {
+    transform: translate(-50%, 0);
+  }
+  .cvT {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .cvIc {
+    font-size: 26px;
+  }
+  .cvT b {
+    font-size: 16px;
+  }
+  .cvT small {
+    display: block;
+    font-size: 12px;
+    color: #fffb;
+  }
+  /* presentes */
+  .ctBox.gift {
+    text-align: center;
+    border-color: #ffc928;
+  }
+  .giftT {
+    font: 900 italic 22px var(--ffF, system-ui);
+    color: #ffc928;
+    margin-bottom: 8px;
+    text-shadow: 0 0 18px #ffc92888;
+  }
+  .giftL {
+    max-height: 48vh;
+    overflow-y: auto;
+    margin-bottom: 10px;
+  }
+  .giftR {
+    padding: 8px;
+    margin-bottom: 6px;
+    background: #ffffff10;
+    border: 1px solid #ffc92844;
+  }
+  .giftR b {
+    display: block;
+    font-size: 16px;
+  }
+  .giftR p {
+    margin: 4px 0 0;
+    font-style: italic;
+    color: #ffe9a8;
+    font-size: 13px;
+  }
+  .giftR small {
+    color: #fff9;
+    font-size: 11px;
+  }
+  /* painel do criador */
+  .admMsg {
+    width: 100%;
+    box-sizing: border-box;
+    margin: 6px 0;
+  }
+  .admGrid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .admLine {
+    display: flex;
+    gap: 6px;
+    width: 100%;
+  }
+  .admLine input,
+  .admLine select {
+    flex: 1;
+    padding: 7px 8px;
+    font-size: 13px;
+  }
+  .admLine input[type='number'] {
+    flex: 0 0 90px;
+  }
+
+  /* dentro do Perfil (fundo claro) */
+  #contaBox {
+    background: #fff6d8;
+    border-color: #e0b100;
+    color: #222;
+  }
+  #contaBox .ctInfo {
+    color: #333;
+  }
+  #contaBox .ctMe span {
+    color: #1b7a36;
+  }
+  #contaBox .ctBtn:not(.y):not(.adm) {
+    background: #2a1f4e;
+    border-color: #2a1f4e;
+    color: #fff;
+  }
+  #contaBox .ctTags span {
+    background: #ece4ff;
+    border-color: #8f6bff;
+    color: #3a2180;
+  }
 </style>
 </head>
 <body>
@@ -27237,7 +27674,8 @@ function renderProfId() {
     }
   };
   P.appendChild(b);
-  if (VER.me) P.insertAdjacentHTML('beforeend', '<div class="vtag">' + verBadge(true) + '<span>Conta verificada<br><small>Criador do WorldBullet</small></span></div>');
+  if (VER.me) P.insertAdjacentHTML('beforeend', '<div class="vtag">' + verBadge(true) + '<span>Conta verificada<br><small>' + (VER.lvl === 1 ? 'Selo oficial do WorldBullet' : 'Criador do WorldBullet') + '</small></span></div>');
+  contaRender();
 }
 function renderLobby() {
   document.getElementById('lbName').value = PROF.name;
@@ -27665,7 +28103,7 @@ function ffRefresh() {
           b.innerHTML = '<span>' + nm.slice(0, 1).toUpperCase() + '</span><small></small>';
           b.querySelector('small').textContent = nm;
         } else b.innerHTML = '<span>+</span>';
-        b.onclick = () => openNet();
+        b.onclick = () => (id ? openNet() : amgOuSala());
         R.appendChild(b);
       }
     }
@@ -28248,7 +28686,7 @@ function espBotTick(b, dt) {
 function setupLobby() {
   ffBuildDom();
   document.getElementById('playBtn').addEventListener('click', () => (NET.code && !NET.mmRoom ? netPlayBtn() : NET.mmRoom ? mmCancel() : mmToggle()));
-  document.getElementById('lbNet').addEventListener('click', openNet);
+  document.getElementById('lbNet').addEventListener('click', amgOuSala);
   document.getElementById('netClose').addEventListener('click', closeNet);
   document.getElementById('lbGear').addEventListener('click', openSettings);
   document.getElementById('lbShop').addEventListener('click', openShop);
@@ -28386,12 +28824,14 @@ function saveProf() {
   try {
     localStorage.setItem('br3d_profile', JSON.stringify(PROF));
   } catch (e) {}
+  contaSync(); // conta: manda pra nuvem também
 }
 
 function saveStats() {
   try {
     localStorage.setItem('br3d_stats', JSON.stringify(STATS));
   } catch (e) {}
+  contaSync();
 }
 
 /* ======================================================================
@@ -29960,11 +30400,13 @@ function verPath() {
 }
 const VER_D = verPath();
 // selo azul com borda dourada e brilho passando
+let VBG_N = 0;
 function verBadge(big) {
+  const g = 'vbg' + ++VBG_N;
   return (
     '<span class="vbadge' + (big ? ' big' : '') + '" title="Conta verificada · Criador do WorldBullet"><svg viewBox="0 0 24 24">' +
-    '<defs><linearGradient id="vbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5fd0ff"/><stop offset=".55" stop-color="#1d8cf0"/><stop offset="1" stop-color="#1450c8"/></linearGradient></defs>' +
-    '<path d="' + VER_D + '" fill="url(#vbg)" stroke="#ffd54f" stroke-width="1.3"/>' +
+    '<defs><linearGradient id="' + g + '" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5fd0ff"/><stop offset=".55" stop-color="#1d8cf0"/><stop offset="1" stop-color="#1450c8"/></linearGradient></defs>' +
+    '<path d="' + VER_D + '" fill="url(#' + g + ')" stroke="#ffd54f" stroke-width="1.3"/>' +
     '<path d="M7.2 12.4l3.1 3.1 6.6-6.8" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>' +
     '</svg></span>'
   );
@@ -29999,6 +30441,7 @@ async function verSetup(rm) {
   try {
     rm.on('verif', verHear);
   } catch (e) {}
+  if (NET.server) return; // no servidor próprio o selo vem da conta
   let u = null;
   try {
     u = await window.claude.use('user');
@@ -30074,6 +30517,10 @@ function wbSalaServidor(url) {
         R.conn.push([ok, er]);
         if (live() && ok) ok(true);
       },
+      auth(tk) {
+        R.tk = tk || null;
+        out({ t: 'auth', tk: R.tk });
+      },
       emit(ev, d) {
         out({ t: 'e', ev, d });
         return Promise.resolve();
@@ -30104,6 +30551,8 @@ function wbSalaServidor(url) {
       ws.onopen = () => {
         clearTimeout(t0);
         R.tries = 0;
+        if (R.tk === undefined && typeof CONTA !== 'undefined') R.tk = CONTA.tk || null;
+        if (R.tk) out({ t: 'auth', tk: R.tk });
         if (R.myPr) out({ t: 'p', pr: R.myPr });
         R.conn.forEach(([ok]) => ok && ok(true));
         if (!R.ok) {
@@ -30116,6 +30565,10 @@ function wbSalaServidor(url) {
         try {
           m = JSON.parse(ev.data);
         } catch (e) {
+          return;
+        }
+        if (m.t === 'ct' || m.t === 'conv' || m.t === 'auth') {
+          if (typeof contaMsg === 'function') contaMsg(m);
           return;
         }
         if (m.t === 'hi') {
@@ -30148,6 +30601,810 @@ function wbSalaServidor(url) {
     open();
   });
 }
+/* ======================================================================
+   CONTAS — usuário e senha, progresso na nuvem, amigos por ID, convites,
+   presentes e o Painel do Criador. Tudo passa pelo servidor do WorldBullet
+   (no link do Claude não tem servidor próprio, então aparece só um aviso).
+   ====================================================================== */
+const CONTA = { tk: null, d: null, salvaT: 0, sujo: false, ultSalvo: 0, convVisto: {}, ctT: 0, tab: 'amigos', busca: null, adm: null };
+try {
+  const j = JSON.parse(localStorage.getItem('wb_conta') || 'null');
+  if (j && typeof j.tk === 'string') CONTA.tk = j.tk;
+} catch (e) {}
+function contaBase() {
+  const w = wbServidorUrl();
+  return w ? w.replace(/^ws/, 'http').replace(/\/ws$/, '') : null;
+}
+const contaPode = () => !!contaBase();
+const contaLogada = () => !!(CONTA.tk && CONTA.d);
+const fmtId = (u) => String(u || '').replace(/(\d{3})(?=\d)/g, '$1 ');
+async function contaApi(nome, b) {
+  const base = contaBase();
+  if (!base) throw new Error('Contas só funcionam no site do jogo.');
+  let r;
+  try {
+    r = await fetch(base + '/api/' + nome, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(Object.assign({ token: CONTA.tk || undefined }, b || {})),
+      keepalive: nome === 'salvar',
+    });
+  } catch (e) {
+    throw new Error('Sem conexão com o servidor (se ele estava dormindo, espere 1 minuto).');
+  }
+  let j = {};
+  try {
+    j = await r.json();
+  } catch (e) {}
+  if (!r.ok) {
+    if ((r.status === 401 || r.status === 403) && CONTA.tk && nome !== 'entrar' && nome !== 'registrar') {
+      contaSair(true);
+      toast('🔒 ' + (j.erro || 'Sessão expirou') + ' Entre de novo na sua conta.');
+    }
+    throw new Error(j.erro || 'Erro ' + r.status);
+  }
+  return j;
+}
+function contaGuarda() {
+  try {
+    if (CONTA.tk) localStorage.setItem('wb_conta', JSON.stringify({ tk: CONTA.tk }));
+    else localStorage.removeItem('wb_conta');
+  } catch (e) {}
+}
+// avisa a conexão do jogo de qual conta é (o selo e o "online" dos amigos vêm daí)
+function contaAuthWs() {
+  try {
+    const R = NET.lobby;
+    if (R && R.servidor && R.auth) R.auth(CONTA.tk || null);
+  } catch (e) {}
+}
+function contaAplica(d) {
+  const antes = CONTA.d;
+  CONTA.d = d;
+  if (NET.server || contaPode()) {
+    VER.me = !!(d && d.vf > 0);
+    VER.lvl = d ? d.vf | 0 : 0;
+  }
+  if (d && d.uid && PROF.uid !== d.uid) {
+    PROF.uid = d.uid;
+    try {
+      localStorage.setItem('br3d_profile', JSON.stringify(PROF));
+    } catch (e) {}
+  }
+  try {
+    renderProfId();
+    contaRender();
+    refreshLobbyHUD();
+  } catch (e) {}
+  if (document.getElementById('amgP') && document.getElementById('amgP').classList.contains('open')) amgRender();
+  // presentes novos
+  if (d && d.caixa && d.caixa.length && (!antes || !antes.caixa || d.caixa.length > antes.caixa.length || !document.getElementById('giftP')))
+    setTimeout(() => inLobby && giftShow(), 700);
+  amgBadge();
+}
+// ---------- começo: confere a sessão e, se não tem conta, oferece criar ----------
+async function contaInit(de) {
+  if (!contaPode()) return;
+  if (!de && CONTA.ini) return contaAuthWs(); // já começou (a conexão do jogo chegou depois)
+  CONTA.ini = true;
+  if (CONTA.tk) {
+    try {
+      const j = await contaApi('eu', {});
+      contaAplica(j.conta);
+      contaAuthWs();
+    } catch (e) {
+      if (CONTA.tk) setTimeout(() => contaInit(1), 15000); // servidor acordando: tenta de novo
+    }
+    return;
+  }
+  let vi = false;
+  try {
+    vi = sessionStorage.getItem('wb_ctPop') === '1';
+  } catch (e) {}
+  if (!vi)
+    setTimeout(() => {
+      if (!CONTA.tk && inLobby && !document.querySelector('.sheetBg.open,#modeSel.open,#charSel.open')) {
+        try {
+          sessionStorage.setItem('wb_ctPop', '1');
+        } catch (e) {}
+        contaAbre('criar', true);
+      }
+    }, 3500);
+}
+// ---------- salvar na nuvem (alguns segundos depois de mudar algo) ----------
+function contaSync() {
+  if (!CONTA.tk || !contaPode()) return;
+  CONTA.sujo = true;
+  clearTimeout(CONTA.salvaT);
+  CONTA.salvaT = setTimeout(contaSalvaJa, 4000);
+}
+async function contaSalvaJa() {
+  if (!CONTA.tk || !CONTA.sujo) return;
+  CONTA.sujo = false;
+  try {
+    await contaApi('salvar', { perfil: PROF, stats: STATS });
+    CONTA.ultSalvo = Date.now();
+    const s = document.getElementById('ctSync');
+    if (s) s.textContent = '☁️ Salvo na nuvem agora';
+  } catch (e) {
+    CONTA.sujo = true;
+    clearTimeout(CONTA.salvaT);
+    CONTA.salvaT = setTimeout(contaSalvaJa, 30000);
+  }
+}
+addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden' && CONTA.sujo) contaSalvaJa();
+});
+// ---------- entrar / criar / sair ----------
+function contaTemProgresso() {
+  return (STATS.matches || 0) > 0 || (STATS.coins || 0) > 0 || (PROF.owned || []).length > 0;
+}
+async function contaEntrar(usuario, senha) {
+  const j = await contaApi('entrar', { usuario, senha });
+  CONTA.tk = j.token;
+  contaGuarda();
+  // o progresso da conta vem para este aparelho (e o jogo recomeça com ele)
+  const c = j.conta,
+    P = Object.assign({}, c.perfil && Object.keys(c.perfil).length ? c.perfil : PROF, { uid: c.uid });
+  try {
+    localStorage.setItem('br3d_profile', JSON.stringify(P));
+    if (c.stats && Object.keys(c.stats).length) localStorage.setItem('br3d_stats', JSON.stringify(c.stats));
+  } catch (e) {}
+  toast('✅ Bem-vindo de volta, ' + c.nome + '!');
+  setTimeout(() => location.reload(), 600);
+}
+async function contaCriar(usuario, senha, nome) {
+  const j = await contaApi('registrar', { usuario, senha, nome: nome || PROF.name, uid: PROF.uid, perfil: PROF, stats: STATS });
+  CONTA.tk = j.token;
+  contaGuarda();
+  if (nome) PROF.name = nome;
+  PROF.uid = j.conta.uid;
+  saveProf();
+  contaAplica(j.conta);
+  contaAuthWs();
+  toast('🎉 Conta criada! Seu progresso agora fica salvo na nuvem.');
+  sfx('coin', 0.7);
+}
+function contaSair(silencio) {
+  const tinha = !!CONTA.tk;
+  CONTA.tk = null;
+  CONTA.d = null;
+  contaGuarda();
+  contaAuthWs();
+  if (silencio || !tinha) {
+    contaRender();
+    return;
+  }
+  // aparelho volta a ser de convidado (o progresso fica guardado na conta)
+  try {
+    localStorage.removeItem('br3d_profile');
+    localStorage.removeItem('br3d_stats');
+  } catch (e) {}
+  toast('👋 Você saiu da conta.');
+  setTimeout(() => location.reload(), 500);
+}
+async function contaAtualiza() {
+  if (!CONTA.tk) return;
+  try {
+    contaAplica((await contaApi('eu', {})).conta);
+  } catch (e) {}
+}
+// mensagens que o servidor manda pela conexão do jogo
+function contaMsg(m) {
+  if (m.t === 'ct') {
+    if (m.pedido) {
+      toast('👋 ' + m.pedido.nome + ' quer ser seu amigo!');
+      sfx('announce', 0.4);
+    }
+    if (m.aceito) toast('🤝 ' + m.aceito.nome + ' aceitou seu pedido de amizade!');
+    clearTimeout(CONTA.ctT);
+    CONTA.ctT = setTimeout(contaAtualiza, 500);
+  } else if (m.t === 'conv' && m.id && !CONTA.convVisto[m.id]) {
+    CONTA.convVisto[m.id] = 1;
+    convShow(m);
+  }
+}
+
+/* ---------- tela de entrar / criar conta ---------- */
+function ctEl(tag, cls, html) {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (html != null) e.innerHTML = html;
+  return e;
+}
+function contaAbre(aba, convite) {
+  let P = document.getElementById('contaP');
+  if (!P) {
+    P = ctEl('div', 'ctBg');
+    P.id = 'contaP';
+    document.body.appendChild(P);
+    P.addEventListener('click', (e) => {
+      if (e.target === P) P.classList.remove('open');
+    });
+    P.addEventListener('keydown', (e) => e.stopPropagation());
+  }
+  P.innerHTML = '';
+  const box = ctEl('div', 'ctBox');
+  P.appendChild(box);
+  const cri = aba !== 'entrar';
+  box.appendChild(ctEl('button', 'ctX', '✕')).onclick = () => P.classList.remove('open');
+  box.appendChild(ctEl('div', 'ctLogo', 'WORLD<b>BULLET</b>'));
+  if (convite) box.appendChild(ctEl('p', 'ctCall', '☁️ Crie sua conta pra nunca perder seu progresso — e jogar com amigos pelo ID!'));
+  const tabs = box.appendChild(ctEl('div', 'ctTabs'));
+  const t1 = tabs.appendChild(ctEl('button', cri ? '' : 'on', 'ENTRAR')),
+    t2 = tabs.appendChild(ctEl('button', cri ? 'on' : '', 'CRIAR CONTA'));
+  t1.onclick = () => contaAbre('entrar', convite);
+  t2.onclick = () => contaAbre('criar', convite);
+  const f = box.appendChild(ctEl('form', 'ctForm'));
+  const campo = (ph, type, ac, max) => {
+    const i = ctEl('input');
+    i.placeholder = ph;
+    i.type = type;
+    i.autocomplete = ac;
+    i.maxLength = max;
+    i.spellcheck = false;
+    i.setAttribute('autocapitalize', 'none');
+    f.appendChild(i);
+    return i;
+  };
+  const u = campo('Nome de usuário', 'text', 'username', 16);
+  const n = cri ? campo('Apelido no jogo', 'text', 'nickname', 14) : null;
+  if (n) n.value = PROF.name && PROF.name !== 'Jogador' ? PROF.name : '';
+  const s1 = campo('Senha', 'password', cri ? 'new-password' : 'current-password', 64);
+  const s2 = cri ? campo('Repita a senha', 'password', 'new-password', 64) : null;
+  const er = f.appendChild(ctEl('p', 'ctErr'));
+  const ok = f.appendChild(ctEl('button', 'ctOk', cri ? 'CRIAR CONTA' : 'ENTRAR'));
+  ok.type = 'submit';
+  f.appendChild(
+    ctEl(
+      'p',
+      'ctNote',
+      cri
+        ? 'Usuário: letras minúsculas, números, _ ou . (é com ele que você entra). O progresso deste aparelho vai junto pra conta. <b>Anote a senha!</b>'
+        : contaTemProgresso()
+          ? '⚠️ O progresso deste aparelho (sem conta) vai ser trocado pelo da sua conta.'
+          : 'Entre com o usuário e a senha que você criou.',
+    ),
+  );
+  u.addEventListener('input', () => {
+    const v = u.value.toLowerCase().replace(/[^a-z0-9_.]/g, '');
+    if (v !== u.value) u.value = v;
+  });
+  f.onsubmit = async (e) => {
+    e.preventDefault();
+    er.textContent = '';
+    const us = u.value.trim().toLowerCase();
+    if (!/^[a-z0-9_.]{3,16}$/.test(us)) return (er.textContent = 'Usuário: de 3 a 16 letras minúsculas, números, _ ou .');
+    if (s1.value.length < 6) return (er.textContent = 'A senha precisa ter pelo menos 6 caracteres.');
+    if (cri && s1.value !== s2.value) return (er.textContent = 'As duas senhas estão diferentes.');
+    ok.disabled = true;
+    ok.textContent = '⏳';
+    try {
+      if (cri) {
+        await contaCriar(us, s1.value, n.value.trim().slice(0, 14));
+        P.classList.remove('open');
+      } else await contaEntrar(us, s1.value);
+    } catch (x) {
+      er.textContent = x.message;
+      ok.disabled = false;
+      ok.textContent = cri ? 'CRIAR CONTA' : 'ENTRAR';
+    }
+  };
+  if (convite) box.appendChild(ctEl('button', 'ctLater', 'Agora não, jogar como convidado')).onclick = () => P.classList.remove('open');
+  P.classList.add('open');
+  setTimeout(() => u.focus(), 60);
+}
+// caixinha da conta dentro do Perfil
+function contaRender() {
+  const pf = document.getElementById('profId');
+  if (!pf) return;
+  let B = document.getElementById('contaBox');
+  if (!B) {
+    B = ctEl('div');
+    B.id = 'contaBox';
+    pf.insertAdjacentElement('afterend', B);
+  }
+  B.innerHTML = '';
+  if (!contaPode()) {
+    B.appendChild(ctEl('p', 'ctInfo', '☁️ Conta com usuário e senha, amigos por ID e presentes: abra o jogo pelo <b>site do WorldBullet</b> (servidor).'));
+    return;
+  }
+  if (!CONTA.tk) {
+    B.appendChild(ctEl('p', 'ctInfo', '⚠️ Você está como <b>convidado</b>: se limpar o navegador ou trocar de aparelho, perde tudo.'));
+    const r = B.appendChild(ctEl('div', 'ctRow'));
+    r.appendChild(ctEl('button', 'ctBtn y', '☁️ Criar conta')).onclick = () => contaAbre('criar');
+    r.appendChild(ctEl('button', 'ctBtn', 'Entrar')).onclick = () => contaAbre('entrar');
+    return;
+  }
+  const d = CONTA.d;
+  if (!d) {
+    B.appendChild(ctEl('p', 'ctInfo', '⏳ Conectando à sua conta...'));
+    return;
+  }
+  const h = B.appendChild(ctEl('div', 'ctMe'));
+  h.appendChild(ctEl('b', '', '')).textContent = '@' + d.usuario;
+  const sy = h.appendChild(ctEl('span'));
+  sy.id = 'ctSync';
+  sy.textContent = CONTA.ultSalvo ? '☁️ Salvo na nuvem' : '☁️ Conta conectada';
+  if (d.acesso && d.acesso.length) {
+    const a = B.appendChild(ctEl('div', 'ctTags'));
+    d.acesso.forEach((t) => (a.appendChild(ctEl('span', '', '')).textContent = '🔑 Acesso antecipado: ' + t));
+  }
+  const r = B.appendChild(ctEl('div', 'ctRow'));
+  if (d.caixa && d.caixa.length) r.appendChild(ctEl('button', 'ctBtn y', '🎁 Presentes (' + d.caixa.length + ')')).onclick = giftShow;
+  r.appendChild(ctEl('button', 'ctBtn', '👥 Amigos')).onclick = () => {
+    document.getElementById('profile').style.display = 'none';
+    amgAbre();
+  };
+  if (d.admin)
+    r.appendChild(ctEl('button', 'ctBtn adm', '🛠️ Painel do Criador')).onclick = () => {
+      document.getElementById('profile').style.display = 'none';
+      admAbre();
+    };
+  r.appendChild(ctEl('button', 'ctBtn sair', 'Sair')).onclick = () => {
+    if (confirm('Sair da conta? Seu progresso fica guardado nela e este aparelho volta a ser de convidado.')) contaSair();
+  };
+}
+// selo de verificado que vem do servidor (presença carimbada lá)
+function verDaPres(ch) {
+  if (!NET.server || !ch || !ch.peers) return;
+  for (const p of ch.peers) {
+    if (p.sameTab) continue;
+    const v = (p.presence && p.presence.vf) | 0;
+    if (v === (VER.peers[p.peer] | 0)) continue;
+    if (v) VER.peers[p.peer] = v;
+    else delete VER.peers[p.peer];
+    const b = netAvatar(p.peer);
+    if (b && b.group) netTag(b, b.name, !!v);
+  }
+}
+
+/* ---------- AMIGOS ---------- */
+function amgBadge() {
+  const n = CONTA.d ? (CONTA.d.pedidos || []).length : 0,
+    b = document.getElementById('lbNet');
+  if (!b) return;
+  let s = b.querySelector('.amgN');
+  if (!n) return s && s.remove();
+  if (!s) s = b.appendChild(ctEl('i', 'amgN'));
+  s.textContent = n;
+}
+function amgOuSala() {
+  if (contaPode()) amgAbre();
+  else openNet();
+}
+function amgAbre(tab) {
+  if (tab) CONTA.tab = tab;
+  let P = document.getElementById('amgP');
+  if (!P) {
+    P = ctEl('div', 'ctBg amgBg');
+    P.id = 'amgP';
+    document.body.appendChild(P);
+    P.addEventListener('click', (e) => {
+      if (e.target === P) P.classList.remove('open');
+    });
+    P.addEventListener('keydown', (e) => e.stopPropagation());
+  }
+  P.classList.add('open');
+  amgRender();
+  contaAtualiza();
+}
+function amgRender() {
+  const P = document.getElementById('amgP');
+  if (!P) return;
+  P.innerHTML = '';
+  const box = P.appendChild(ctEl('div', 'ctBox amg'));
+  box.appendChild(ctEl('button', 'ctX', '✕')).onclick = () => P.classList.remove('open');
+  const top = box.appendChild(ctEl('div', 'amgTop'));
+  top.appendChild(ctEl('b', '', '👥 AMIGOS'));
+  if (!CONTA.tk) {
+    box.appendChild(ctEl('p', 'ctCall', 'Para adicionar amigos pelo ID, ver quem está online e convidar pra sala, você precisa de uma conta.'));
+    const r = box.appendChild(ctEl('div', 'ctRow c'));
+    r.appendChild(ctEl('button', 'ctBtn y', '☁️ Criar conta')).onclick = () => contaAbre('criar');
+    r.appendChild(ctEl('button', 'ctBtn', 'Entrar')).onclick = () => contaAbre('entrar');
+    r.appendChild(ctEl('button', 'ctBtn', '🎮 Salas por código')).onclick = () => {
+      P.classList.remove('open');
+      openNet();
+    };
+    return;
+  }
+  const d = CONTA.d || { amigos: [], pedidos: [], enviados: [] };
+  const idb = top.appendChild(ctEl('button', 'amgId'));
+  idb.textContent = '🆔 Seu ID: ' + fmtId(PROF.uid) + ' 📋';
+  idb.onclick = () => {
+    try {
+      navigator.clipboard.writeText(PROF.uid).then(() => toast('🆔 ID copiado! Mande pro seu amigo.'));
+    } catch (e) {
+      toast('🆔 Seu ID: ' + PROF.uid);
+    }
+  };
+  const tabs = box.appendChild(ctEl('div', 'ctTabs amgTabs'));
+  const T = [
+    ['amigos', 'AMIGOS (' + d.amigos.length + ')'],
+    ['pedidos', 'PEDIDOS' + (d.pedidos.length ? ' (' + d.pedidos.length + ')' : '')],
+    ['add', '➕ ADICIONAR'],
+    ['salas', '🎮 SALAS'],
+  ];
+  T.forEach(([k, n]) => {
+    const b = tabs.appendChild(ctEl('button', CONTA.tab === k ? 'on' : '', ''));
+    b.textContent = n;
+    if (k === 'pedidos' && d.pedidos.length) b.classList.add('dot');
+    b.onclick = () => {
+      if (k === 'salas') {
+        P.classList.remove('open');
+        return openNet();
+      }
+      CONTA.tab = k;
+      amgRender();
+    };
+  });
+  const L = box.appendChild(ctEl('div', 'amgList'));
+  const linha = (a, extra) => {
+    const r = L.appendChild(ctEl('div', 'amgRow' + (a.on ? ' on' : '')));
+    const av = r.appendChild(ctEl('span', 'amgAv'));
+    av.textContent = String(a.nome || '?').slice(0, 1).toUpperCase();
+    const t = r.appendChild(ctEl('div', 'amgTx'));
+    const nm = t.appendChild(ctEl('b'));
+    nm.textContent = a.nome;
+    verMark(nm, a.vf > 0);
+    const sm = t.appendChild(ctEl('small'));
+    sm.textContent = 'ID ' + fmtId(a.uid) + (extra ? ' · ' + extra : '');
+    return r;
+  };
+  const acao = async (acao, uid, b) => {
+    if (b) b.disabled = true;
+    try {
+      const j = await contaApi('amigos', { acao, uid });
+      if (j.msg) toast('👥 ' + j.msg);
+      contaAplica(Object.assign({}, CONTA.d, j.conta));
+    } catch (e) {
+      toast('😕 ' + e.message);
+      if (b) b.disabled = false;
+    }
+  };
+  if (CONTA.tab === 'amigos') {
+    if (!d.amigos.length) L.appendChild(ctEl('p', 'ctInfo', 'Nenhum amigo ainda. Toque em <b>➕ ADICIONAR</b> e digite o ID do seu amigo (ele vê o ID dele aqui em cima).'));
+    d.amigos
+      .slice()
+      .sort((a, b) => (b.on | 0) - (a.on | 0) || String(a.nome).localeCompare(b.nome))
+      .forEach((a) => {
+        const st = !a.on ? '⚫ offline' : a.st === 'play' ? '🎮 jogando' : '🟢 no lobby';
+        const r = linha(a, st);
+        if (a.on && a.st !== 'play') {
+          const b = r.appendChild(ctEl('button', 'ctBtn y sm', 'Convidar'));
+          b.onclick = () => amgConvida(a, b);
+        }
+        const x = r.appendChild(ctEl('button', 'ctBtn sm ghost', '✕'));
+        x.title = 'Remover amigo';
+        x.onclick = () => confirm('Remover ' + a.nome + ' dos amigos?') && acao('remover', a.uid, x);
+      });
+  } else if (CONTA.tab === 'pedidos') {
+    if (!d.pedidos.length && !d.enviados.length) L.appendChild(ctEl('p', 'ctInfo', 'Nenhum pedido de amizade agora.'));
+    d.pedidos.forEach((a) => {
+      const r = linha(a, 'quer ser seu amigo');
+      const y = r.appendChild(ctEl('button', 'ctBtn y sm', 'Aceitar'));
+      y.onclick = () => acao('aceitar', a.uid, y);
+      const n = r.appendChild(ctEl('button', 'ctBtn sm', 'Recusar'));
+      n.onclick = () => acao('recusar', a.uid, n);
+    });
+    if (d.enviados.length) L.appendChild(ctEl('div', 'amgSub', 'ENVIADOS'));
+    d.enviados.forEach((a) => {
+      const r = linha(a, 'esperando aceitar');
+      const n = r.appendChild(ctEl('button', 'ctBtn sm', 'Cancelar'));
+      n.onclick = () => acao('cancelar', a.uid, n);
+    });
+  } else {
+    const f = L.appendChild(ctEl('form', 'amgAdd'));
+    const i = f.appendChild(ctEl('input'));
+    i.placeholder = 'ID do amigo (9 números)';
+    i.inputMode = 'numeric';
+    i.maxLength = 11;
+    i.value = CONTA.busca ? CONTA.busca.q : '';
+    f.appendChild(ctEl('button', 'ctBtn y', '🔎 Buscar')).type = 'submit';
+    const res = L.appendChild(ctEl('div', 'amgRes'));
+    const mostra = (j) => {
+      res.innerHTML = '';
+      if (!j) return;
+      if (j.erro) return (res.appendChild(ctEl('p', 'ctErr')).textContent = j.erro);
+      const a = j.jogador,
+        r = linha(a, a.on ? '🟢 online' : '⚫ offline');
+      res.appendChild(r);
+      const ja = d.amigos.some((x) => x.uid === a.uid),
+        env = d.enviados.some((x) => x.uid === a.uid);
+      if (a.uid === PROF.uid) r.appendChild(ctEl('small', 'amgEu', 'é você 😄'));
+      else if (ja) r.appendChild(ctEl('small', 'amgEu', '✔ já é seu amigo'));
+      else if (env) r.appendChild(ctEl('small', 'amgEu', '⏳ pedido enviado'));
+      else {
+        const b = r.appendChild(ctEl('button', 'ctBtn y sm', 'Adicionar'));
+        b.onclick = () => acao('pedir', a.uid, b);
+      }
+    };
+    mostra(CONTA.busca && CONTA.busca.j);
+    f.onsubmit = async (e) => {
+      e.preventDefault();
+      const q = i.value.replace(/\D/g, '');
+      if (q.length !== 9) return mostra({ erro: 'O ID tem 9 números.' });
+      try {
+        CONTA.busca = { q, j: await contaApi('jogador', { uid: q }) };
+      } catch (x) {
+        CONTA.busca = { q, j: { erro: x.message } };
+      }
+      mostra(CONTA.busca.j);
+    };
+    setTimeout(() => i.focus(), 50);
+  }
+}
+async function amgConvida(a, b) {
+  if (!inLobby) return toast('Termine a partida antes de convidar.');
+  if (b) b.disabled = true;
+  try {
+    if (MM) mmCancel(true);
+    if (!NET.code) {
+      await netJoin(netNewCode(), true); // cria uma sala para vocês
+      await new Promise((r) => setTimeout(r, 400));
+    }
+    if (!NET.code) throw new Error('Não deu para criar a sala.');
+    await contaApi('convidar', { uid: a.uid, sala: NET.code });
+    toast('📨 Convite enviado para ' + a.nome + ' (sala ' + NET.code + ')');
+    if (b) b.textContent = 'Enviado ✓';
+  } catch (e) {
+    toast('😕 ' + e.message);
+    if (b) b.disabled = false;
+  }
+}
+// alguém te chamou
+function convShow(m) {
+  let C = document.getElementById('convPop');
+  if (!C) {
+    C = ctEl('div');
+    C.id = 'convPop';
+    document.body.appendChild(C);
+  }
+  C.innerHTML = '';
+  const t = C.appendChild(ctEl('div', 'cvT'));
+  t.appendChild(ctEl('span', 'cvIc', '🎮'));
+  const tx = t.appendChild(ctEl('div'));
+  const nm = tx.appendChild(ctEl('b'));
+  nm.textContent = m.de.nome;
+  verMark(nm, m.de.vf > 0);
+  tx.appendChild(ctEl('small', '', '')).textContent = 'te chamou pra jogar · sala ' + m.sala;
+  const r = C.appendChild(ctEl('div', 'ctRow'));
+  r.appendChild(ctEl('button', 'ctBtn y', 'ENTRAR')).onclick = async () => {
+    C.classList.remove('on');
+    if (!inLobby) return toast('Saia da partida para entrar na sala do seu amigo.');
+    if (MM) mmCancel(true);
+    ['modeSel', 'charSel', 'vault', 'shop', 'royale', 'amgP', 'contaP'].forEach((k) => {
+      const e = document.getElementById(k);
+      if (e) e.classList.remove('open');
+    });
+    await netJoin(m.sala, false);
+    openNet();
+  };
+  r.appendChild(ctEl('button', 'ctBtn', 'Agora não')).onclick = () => C.classList.remove('on');
+  C.classList.add('on');
+  sfx('announce', 0.6);
+  clearTimeout(C._t);
+  C._t = setTimeout(() => C.classList.remove('on'), 25000);
+}
+
+/* ---------- PRESENTES (o que o Criador mandou) ---------- */
+function giftTxt(g) {
+  if (g.tipo === 'moedas') return '🪙 ' + g.n + ' moedas';
+  if (g.tipo === 'vf') return '💙 Selo de conta verificada';
+  if (g.tipo === 'acesso') return '🔑 Acesso antecipado: ' + g.tag;
+  if (g.tipo === 'item') return '🎁 ' + (g.nome || g.item);
+  return '✉️ Mensagem';
+}
+function giftShow() {
+  const d = CONTA.d;
+  if (!d || !d.caixa || !d.caixa.length) return;
+  let P = document.getElementById('giftP');
+  if (!P) {
+    P = ctEl('div', 'ctBg');
+    P.id = 'giftP';
+    document.body.appendChild(P);
+  }
+  P.innerHTML = '';
+  const box = P.appendChild(ctEl('div', 'ctBox gift'));
+  box.appendChild(ctEl('div', 'giftT', '🎁 VOCÊ RECEBEU'));
+  const L = box.appendChild(ctEl('div', 'giftL'));
+  d.caixa.forEach((g) => {
+    const r = L.appendChild(ctEl('div', 'giftR'));
+    r.appendChild(ctEl('b')).textContent = giftTxt(g);
+    if (g.msg) r.appendChild(ctEl('p')).textContent = '“' + g.msg + '”';
+    r.appendChild(ctEl('small')).textContent = 'de ' + (g.de || 'WorldBullet');
+  });
+  const b = box.appendChild(ctEl('button', 'ctOk', 'RESGATAR TUDO'));
+  b.onclick = async () => {
+    b.disabled = true;
+    try {
+      const j = await contaApi('resgatar', { id: '*' });
+      let n = 0;
+      j.itens.forEach((g) => (n += giftAplica(g)));
+      saveProf();
+      saveStats();
+      contaSalvaJa();
+      CONTA.d.caixa = [];
+      P.classList.remove('open');
+      toast('🎉 Presentes resgatados!' + (n ? ' (+' + n + ' moedas)' : ''));
+      sfx('coin', 0.8);
+      try {
+        refreshLobbyHUD();
+        renderLobby();
+      } catch (e) {}
+      contaRender();
+    } catch (e) {
+      toast('😕 ' + e.message);
+      b.disabled = false;
+    }
+  };
+  P.classList.add('open');
+  sfx('announce', 0.5);
+}
+function giftAplica(g) {
+  if (g.tipo === 'moedas') {
+    STATS.coins = (STATS.coins || 0) + (g.n | 0);
+    return g.n | 0;
+  }
+  if (g.tipo === 'item') {
+    if (g.cat === 'ch') {
+      if (CHAR_BY[g.item] && !(PROF.chars || []).includes(g.item)) PROF.chars = (PROF.chars || []).concat(g.item);
+    } else if (cosmFind(g.cat, g.item)) {
+      PROF.owned = PROF.owned || [];
+      if (!PROF.owned.includes(g.item)) PROF.owned.push(g.item);
+    }
+  }
+  return 0;
+}
+// acesso antecipado: use temAcesso('beta') para liberar coisas só para quem ganhou
+const temAcesso = (tag) => !!(CONTA.d && (CONTA.d.admin || (CONTA.d.acesso || []).includes(tag)));
+
+/* ---------- PAINEL DO CRIADOR (só a sua conta) ---------- */
+function admItens() {
+  const L = [];
+  CHAR_DEF.forEach((c) => c.preco && L.push(['ch', c.id, '🧍 ' + c.n]));
+  OUTFITS.forEach((o) => o.id !== 'none' && L.push(['o', o.id, '👕 ' + o.name]));
+  GSKINS.forEach((o) => o.id !== 'none' && L.push(['g', o.id, '🔫 ' + o.name]));
+  CHUTES.forEach((o) => o.id !== 'none' && L.push(['p', o.id, '🪂 ' + o.name]));
+  return L;
+}
+function admAbre() {
+  if (!CONTA.d || !CONTA.d.admin) return;
+  let P = document.getElementById('admP');
+  if (!P) {
+    P = ctEl('div', 'ctBg');
+    P.id = 'admP';
+    document.body.appendChild(P);
+    P.addEventListener('click', (e) => {
+      if (e.target === P) P.classList.remove('open');
+    });
+    P.addEventListener('keydown', (e) => e.stopPropagation());
+  }
+  P.classList.add('open');
+  admRender();
+}
+function admRender() {
+  const P = document.getElementById('admP');
+  P.innerHTML = '';
+  const box = P.appendChild(ctEl('div', 'ctBox adm'));
+  box.appendChild(ctEl('button', 'ctX', '✕')).onclick = () => P.classList.remove('open');
+  box.appendChild(ctEl('div', 'amgTop', '<b>🛠️ PAINEL DO CRIADOR</b>'));
+  const f = box.appendChild(ctEl('form', 'amgAdd'));
+  const i = f.appendChild(ctEl('input'));
+  i.placeholder = 'ID do jogador (9 números)';
+  i.inputMode = 'numeric';
+  i.maxLength = 11;
+  if (CONTA.adm) i.value = CONTA.adm.uid;
+  f.appendChild(ctEl('button', 'ctBtn y', '🔎 Buscar')).type = 'submit';
+  const out = box.appendChild(ctEl('div', 'admOut'));
+  const chama = async (b, extra, okMsg) => {
+    try {
+      const j = await contaApi('admin', Object.assign({ uid: CONTA.adm.uid }, extra));
+      if (okMsg) toast('✅ ' + okMsg);
+      if (extra.acao === 'ver' || j.jogador) {
+        const v = extra.acao === 'ver' ? j : await contaApi('admin', { uid: CONTA.adm.uid, acao: 'ver' });
+        CONTA.adm = v.jogador;
+      }
+      admRender();
+    } catch (e) {
+      toast('😕 ' + e.message);
+      if (b) b.disabled = false;
+    }
+  };
+  f.onsubmit = (e) => {
+    e.preventDefault();
+    const q = i.value.replace(/\D/g, '');
+    if (q.length !== 9) return toast('O ID tem 9 números.');
+    CONTA.adm = { uid: q };
+    chama(null, { acao: 'ver' });
+  };
+  const a = CONTA.adm;
+  if (!a || !a.usuario) {
+    out.appendChild(ctEl('p', 'ctInfo', 'Digite o ID de um jogador para mandar selo, moedas, itens, acesso antecipado ou uma mensagem. Ele recebe na hora (ou quando entrar no jogo).'));
+    return;
+  }
+  const card = out.appendChild(ctEl('div', 'amgRow on'));
+  card.appendChild(ctEl('span', 'amgAv')).textContent = String(a.nome).slice(0, 1).toUpperCase();
+  const tx = card.appendChild(ctEl('div', 'amgTx'));
+  const nm = tx.appendChild(ctEl('b'));
+  nm.textContent = a.nome;
+  verMark(nm, a.vf > 0);
+  tx.appendChild(ctEl('small')).textContent =
+    '@' + a.usuario + ' · ID ' + fmtId(a.uid) + (a.on ? ' · 🟢 online' : '') + (a.banido ? ' · ⛔ BANIDO' : '') + (a.acesso && a.acesso.length ? ' · 🔑 ' + a.acesso.join(', ') : '');
+  const msg = out.appendChild(ctEl('input', 'admMsg'));
+  msg.placeholder = 'Mensagem junto (opcional)';
+  msg.maxLength = 200;
+  const G = out.appendChild(ctEl('div', 'admGrid'));
+  const bt = (txt, cls, fn) => {
+    const b = G.appendChild(ctEl('button', 'ctBtn ' + (cls || '')));
+    b.textContent = txt;
+    b.onclick = () => {
+      b.disabled = true;
+      fn(b);
+    };
+    return b;
+  };
+  if (!a.admin) {
+    if (a.vf > 0) bt('✖ Tirar verificado', '', (b) => chama(b, { acao: 'verificar', on: false }, 'Selo removido'));
+    else bt('💙 Dar verificado', 'y', (b) => chama(b, { acao: 'verificar', on: true, msg: msg.value }, 'Selo enviado para ' + a.nome));
+  }
+  // moedas
+  const mr = G.appendChild(ctEl('div', 'admLine'));
+  const mq = mr.appendChild(ctEl('input'));
+  mq.type = 'number';
+  mq.min = 1;
+  mq.value = 500;
+  const mb = mr.appendChild(ctEl('button', 'ctBtn y', '🪙 Enviar moedas'));
+  mb.onclick = () => {
+    mb.disabled = true;
+    chama(mb, { acao: 'moedas', n: +mq.value, msg: msg.value }, mq.value + ' moedas enviadas');
+  };
+  // item
+  const ir = G.appendChild(ctEl('div', 'admLine'));
+  const sel = ir.appendChild(ctEl('select'));
+  admItens().forEach(([c, id, n]) => {
+    const o = sel.appendChild(ctEl('option'));
+    o.value = c + ':' + id;
+    o.textContent = n;
+  });
+  const ib = ir.appendChild(ctEl('button', 'ctBtn y', '🎁 Enviar item'));
+  ib.onclick = () => {
+    const [c, id] = sel.value.split(':'),
+      nome = sel.options[sel.selectedIndex].textContent.replace(/^\S+\s/, '');
+    ib.disabled = true;
+    chama(ib, { acao: 'item', cat: c, id, nome, msg: msg.value }, nome + ' enviado');
+  };
+  // acesso antecipado
+  const ar = G.appendChild(ctEl('div', 'admLine'));
+  const tg = ar.appendChild(ctEl('input'));
+  tg.value = 'beta';
+  tg.maxLength = 20;
+  const tem = (a.acesso || []).includes(tg.value);
+  const ab = ar.appendChild(ctEl('button', 'ctBtn ' + (tem ? '' : 'y'), tem ? '✖ Tirar acesso' : '🔑 Dar acesso antecipado'));
+  ab.onclick = () => {
+    const on = !(a.acesso || []).includes(tg.value.toLowerCase());
+    ab.disabled = true;
+    chama(ab, { acao: 'acesso', tag: tg.value, on, msg: msg.value }, on ? 'Acesso dado' : 'Acesso tirado');
+  };
+  bt('✉️ Só mandar a mensagem', '', (b) => (msg.value.trim() ? chama(b, { acao: 'msg', msg: msg.value }, 'Mensagem enviada') : (toast('Escreva a mensagem primeiro'), (b.disabled = false))));
+  const sr = G.appendChild(ctEl('div', 'admLine'));
+  const sn = sr.appendChild(ctEl('input'));
+  sn.placeholder = 'Nova senha (se ele esqueceu)';
+  sn.maxLength = 64;
+  const sb = sr.appendChild(ctEl('button', 'ctBtn', '🔐 Trocar senha'));
+  sb.onclick = () => {
+    if (sn.value.length < 6) return toast('A senha nova precisa de 6 caracteres ou mais');
+    sb.disabled = true;
+    chama(sb, { acao: 'senha', nova: sn.value }, 'Senha trocada. Passe a senha nova pra ele.');
+  };
+  if (!a.admin) {
+    if (a.banido) bt('✅ Desbanir', '', (b) => chama(b, { acao: 'banir', on: false }, 'Conta desbanida'));
+    else bt('⛔ Banir', 'red', (b) => (confirm('Banir ' + a.nome + '? Ele não consegue mais entrar na conta.') ? chama(b, { acao: 'banir', on: true }, 'Conta banida') : (b.disabled = false)));
+  }
+}
+
+// a conta não espera a conexão do jogo: confere logo que a página abre
+setTimeout(() => contaInit(), 1200);
 /* ---------- Conexão e salas ---------- */
 async function netSetup() {
   let rm = null;
@@ -30173,11 +31430,13 @@ async function netSetup() {
   if (!rm) {
     NET.state = 'off';
     renderNet();
+    contaInit();
     return;
   }
   NET.lobby = rm;
   NET.state = 'on';
   verSetup(rm);
+  contaInit();
   // diagnóstico: está mesmo falando com o servidor?
   NET.conn = null;
   try {
@@ -30212,6 +31471,7 @@ function netLobbyPresence() {
 }
 // salas abertas: quem está na sala geral com um código
 function netLobbyPeers(ch) {
+  verDaPres(ch);
   const R = {};
   NET.online = ch.peers.filter((p) => p.kind === 'viewer').length;
   // fila do matchmaking: quem está procurando partida agora
@@ -30312,6 +31572,7 @@ async function netLeave() {
 }
 // estado dos jogadores da minha sala
 function netOnPeers(ch) {
+  verDaPres(ch);
   const fb = NET.rm === NET.lobby,
     next = {};
   for (const p of ch.peers) {
