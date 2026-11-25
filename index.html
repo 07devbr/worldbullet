@@ -8111,7 +8111,7 @@
     <div class="spLoad"><div class="spTip" id="spTip">Preparando a ilha...</div><div class="spBar"><i id="spFill"></i></div><div class="spPct"><span id="spStep">Carregando</span><b id="spPct">0%</b></div></div>
     <div class="spTap" id="spTap"><b>TOQUE PARA JOGAR</b><div class="spWho" id="spWho"></div></div>
     <div class="spGate" id="spGate"></div>
-    <div class="spVer">v111 · Feito no Amapá 🇧🇷</div>
+    <div class="spVer">v112b · Feito no Amapá 🇧🇷</div>
   </div>
 </div>
 <!-- ===== GIRE O CELULAR: o jogo é só deitado ===== -->
@@ -25416,6 +25416,7 @@ function startMatch() {
   });
 }
 function startMatchNow() {
+  lobMatesClear(); // os amigos do palco somem (vocês vão para a partida)
   if (!inLobby) return;
   inLobby = false;
   clearKillIcons();
@@ -28424,6 +28425,12 @@ function renderProfId() {
   s.className = 'idv';
   s.textContent = '🆔 ID ' + PROF.uid.replace(/(\d{3})(?=\d)/g, '$1 ');
   P.appendChild(s);
+  // no site do jogo, convidado ainda não tem ID de verdade (ele vem com a conta: 100001, 100002...)
+  if (contaPode() && !CONTA.tk) {
+    s.textContent = '🆔 ID: crie uma conta para ganhar o seu';
+    contaRender();
+    return;
+  }
   const b = document.createElement('button');
   b.textContent = '📋 Copiar';
   b.onclick = () => {
@@ -28821,6 +28828,7 @@ function ffCam(dt, t) {
     u.head.rotation.x = Math.max(0, Math.sin(t * 0.33)) * 0.25;
   }
   mmTick();
+  lobMatesTick(dt); // amigos da sala em pé do seu lado
   FF.banT += dt;
   if (FF.banT > 4.5) {
     FF.banT = 0;
@@ -31468,6 +31476,10 @@ function contaInit(de) {
     if (!CONTA.tk) return;
     try {
       const j = await contaApi('eu', {});
+      if (j.token) {
+        CONTA.tk = j.token; // a conta ganhou ID novo
+        contaGuarda();
+      }
       contaAplica(j.conta);
       contaAuthWs();
     } catch (e) {
@@ -31947,7 +31959,7 @@ function amgRender() {
   } else {
     const f = L.appendChild(ctEl('form', 'amgAdd'));
     const i = f.appendChild(ctEl('input'));
-    i.placeholder = 'ID do amigo (9 números)';
+    i.placeholder = 'ID do amigo (6 números)';
     i.inputMode = 'numeric';
     i.maxLength = 11;
     i.value = CONTA.busca ? CONTA.busca.q : '';
@@ -31974,7 +31986,7 @@ function amgRender() {
     f.onsubmit = async (e) => {
       e.preventDefault();
       const q = i.value.replace(/\D/g, '');
-      if (q.length !== 9) return mostra({ erro: 'O ID tem 9 números.' });
+      if (q.length < 6 || q.length > 9) return mostra({ erro: 'O ID tem 6 números.' });
       try {
         CONTA.busca = { q, j: await contaApi('jogador', { uid: q }) };
       } catch (x) {
@@ -32142,7 +32154,7 @@ function admRender() {
   box.appendChild(ctEl('div', 'amgTop', '<b>🛠️ PAINEL DO CRIADOR</b>'));
   const f = box.appendChild(ctEl('form', 'amgAdd'));
   const i = f.appendChild(ctEl('input'));
-  i.placeholder = 'ID do jogador (9 números)';
+  i.placeholder = 'ID do jogador (6 números)';
   i.inputMode = 'numeric';
   i.maxLength = 11;
   if (CONTA.adm) i.value = CONTA.adm.uid;
@@ -32165,7 +32177,7 @@ function admRender() {
   f.onsubmit = (e) => {
     e.preventDefault();
     const q = i.value.replace(/\D/g, '');
-    if (q.length !== 9) return toast('O ID tem 9 números.');
+    if (q.length < 6 || q.length > 9) return toast('O ID tem 6 números.');
     CONTA.adm = { uid: q };
     chama(null, { acao: 'ver' });
   };
@@ -32821,6 +32833,114 @@ function csApplyT(T) {
   if (ph === 'over' && !matchOver) tmMatchEnd();
 }
 const csSeguidor = () => !!(NET.cs && NET.mid && !NET.host);
+/* ======================================================================
+   TIME NO LOBBY — quem está na sua sala aparece em pé do seu lado,
+   com o personagem e a roupa dele, o nome em cima e os emotes dele.
+   ====================================================================== */
+const LOBM = {}; // peer -> { group, rig, lk, net, tag, em, leVisto, disco }
+// lugares no palco (o seu boneco fica no meio)
+const LOBM_POS = [
+  [1.22, -0.5],
+  [-1.18, -0.5],
+  [2.15, -1.15],
+];
+function lobMatesClear() {
+  for (const id in LOBM) lobMateTira(id);
+}
+function lobMateTira(id) {
+  const m = LOBM[id];
+  if (!m) return;
+  scene.remove(m.group);
+  if (m.disco) scene.remove(m.disco);
+  delete LOBM[id];
+}
+function lobMateDisco() {
+  // plataforma pequena embaixo de cada amigo
+  const g = new THREE.Group();
+  const top = mesh(new THREE.CylinderGeometry(0.5, 0.56, 0.08, 32), mat(0x1d1a2e, 0.35, 0.6));
+  g.add(top);
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(0.52, 0.018, 6, 40), new THREE.MeshBasicMaterial({ color: 0x7c4dff }));
+  ring.rotation.x = Math.PI / 2;
+  ring.position.y = 0.045;
+  g.add(ring);
+  g.traverse((o) => (o.raycast = () => {}));
+  return g;
+}
+function lobMatesTick(dt) {
+  const quer = {};
+  if (inLobby && NET.code && !NET.mmRoom && NET.me)
+    Object.keys(NET.pres)
+      .filter((id) => NET.pres[id] && NET.pres[id].s === NET.code && NET.pres[id].st !== 'play' && NET.pres[id].st !== 'dead')
+      .sort()
+      .slice(0, 3)
+      .forEach((id, i) => (quer[id] = i));
+  for (const id in LOBM) if (!(id in quer)) lobMateTira(id);
+  const host = NET.code ? netLobbyHost() : null;
+  for (const id in quer) {
+    const pr = NET.pres[id],
+      lk = JSON.stringify(pr.lk || null),
+      nome = (id === host ? '👑 ' : '') + netName(pr.n);
+    let m = LOBM[id];
+    if (m && m.lk !== lk) {
+      lobMateTira(id); // trocou de roupa ou personagem: monta de novo
+      m = null;
+    }
+    if (!m) {
+      let g;
+      try {
+        g = buildCharacter(lookFrom(pr.lk));
+      } catch (e) {
+        continue;
+      }
+      g.traverse((o) => {
+        if (o.isMesh) o.raycast = () => {};
+      });
+      // no palco ficam de mãos livres, relaxados
+      g.userData.noGun = true;
+      if (g.userData.gun) g.userData.gun.visible = false;
+      scene.add(g);
+      const disco = lobMateDisco();
+      scene.add(disco);
+      m = LOBM[id] = { group: g, rig: g.userData, lk, net: id, disco, nome: '', em: null, leVisto: pr.le || null };
+      sfx('swap', 0.25);
+    }
+    const [x, z] = LOBM_POS[quer[id]];
+    m.group.position.set(x, 0.04, z);
+    m.disco.position.set(x, 0.0, z);
+    m.group.rotation.y = Math.atan2(camera.position.x - x, camera.position.z - z) * 0.8;
+    m.group.visible = m.disco.visible = true;
+    const ver = verPeer(id);
+    if (m.nome !== nome + ver) {
+      m.nome = nome + ver;
+      netTag(m, nome, ver);
+      if (m.tag) {
+        m.tag.position.y = 1.93;
+        m.tag.scale.set(1.0, 0.25, 1);
+      }
+    }
+    // emote que o amigo fez no lobby dele
+    if ((pr.le || null) !== m.leVisto) {
+      m.leVisto = pr.le || null;
+      if (pr.le) m.em = { id: String(pr.le).split(':')[0], t: 0 };
+    }
+    try {
+      const u = m.rig;
+      u.pitch = 0;
+      u.air = false;
+      u.rl = 0;
+      u.ck = 0;
+      u.pk = 0;
+      animRig(u, 0, 0, 0, 0, dt, true);
+      if (m.em && !applyEmote(u, m.em, dt)) m.em = null;
+    } catch (e) {}
+  }
+  // meu emote no lobby vai junto na presença (os amigos veem)
+  const le = inLobby && emoteSt ? emoteSt.id + ':' + (emoteSt.k || (emoteSt.k = (Date.now() % 1e6) + 1)) : null;
+  if (le !== lobMatesTick.le) {
+    lobMatesTick.le = le;
+    if (NET.code) netSend(true);
+  }
+}
 /* ---------- Conexão e salas ---------- */
 async function netSetup() {
   let rm = null;
@@ -33680,6 +33800,7 @@ function netEmptyPresence() {
   // sala personalizada: o dono mostra os ajustes, cada um o time que escolheu
   o.sl = NET.code && !NET.mmRoom && NET.me && netLobbyHost() === NET.me ? salaEnc(NET.sala || NET.salaVista || SALA_DEF) : null;
   o.tt = NET.code && NET.tt !== undefined ? NET.tt : null;
+  o.le = inLobby && emoteSt && emoteSt.k ? emoteSt.id + ':' + emoteSt.k : null; // emote no lobby
   ['m', 'p', 'em', 'h', 'pk', 'dl', 'gn', 'rv', 'kd', 'M', 'Z', 'B', 'D', 'A', 'vc', 'ch', 'T', 'tr'].forEach((k) => (o[k] = null));
   return o;
 }

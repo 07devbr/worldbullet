@@ -269,6 +269,19 @@ function bancoSupabase() {
     async remove(uid) {
       await sbReq('DELETE', '?uid=eq.' + enc(uid));
     },
+    async maiorId() {
+      // as contas mais novas têm os maiores IDs
+      const r = await sbReq('GET', '?select=uid&order=criado.desc&limit=200');
+      let m = 0;
+      for (const x of r) if (ID6.test(x.uid)) m = Math.max(m, +x.uid);
+      return m ? String(m) : null;
+    },
+    async byOld(old) {
+      return (await sbReq('GET', '?perfil->>uidAntigo=eq.' + enc(old) + '&select=*'))[0] || null;
+    },
+    async todas() {
+      return sbReq('GET', '?select=uid,usuario,criado,amigos,pedidos,enviados,perfil&order=criado.asc&limit=10000');
+    },
     async ranking() {
       return sbReq('GET', '?select=uid,nome,vf,banido,rp:stats->rp,st4:stats->st4,wins:stats->wins,kills:stats->kills&limit=5000');
     },
@@ -322,12 +335,28 @@ function bancoLocal() {
       const r = M.get(uid);
       if (!r) return null;
       Object.assign(r, cp(patch));
+      if (r.uid !== uid) {
+        M.delete(uid);
+        M.set(r.uid, r);
+      }
       save();
       return cp(r);
     },
     async remove(uid) {
       M.delete(uid);
       save();
+    },
+    async maiorId() {
+      let m = 0;
+      for (const k of M.keys()) if (ID6.test(k)) m = Math.max(m, +k);
+      return m ? String(m) : null;
+    },
+    async todas() {
+      return [...M.values()].map(cp);
+    },
+    async byOld(old) {
+      for (const r of M.values()) if (r.perfil && r.perfil.uidAntigo === old) return cp(r);
+      return null;
     },
     async ranking() {
       return [...M.values()].map((r) => ({ uid: r.uid, nome: r.nome, vf: r.vf, banido: r.banido, rp: (r.stats || {}).rp, st4: (r.stats || {}).st4, wins: (r.stats || {}).wins, kills: (r.stats || {}).kills }));
@@ -361,7 +390,7 @@ async function testaBanco() {
   console.log('Contas (banco):', DIAG.msg, '| URL usada:', SB_URL);
   return DIAG;
 }
-testaBanco();
+testaBanco().then(migraIds);
 
 // ---- senha (scrypt com sal: nem quem abrir o banco vê a senha) ----
 const scryptP = (s, salt) => new Promise((ok, no) => crypto.scrypt(s, salt, 32, { N: 16384, r: 8, p: 1 }, (e, k) => (e ? no(e) : ok(k))));
@@ -411,13 +440,46 @@ setInterval(() => {
   for (const [k, r] of RL) if (now - r[0] > 3600e3) RL.delete(k);
 }, 600e3).unref();
 
-const okUid = (s) => typeof s === 'string' && /^[1-9]\d{8}$/.test(s);
+const okUid = (s) => typeof s === 'string' && /^[1-9]\d{5,8}$/.test(s); // 6 números (antigos: 9)
 const okUser = (s) => typeof s === 'string' && /^[a-z0-9_.]{3,16}$/.test(s);
 const limpaTxt = (s, n) => String(s == null ? '' : s).replace(/[\u0000-\u001f\u007f<>]/g, '').trim().slice(0, n);
 const limpaNome = (s) => limpaTxt(s, 14) || 'Jogador';
 const objOk = (o, max) => !!o && typeof o === 'object' && !Array.isArray(o) && JSON.stringify(o).length <= max;
 const arr = (a) => (Array.isArray(a) ? a : []);
-const novoUid = () => String(100000000 + crypto.randomInt(900000000));
+// IDs em ordem de chegada: a 1ª conta é 100001, a 2ª 100002...
+const ID6 = /^[1-9]\d{5}$/;
+let PROX_ID = null;
+async function proxId() {
+  if (PROX_ID == null) {
+    const r = await DB.maiorId();
+    PROX_ID = Math.max(100001, (r ? +r : 100000) + 1);
+  }
+  return String(PROX_ID++);
+}
+// contas antigas (ID de 9 números) ganham ID novo na ordem em que foram criadas
+async function migraIds() {
+  try {
+    const rows = await DB.todas();
+    const velhas = rows.filter((r) => !ID6.test(r.uid));
+    if (!velhas.length) return;
+    let n = Math.max(100000, ...rows.filter((r) => ID6.test(r.uid)).map((r) => +r.uid)) + 1;
+    velhas.sort((a, b) => (Date.parse(a.criado) || 0) - (Date.parse(b.criado) || 0) || (a.uid < b.uid ? -1 : 1));
+    const M = {};
+    for (const r of velhas) M[r.uid] = String(n++);
+    const troca = (a) => arr(a).map((x) => M[x] || x);
+    // 1) listas de amigos/pedidos de todo mundo  2) o ID de cada conta antiga
+    for (const r of rows) {
+      const L = [r.amigos, r.pedidos, r.enviados];
+      if (L.some((a) => arr(a).some((x) => M[x]))) await DB.update(r.uid, { amigos: troca(r.amigos), pedidos: troca(r.pedidos), enviados: troca(r.enviados) });
+    }
+    for (const r of velhas) await DB.update(r.uid, { uid: M[r.uid], perfil: Object.assign({}, obj(r.perfil), { uid: M[r.uid], uidAntigo: r.uid }) });
+    PROX_ID = null;
+    RANK.t = 0;
+    console.log('IDs novos:', velhas.map((r) => r.usuario + ' ' + r.uid + ' -> ' + M[r.uid]).join(', '));
+  } catch (e) {
+    console.warn('não deu para trocar os IDs agora:', e.message);
+  }
+}
 const novoId = () => crypto.randomBytes(5).toString('hex');
 
 // quem está conectado com qual conta (para amigos online e convites)
@@ -466,16 +528,22 @@ class Erro extends Error {
     this.st = st;
   }
 }
+// a conta ganhou ID novo (6 números)? a sessão com o ID antigo ainda acha ela
+async function contaDoToken(uid) {
+  let r = await DB.get(uid);
+  if (!r && !ID6.test(uid)) r = await DB.byOld(uid);
+  return r;
+}
 async function quem(b) {
   const uid = leToken(b.token);
   if (!uid) throw new Erro(401, 'Sua sessão expirou. Entre de novo.');
-  const r = await DB.get(uid);
+  const r = await contaDoToken(uid);
   if (!r) throw new Erro(401, 'Conta não encontrada. Entre de novo.');
   if (r.banido) throw new Erro(403, 'Esta conta foi banida.');
   return r;
 }
 async function alvo(uid) {
-  if (!okUid(uid)) throw new Erro(400, 'ID inválido (são 9 números).');
+  if (!okUid(uid)) throw new Erro(400, 'ID inválido (são 6 números).');
   const r = await DB.get(uid);
   if (!r) throw new Erro(404, 'Nenhum jogador com esse ID.');
   return r;
@@ -553,9 +621,9 @@ const API = {
     if (await DB.byUser(usuario)) throw new Erro(409, 'Esse nome de usuário já existe.');
     const h = await hashSenha(senha),
       adm = !!ADMIN && usuario === ADMIN;
-    let uid = okUid(b.uid) && !(await DB.get(b.uid)) ? b.uid : null; // mantém o ID que ele já tinha
-    for (let i = 0; i < 6; i++) {
-      if (!uid) uid = novoUid();
+    let uid = null;
+    for (let i = 0; i < 12; i++) {
+      if (!uid) uid = await proxId(); // próximo ID da fila
       perfil.uid = uid;
       const row = contaNova({ uid, usuario, nome: limpaNome(b.nome || perfil.name), senha: h, perfil, stats, vf: adm ? 2 : 0, admin: adm });
       const r = await DB.insert(row);
@@ -585,8 +653,10 @@ const API = {
     return { token: fazToken(r.uid), conta: await minha(r, true) };
   },
   async eu(b) {
-    const r = await quem(b);
-    return { conta: await minha(r, !!b.full) };
+    const r = await quem(b),
+      o = { conta: await minha(r, !!b.full) };
+    if (leToken(b.token) !== r.uid) o.token = fazToken(r.uid); // ID mudou: crachá novo
+    return o;
   },
   async salvar(b) {
     const r = await quem(b);
@@ -830,7 +900,7 @@ async function wsAuth(c, tk) {
   const uid = leToken(tk);
   let r = null;
   try {
-    r = uid ? await DB.get(uid) : null;
+    r = uid ? await contaDoToken(uid) : null;
   } catch (e) {}
   if (!c.alive) return;
   if (!r || r.banido) {
