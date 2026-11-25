@@ -140,8 +140,9 @@ function broadcastCount() {
   }, 500);
 }
 // resumo para quem está fora da sala (lista de salas abertas)
-const light = (pr) => (pr ? { v: pr.v, n: pr.n, s: pr.s, u: pr.u, vf: pr.vf || 0, st: pr.st === 'play' || pr.st === 'dead' ? pr.st : null, q: pr.q || null, qt: pr.qt || null, qk: pr.qk || null } : null);
-const lightKey = (pr) => (pr ? [pr.n, pr.s, pr.u, pr.vf, pr.q, pr.qt, pr.qk, pr.st === 'play' || pr.st === 'dead'].join('|') : '');
+const slOk = (a) => (Array.isArray(a) && a.length <= 6 && a.every((x) => typeof x === 'number') ? a : null);
+const light = (pr) => (pr ? { v: pr.v, n: pr.n, s: pr.s, u: pr.u, vf: pr.vf || 0, cr: pr.cr ? 1 : 0, sl: slOk(pr.sl), st: pr.st === 'play' || pr.st === 'dead' ? pr.st : null, q: pr.q || null, qt: pr.qt || null, qk: pr.qk || null } : null);
+const lightKey = (pr) => (pr ? [pr.n, pr.s, pr.u, pr.vf, pr.cr, JSON.stringify(slOk(pr.sl)), pr.q, pr.qt, pr.qk, pr.st === 'play' || pr.st === 'dead'].join('|') : '');
 
 function onPresence(c, pr) {
   if (!pr || typeof pr !== 'object') return;
@@ -261,6 +262,9 @@ function bancoSupabase() {
     async update(uid, patch) {
       return (await sbReq('PATCH', '?uid=eq.' + enc(uid), patch, 'return=representation'))[0] || null;
     },
+    async ranking() {
+      return sbReq('GET', '?select=uid,nome,vf,banido,rp:stats->rp,st4:stats->st4,wins:stats->wins,kills:stats->kills&limit=5000');
+    },
   };
 }
 function bancoLocal() {
@@ -313,6 +317,9 @@ function bancoLocal() {
       Object.assign(r, cp(patch));
       save();
       return cp(r);
+    },
+    async ranking() {
+      return [...M.values()].map((r) => ({ uid: r.uid, nome: r.nome, vf: r.vf, banido: r.banido, rp: (r.stats || {}).rp, st4: (r.stats || {}).st4, wins: (r.stats || {}).wins, kills: (r.stats || {}).kills }));
     },
   };
 }
@@ -470,6 +477,7 @@ async function daPresente(r, item, de) {
   avisa(r.uid, { t: 'ct' });
 }
 
+const RANK = { t: 0, br: null, cs: null, p: null }; // ranking guardado por 45 s (não pesa no banco)
 const API = {
   async registrar(b, ip) {
     if (estourou('reg:' + ip, 6, 3600e3)) throw new Erro(429, 'Muitas contas criadas daqui. Tente mais tarde.');
@@ -572,6 +580,26 @@ const API = {
     if (!onlineDe(String(b.uid))) throw new Erro(409, 'Seu amigo não está online agora.');
     avisa(String(b.uid), { t: 'conv', id: novoId(), de: { uid: r.uid, nome: r.nome, vf: r.vf | 0 }, sala: b.sala });
     return { ok: true };
+  },
+  async ranking(b) {
+    if (Date.now() - RANK.t > 45e3 || !RANK.br) {
+      if (!RANK.p)
+        RANK.p = DB.ranking()
+          .then((rows) => {
+            const L = (rows || [])
+              .filter((r) => r && !r.banido)
+              .map((r) => ({ uid: r.uid, nome: r.nome, vf: r.vf | 0, rp: Math.max(0, +r.rp || 0), st4: Math.max(0, +r.st4 || 0), wins: +r.wins || 0, kills: +r.kills || 0 }));
+            RANK.br = L.filter((r) => r.rp > 0).sort((a, b) => b.rp - a.rp || b.wins - a.wins);
+            RANK.cs = L.filter((r) => r.st4 > 0).sort((a, b) => b.st4 - a.st4 || b.wins - a.wins);
+            RANK.t = Date.now();
+          })
+          .finally(() => (RANK.p = null));
+      await RANK.p;
+    }
+    const uid = leToken(b.token),
+      top = (A) => A.slice(0, 100).map((r) => Object.assign({}, r, { on: !!onlineDe(r.uid) })),
+      pos = (A) => (uid ? A.findIndex((r) => r.uid === uid) + 1 : 0);
+    return { br: top(RANK.br), cs: top(RANK.cs), eu: uid ? { br: pos(RANK.br), cs: pos(RANK.cs) } : null, total: RANK.br.length, t: RANK.t };
   },
   async resgatar(b) {
     const r = await quem(b),
