@@ -132,8 +132,8 @@ function broadcastCount() {
   }, 500);
 }
 // resumo para quem está fora da sala (lista de salas abertas)
-const light = (pr) => (pr ? { v: pr.v, n: pr.n, s: pr.s, u: pr.u, st: null } : null);
-const lightKey = (pr) => (pr ? [pr.n, pr.s, pr.u].join('|') : '');
+const light = (pr) => (pr ? { v: pr.v, n: pr.n, s: pr.s, u: pr.u, st: pr.st === 'play' || pr.st === 'dead' ? pr.st : null, q: pr.q || null, qt: pr.qt || null, qk: pr.qk || null } : null);
+const lightKey = (pr) => (pr ? [pr.n, pr.s, pr.u, pr.q, pr.qt, pr.qk, pr.st === 'play' || pr.st === 'dead'].join('|') : '');
 
 function onPresence(c, pr) {
   if (!pr || typeof pr !== 'object') return;
