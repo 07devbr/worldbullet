@@ -8035,6 +8035,40 @@
       display: flex;
     }
   }
+
+  #rkTabs {
+    display: flex;
+    gap: 4px;
+    padding: 6px 12px 0;
+  }
+  #rkTabs button {
+    flex: 1;
+    padding: 8px 4px;
+    border: none;
+    background: #1a12301a;
+    color: #4a3f66;
+    font: 900 italic 13px var(--ffF, system-ui);
+    border-radius: 2px;
+  }
+  #rkTabs button.on {
+    background: #ffc928;
+    color: #2a1a00;
+  }
+  .rk4St {
+    font-size: 18px;
+    letter-spacing: 2px;
+  }
+  #rkName {
+    text-shadow: 0 1px 0 #0005;
+  }
+  .rk4St .sOn {
+    color: #ffd24a;
+    font-style: normal;
+  }
+  .rk4St .sOff {
+    color: #00000022;
+    font-style: normal;
+  }
 </style>
 </head>
 <body>
@@ -8048,7 +8082,7 @@
     <div class="spLoad"><div class="spTip" id="spTip">Preparando a ilha...</div><div class="spBar"><i id="spFill"></i></div><div class="spPct"><span id="spStep">Carregando</span><b id="spPct">0%</b></div></div>
     <div class="spTap" id="spTap"><b>TOQUE PARA JOGAR</b><div class="spWho" id="spWho"></div></div>
     <div class="spGate" id="spGate"></div>
-    <div class="spVer">v110 · Feito no Amapá 🇧🇷</div>
+    <div class="spVer">v110b · Feito no Amapá 🇧🇷</div>
   </div>
 </div>
 <!-- ===== GIRE O CELULAR: o jogo é só deitado ===== -->
@@ -8099,6 +8133,7 @@
 <!-- ===== JANELA DO RANQUEADO — patente, pontos e escada de patentes ===== -->
 <div id="rankM"><div id="rankSheet">
   <div class="ash"><b>🏆 Ranqueado</b><button id="rankClose">✕</button></div>
+  <div id="rkTabs"><button data-t="br" class="on">🪂 BATTLE ROYALE</button><button data-t="cs">⚔️ 4v4</button></div>
   <div id="rankBody">
     <div class="rk-hero"><div id="rkBadge" class="badge"></div><div id="rkName"></div><div id="rkRP"></div><div class="rk-bar"><i id="rkFill"></i></div><div id="rkNext"></div></div>
     <div id="rkLadder"></div>
@@ -27896,7 +27931,62 @@ function animateRank(r) {
   }, 33);
 }
 
+let RK_TAB = 'br';
+// patente do 4v4 (estrelas): mesma tela, outra aba
+function renderRank4() {
+  const si = starInfo(STATS.st4 || 0),
+    T = si.tier,
+    rk = STATS.rk4 || { m: 0, w: 0, k: 0, peak: 0 };
+  const bd = document.getElementById('rkBadge');
+  bd.textContent = T.e;
+  bd.style.borderColor = T.c;
+  bd.style.background = 'radial-gradient(circle at 30% 30%,#ffffff88,' + T.c + ')';
+  bd.style.boxShadow = '0 0 24px ' + T.c + '99';
+  const nm = document.getElementById('rkName');
+  nm.textContent = si.name;
+  nm.style.color = T.c;
+  document.getElementById('rkRP').innerHTML = '<span class="rk4St">' + si.html + '</span>';
+  const fl = document.getElementById('rkFill');
+  fl.style.width = (si.max ? Math.round((si.stars / si.max) * 100) : 100) + '%';
+  fl.style.background = T.c;
+  let prox = '';
+  if (!T.div) prox = 'Você está no topo do 4v4! ⭐ ' + si.stars + ' estrelas de Mestre';
+  else {
+    const falta = si.max - si.stars;
+    const nx = starInfo((STATS.st4 || 0) + falta);
+    prox = 'Faltam ' + falta + ' ⭐ para ' + nx.name;
+  }
+  document.getElementById('rkNext').textContent = prox;
+  const lad = document.getElementById('rkLadder');
+  lad.innerHTML = '';
+  STAR_T.forEach((t, i) => {
+    const row = document.createElement('div'),
+      e = document.createElement('span'),
+      b = document.createElement('b'),
+      s = document.createElement('small');
+    row.className = 'rk-row' + (i === si.ti ? ' cur' : '');
+    e.className = 'e';
+    e.textContent = t.e;
+    b.textContent = t.n;
+    b.style.color = t.c;
+    s.textContent = t.div ? t.div + ' divisões · ' + t.st + ' ⭐ cada' : 'estrelas sem limite';
+    row.appendChild(e);
+    row.appendChild(b);
+    row.appendChild(s);
+    lad.appendChild(row);
+  });
+  document.getElementById('rkStats').innerHTML =
+    '🎮 Partidas 4v4 ranqueadas: ' + rk.m + ' · 🥇 Vitórias: ' + rk.w + '<br>🎯 Abates: ' + rk.k + ' · 📈 Pico: ' + starInfo(rk.peak || 0).name + ' (' + (rk.peak || 0) + ' ⭐)';
+  document.getElementById('rkNote').textContent =
+    'Vitória = +1 ⭐ (+1 se fizer 6 abates ou mais) · derrota = -1 ⭐. No Bronze você não perde estrela. Partida 4v4: rodadas com loja, primeiro a ganhar ' + TM_WIN + ' rodadas.';
+  document.getElementById('rkPlay').textContent = '⚔️ Jogar 4v4 Ranqueado';
+}
 function renderRank() {
+  document.querySelectorAll('#rkTabs button').forEach((b) => b.classList.toggle('on', b.dataset.t === RK_TAB));
+  if (RK_TAB === 'cs') return renderRank4();
+  if (!renderRank.nota) renderRank.nota = document.getElementById('rkNote').textContent;
+  document.getElementById('rkNote').textContent = renderRank.nota;
+  document.getElementById('rkPlay').textContent = '🏆 Jogar Ranqueada';
   const ri = rankInfo(STATS.rp),
     T = ri.tier,
     rk = STATS.rk;
@@ -29377,8 +29467,15 @@ function setupLobby() {
   document.getElementById('rankClose').addEventListener('click', () => {
     document.getElementById('rankM').style.display = 'none';
   });
+  document.querySelectorAll('#rkTabs button').forEach((b) =>
+    b.addEventListener('click', () => {
+      RK_TAB = b.dataset.t;
+      renderRank();
+      sfx('swap', 0.3);
+    }),
+  );
   document.getElementById('rkPlay').addEventListener('click', () => {
-    PROF.mode = 'rank';
+    PROF.mode = RK_TAB === 'cs' ? 'tdmrank' : 'rank';
     saveProf();
     document.getElementById('rankM').style.display = 'none';
     refreshLobbyHUD();
