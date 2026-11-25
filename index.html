@@ -7434,6 +7434,277 @@
     color: #3a2180;
   }
 
+  /* ranking */
+  .ctBox.rkTop {
+    width: min(620px, 96vw);
+  }
+  .rkSub {
+    color: #fff9;
+    font-size: 12px;
+  }
+  .rkList {
+    max-height: 56vh;
+    overflow-y: auto;
+    min-height: 120px;
+  }
+  .rkRow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 8px;
+    margin-bottom: 5px;
+    background: #ffffff0b;
+    border-left: 3px solid #ffffff1c;
+  }
+  .rkRow.p1 {
+    background: linear-gradient(90deg, #ffc92833, #ffffff08);
+    border-left-color: #ffc928;
+  }
+  .rkRow.p2 {
+    background: linear-gradient(90deg, #c0c8d433, #ffffff08);
+    border-left-color: #c0c8d4;
+  }
+  .rkRow.p3 {
+    background: linear-gradient(90deg, #cd7f3233, #ffffff08);
+    border-left-color: #cd7f32;
+  }
+  .rkRow.eu {
+    outline: 1px solid #3ddc84;
+  }
+  .rkPos {
+    flex: 0 0 38px;
+    text-align: center;
+    font: 900 italic 16px var(--ffF, system-ui);
+    color: #fffc;
+  }
+  .rkRow.p1 .rkPos,
+  .rkRow.p2 .rkPos,
+  .rkRow.p3 .rkPos {
+    font-size: 24px;
+  }
+  .rkOn {
+    color: #3ddc84;
+    font-size: 11px;
+    margin-left: 5px;
+    font-style: normal;
+  }
+  .rkPat {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-align: right;
+  }
+  .rkE {
+    font-size: 24px;
+  }
+  .rkPat b {
+    display: block;
+    font: 900 italic 13px var(--ffF, system-ui);
+  }
+  .rkPat small {
+    font-size: 11.5px;
+    color: #ffe9a8;
+  }
+  .rkMe {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 8px;
+    padding: 8px 10px;
+    background: #3ddc8418;
+    border: 1px solid #3ddc8455;
+    font-size: 13px;
+  }
+  .rkAt {
+    display: block;
+    margin-top: 6px;
+    color: #fff8;
+    font-size: 11px;
+    text-align: center;
+  }
+
+  /* salas personalizadas */
+  .ctBox.sala {
+    width: min(780px, 97vw);
+    max-height: 95vh;
+  }
+  .slWrap {
+    display: grid;
+    grid-template-columns: 210px 1fr;
+    gap: 14px;
+  }
+  .slEsq {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .slCriar {
+    padding: 16px 10px;
+    border: none;
+    background: linear-gradient(160deg, #ffe35a, #ffb300);
+    color: #3a2500;
+    clip-path: polygon(6% 0, 100% 0, 94% 100%, 0 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+  }
+  .slCriar b {
+    font: 900 italic 18px var(--ffF, system-ui);
+  }
+  .slCriar small {
+    font: 700 11px system-ui;
+    opacity: 0.8;
+  }
+  .slCod {
+    display: flex;
+    gap: 5px;
+  }
+  .slCod input {
+    flex: 1;
+    min-width: 0;
+    padding: 8px 10px;
+    border: 1px solid #ffffff30;
+    background: #0a0716;
+    color: #fff;
+    font: 800 15px system-ui;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .slLista {
+    max-height: 62vh;
+    overflow-y: auto;
+  }
+  .slCard {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px;
+    margin-bottom: 6px;
+    background: #ffffff0c;
+    border-left: 3px solid #ffc928;
+  }
+  .slCard.br {
+    border-left-color: #3ddc84;
+  }
+  .slBadge {
+    flex: 0 0 46px;
+    height: 38px;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(160deg, #ff5a4f, #8a1f2a);
+    font: 900 italic 15px var(--ffF, system-ui);
+    clip-path: polygon(15% 0, 100% 0, 85% 100%, 0 100%);
+  }
+  .slCard.br .slBadge {
+    background: linear-gradient(160deg, #3ddc84, #1b6e44);
+  }
+  .slN {
+    font: 900 14px var(--ffF, system-ui);
+    color: #8fe3a1;
+  }
+  .slN.full {
+    color: #ff7b7b;
+  }
+  .slTop {
+    gap: 8px 12px;
+  }
+  .slModo {
+    font: 900 italic 15px var(--ffF, system-ui);
+  }
+  .slTimes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 4px 0 8px;
+  }
+  .slTime {
+    padding: 8px;
+    background: #ffffff08;
+    border-top: 3px solid #ffc928;
+  }
+  .slTime.t1 {
+    border-top-color: #b266ff;
+  }
+  .slTT {
+    font: 900 italic 14px var(--ffF, system-ui);
+    margin-bottom: 6px;
+    letter-spacing: 1px;
+  }
+  .slSlot {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    min-height: 44px;
+    padding: 5px 8px;
+    margin-bottom: 5px;
+    background: #ffffff10;
+    border: 1px solid #ffffff18;
+    color: #fff;
+    text-align: left;
+    box-sizing: border-box;
+  }
+  .slSlot.eu {
+    border-color: #3ddc84;
+    background: #3ddc8414;
+  }
+  .slSlot.vazio {
+    border-style: dashed;
+    color: #fff8;
+    font: 700 13px system-ui;
+    flex-wrap: wrap;
+  }
+  .slSlot.vazio span {
+    font-size: 13px;
+  }
+  .slTroca {
+    width: 100%;
+    font-size: 10.5px;
+    color: #ffc928;
+  }
+  .slBR {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 6px;
+    max-height: 46vh;
+    overflow-y: auto;
+  }
+  .slFoot {
+    align-items: center;
+    margin-top: 8px;
+  }
+  .slGo {
+    margin-left: auto;
+    padding: 10px 34px;
+  }
+  .slEsp {
+    margin-left: auto;
+    font-size: 13px;
+    color: #ffe9a8;
+  }
+  .slOpt {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 8px 0;
+    flex-wrap: wrap;
+  }
+  .slOpt .ffFh {
+    width: 70px;
+  }
+  .slChips {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+  }
+  @media (max-width: 640px) {
+    .slWrap {
+      grid-template-columns: 1fr;
+    }
+  }
+
   /* ===================== SPLASH (abre antes de tudo) ===================== */
   #splash {
     position: fixed;
@@ -7777,7 +8048,7 @@
     <div class="spLoad"><div class="spTip" id="spTip">Preparando a ilha...</div><div class="spBar"><i id="spFill"></i></div><div class="spPct"><span id="spStep">Carregando</span><b id="spPct">0%</b></div></div>
     <div class="spTap" id="spTap"><b>TOQUE PARA JOGAR</b><div class="spWho" id="spWho"></div></div>
     <div class="spGate" id="spGate"></div>
-    <div class="spVer">v109 · Feito no Amapá 🇧🇷</div>
+    <div class="spVer">v110 · Feito no Amapá 🇧🇷</div>
   </div>
 </div>
 <!-- ===== GIRE O CELULAR: o jogo é só deitado ===== -->
@@ -26677,7 +26948,7 @@ const TM_SHOP = [
 ];
 let TM = null;
 function isTeam() {
-  return (PROF.mode === 'tdm' || PROF.mode === 'tdmrank') && !NET.mid;
+  return ((PROF.mode === 'tdm' || PROF.mode === 'tdmrank') && !NET.mid) || !!(NET.mid && NET.cs);
 }
 function isTeamRank() {
   return PROF.mode === 'tdmrank' && !NET.mid;
@@ -26752,17 +27023,17 @@ function tmBarriers(on) {
 }
 function tmStart() {
   // ordem das arenas: cada rodada num lugar diferente (sorteado, sem repetir seguido)
-  const order = TM_AREAS.slice().sort(() => Math.random() - 0.5),
+  const order = NET.cs ? withSeed(NET.seed + 5, () => TM_AREAS.slice().sort(() => Math.random() - 0.5)) : TM_AREAS.slice().sort(() => Math.random() - 0.5),
     A = order[0],
-    names = Array.from({ length: 7 }, newBotNick),
-    roster = [];
-  for (let i = 0; i < 7; i++) roster.push({ team: i < 3 ? 0 : 1, k: i < 3 ? i + 1 : i - 3, name: names[i], w: 'pt1', look: tmLook(i < 3 ? 0 : 1), alive: false, vest: 0, helm: 0 });
+    names = Array.from({ length: 8 }, newBotNick),
+    roster = NET.cs ? csRoster(names) : [];
+  if (!NET.cs) for (let i = 0; i < 7; i++) roster.push({ team: i < 3 ? 0 : 1, k: i < 3 ? i + 1 : i - 3, name: names[i], w: 'pt1', look: tmLook(i < 3 ? 0 : 1), alive: false, vest: 0, helm: 0 });
   TM = { area: A, order, round: 0, score: [0, 0], phase: 'buy', t: 0, money: 800, roster, swap: Math.random() < 0.5, died: true, hudT: 0, zr: A.r };
   zone.on = false;
   zone.preT = 0;
   zoneMeshes();
   document.body.classList.add('tdm');
-  toast('👥 4v4 · primeiro a ' + TM_WIN + ' rodadas' + (isTeamRank() ? ' · ' + starInfo(STATS.st4).name : '') + ' · cada rodada num lugar');
+  toast('👥 ' + (NET.cs ? NET.cs.n + 'v' + NET.cs.n : '4v4') + ' · primeiro a ' + TM_WIN + ' rodadas' + (isTeamRank() ? ' · ' + starInfo(STATS.st4).name : '') + ' · cada rodada num lugar');
   tmRound();
 }
 // põe a arena da rodada: safe no lugar, barreiras das bases
@@ -26792,8 +27063,9 @@ function tmRound() {
   TM.phase = 'buy';
   TM.t = TM_BUY;
   tmSetArea(TM.order[(TM.round - 1) % TM.order.length]);
-  TM.swap = Math.random() < 0.5;
+  TM.swap = NET.cs ? csSwap(TM.round) : Math.random() < 0.5;
   clearBots();
+  if (NET.cs) NET.deadP = new Set(); // rodada nova: todo mundo volta
   knock = null; // ninguém começa a rodada caído
   reviveSt = null;
   showKnockUI(false);
@@ -26810,7 +27082,7 @@ function tmRound() {
   zone.r = TM.zr;
   zoneApply();
   tmBarriers(true);
-  const sp = tmSpot(0, 0),
+  const sp = tmSpot(0, NET.cs ? csMyK() : 0),
     A = { x: TM.area.c[0], z: TM.area.c[1] };
   dead = false;
   matchOver = false;
@@ -26849,6 +27121,11 @@ function tmRound() {
     R.alive = true;
     const s = tmSpot(R.team, R.k);
     spawnBot({ look: R.look, w: R.w, name: R.name, team: R.team, x: s.x, z: s.z, vest: R.vest, helm: R.helm, face: Math.atan2(A.x - s.x, A.z - s.z), tmR: R });
+    if (NET.cs) {
+      const nb = bots[bots.length - 1];
+      nb.nid = 'b' + (TM.round * 16 + TM.roster.indexOf(R)); // id novo a cada rodada
+      nb.nades = 0;
+    }
   });
   tmBuyShow(true);
   tmBanner('Rodada ' + TM.round + ' · ' + TM.area.n + ' · compre suas armas!');
@@ -26862,12 +27139,13 @@ function tmAlive() {
   return [a, b];
 }
 function tmCheck() {
-  if (!TM || TM.phase !== 'fight') return;
+  if (!TM || TM.phase !== 'fight' || csSeguidor()) return;
   const [a, b] = tmAlive();
   if (b === 0) tmRoundEnd(0);
   else if (a === 0) tmRoundEnd(1);
 }
 function tmRoundEnd(w) {
+  TM.lw = NET.cs ? w ^ NET.cs.g : w; // quem ganhou (time da sala)
   TM.phase = 'end';
   TM.t = TM_END;
   TM.score[w]++;
@@ -26890,23 +27168,24 @@ function tmHpWinner() {
   let a = dead ? 0 : hp / MAX_HP,
     b = 0;
   for (const o of bots) {
-    const f = Math.max(0, o.health / o.maxHp);
+    const f = Math.max(0, o.puppet ? o.hpf || 0 : o.health / o.maxHp);
     o.team === 0 ? (a += f) : (b += f);
   }
   return a >= b ? 0 : 1;
+}
+function tmFight() {
+  TM.phase = 'fight';
+  TM.t = TM_FIGHT;
+  tmBarriers(false); // a barreira cai: podem sair da base
+  tmBuyShow(false);
+  tmBanner('⚔️ LUTEM!');
+  sfx('announce', 0.6);
 }
 function tmUpdate(dt) {
   if (!TM || !inMatch || matchOver) return;
   TM.t -= dt;
   if (TM.phase === 'buy') {
-    if (TM.t <= 0) {
-      TM.phase = 'fight';
-      TM.t = TM_FIGHT;
-      tmBarriers(false); // a barreira cai: podem sair da base
-      tmBuyShow(false);
-      tmBanner('⚔️ LUTEM!');
-      sfx('announce', 0.6);
-    }
+    if (TM.t <= 0 && !csSeguidor()) tmFight(); // em rede quem manda é o dono
   } else if (TM.phase === 'fight') {
     // safe: espera um pouco, depois fecha até o meio
     const el = TM_FIGHT - TM.t,
@@ -26926,8 +27205,8 @@ function tmUpdate(dt) {
       const q = b.group.position;
       if (Math.hypot(q.x - cx, q.z - cz) > TM.zr) damageBot(b, TM_ZDPS * dt, ZONE_BY);
     }
-    if (TM && TM.phase === 'fight' && TM.t <= 0) tmRoundEnd(tmHpWinner());
-  } else if (TM.phase === 'end' && TM.t <= 0) {
+    if (TM && TM.phase === 'fight' && TM.t <= 0 && !csSeguidor()) tmRoundEnd(tmHpWinner());
+  } else if (TM.phase === 'end' && TM.t <= 0 && !csSeguidor()) {
     if (TM.score[0] >= TM_WIN || TM.score[1] >= TM_WIN) tmMatchEnd();
     else tmRound();
   }
@@ -26989,7 +27268,7 @@ function tmMatchEnd() {
     saveStats();
   }
   if (isTeamRank() && !rkApplied) rkResult = applyTeamRanked(win);
-  showEnd(win ? '🏆 VITÓRIA!' : '💀 DERROTA', 'Placar ' + TM.score[0] + ' x ' + TM.score[1] + ' · 4v4 em ' + TM.area.n, win ? 'Seu time venceu!' : 'O time vermelho venceu', win);
+  showEnd(win ? '🏆 VITÓRIA!' : '💀 DERROTA', 'Placar ' + TM.score[0] + ' x ' + TM.score[1] + ' · ' + (NET.cs ? NET.cs.n + 'v' + NET.cs.n : '4v4') + ' em ' + TM.area.n, win ? 'Seu time venceu!' : 'O time vermelho venceu', win);
   if (win) {
     playTune(JINGLE, 170, 'triangle');
     vib(200);
@@ -27084,8 +27363,9 @@ function tmHud(force) {
   const te = document.getElementById('tmTime');
   te.textContent = TM.phase === 'buy' ? '🔒 ' + tm : TM.phase === 'fight' ? (TM.zr < TM.area.r - 0.5 ? '🌀 ' : '') + tm : '—';
   te.style.color = TM.phase === 'fight' && t <= 15 ? '#ff6a5a' : '';
-  document.getElementById('tmD0').textContent = '●'.repeat(a) + '○'.repeat(Math.max(0, 4 - a));
-  document.getElementById('tmD1').textContent = '●'.repeat(b) + '○'.repeat(Math.max(0, 4 - b));
+  const tn = NET.cs ? NET.cs.n : 4;
+  document.getElementById('tmD0').textContent = '●'.repeat(Math.min(8, a)) + '○'.repeat(Math.max(0, tn - a));
+  document.getElementById('tmD1').textContent = '●'.repeat(Math.min(8, b)) + '○'.repeat(Math.max(0, tn - b));
   document.getElementById('tmBuyBtn').style.display = TM.phase === 'buy' ? '' : 'none';
   if (force || document.getElementById('tmBuy').classList.contains('open')) tmRenderBuy();
 }
@@ -28173,6 +28453,7 @@ const FF_SIDE = [
   ['lbPass', '🎖️', 'Passe'],
   ['lbMis', '📋', 'Missões'],
   ['lbRank', '🏆', 'Ranqueado'],
+  ['lbTop', '🏅', 'Ranking'],
 ];
 const FF_BAR = [
   ['lbVault', '🗄️', 'Cofre'],
@@ -28227,7 +28508,13 @@ function ffBuildDom() {
   const side = el('div', 'ffSide');
   L.appendChild(side);
   FF_SIDE.forEach(([id, ic, n]) => {
-    const b = document.getElementById(id);
+    let b = document.getElementById(id);
+    if (!b && id === 'lbTop') {
+      // botão novo: ranking online dos melhores jogadores
+      b = el('button', '', '<span class="ic"></span><b></b><small>Top jogadores</small>');
+      b.id = id;
+      b.onclick = () => rkTopAbre();
+    }
     if (!b) return;
     b.classList.add('ffS');
     const s = b.querySelector('.ic');
@@ -31011,6 +31298,7 @@ function contaAplica(d) {
     VER.me = !!(d && d.vf > 0);
     VER.lvl = d ? d.vf | 0 : 0;
   }
+  if (d && d.nome && (!PROF.name || PROF.name === 'Jogador')) PROF.name = d.nome; // apelido da conta
   if (d && d.uid && PROF.uid !== d.uid) {
     PROF.uid = d.uid;
     try {
@@ -31753,6 +32041,571 @@ function admRender() {
 
 // a conta não espera a conexão do jogo: confere logo que a página abre
 setTimeout(() => contaInit(), 1200);
+/* ======================================================================
+   RANKING — os melhores jogadores online (contas do servidor):
+   aba Battle Royale (pontos de ranque) e aba 4v4 (estrelas), com patente,
+   selo de verificado, quem está online e a sua posição.
+   ====================================================================== */
+const RKT = { tab: 'br', d: null, t: 0, busy: false };
+function rkTopAbre(tab) {
+  if (tab) RKT.tab = tab;
+  let P = document.getElementById('rkTopP');
+  if (!P) {
+    P = ctEl('div', 'ctBg');
+    P.id = 'rkTopP';
+    document.body.appendChild(P);
+    P.addEventListener('click', (e) => {
+      if (e.target === P) P.classList.remove('open');
+    });
+  }
+  P.classList.add('open');
+  rkTopRender();
+  if (contaPode() && (!RKT.d || Date.now() - RKT.t > 30000)) rkTopBusca();
+}
+async function rkTopBusca() {
+  if (RKT.busy) return;
+  RKT.busy = true;
+  try {
+    RKT.d = await contaApi('ranking', {});
+    RKT.t = Date.now();
+    RKT.err = '';
+  } catch (e) {
+    RKT.err = e.message;
+  }
+  RKT.busy = false;
+  rkTopRender();
+}
+function rkPat(tab, r) {
+  if (tab === 'br') {
+    const i = rankInfo(r.rp);
+    return { e: i.tier.e, n: i.name, v: r.rp + ' RP', c: i.tier.c };
+  }
+  const i = starInfo(r.st4);
+  return { e: i.tier.e, n: i.name, v: '⭐ ' + r.st4, c: i.tier.c };
+}
+function rkTopRender() {
+  const P = document.getElementById('rkTopP');
+  if (!P) return;
+  P.innerHTML = '';
+  const box = P.appendChild(ctEl('div', 'ctBox rkTop'));
+  box.appendChild(ctEl('button', 'ctX', '✕')).onclick = () => P.classList.remove('open');
+  const top = box.appendChild(ctEl('div', 'amgTop'));
+  top.appendChild(ctEl('b', '', '🏅 RANKING'));
+  top.appendChild(ctEl('small', 'rkSub', 'Os melhores do WorldBullet'));
+  const tabs = box.appendChild(ctEl('div', 'ctTabs'));
+  [
+    ['br', '🪂 BATTLE ROYALE'],
+    ['cs', '⚔️ 4v4'],
+  ].forEach(([k, n]) => {
+    const b = tabs.appendChild(ctEl('button', RKT.tab === k ? 'on' : ''));
+    b.textContent = n;
+    b.onclick = () => {
+      RKT.tab = k;
+      rkTopRender();
+    };
+  });
+  const L = box.appendChild(ctEl('div', 'rkList'));
+  if (!contaPode()) {
+    L.appendChild(ctEl('p', 'ctInfo', '🌐 O ranking online funciona no <b>site do WorldBullet</b> (servidor), com as contas dos jogadores.'));
+    return;
+  }
+  if (!RKT.d) {
+    L.appendChild(ctEl('p', 'ctInfo', RKT.err ? '😕 ' + RKT.err : '⏳ Carregando o ranking...'));
+    return;
+  }
+  const A = RKT.d[RKT.tab] || [];
+  if (!A.length) L.appendChild(ctEl('p', 'ctInfo', 'Ninguém pontuou ainda nesse modo. Jogue o ' + (RKT.tab === 'br' ? 'BR Ranqueado' : '4v4 Ranqueado') + ' e seja o primeiro! 🏆'));
+  const amigos = new Set(((CONTA.d && CONTA.d.amigos) || []).map((a) => a.uid));
+  A.forEach((r, i) => {
+    const pt = rkPat(RKT.tab, r),
+      eu = r.uid === PROF.uid,
+      row = L.appendChild(ctEl('div', 'rkRow' + (i < 3 ? ' p' + (i + 1) : '') + (eu ? ' eu' : '')));
+    row.appendChild(ctEl('span', 'rkPos', i < 3 ? ['🥇', '🥈', '🥉'][i] : '#' + (i + 1)));
+    const tx = row.appendChild(ctEl('div', 'amgTx'));
+    const nm = tx.appendChild(ctEl('b'));
+    nm.textContent = r.nome + (eu ? ' (você)' : '');
+    verMark(nm, r.vf > 0);
+    if (r.on) nm.appendChild(ctEl('i', 'rkOn', '●')).title = 'online agora';
+    tx.appendChild(ctEl('small')).textContent = 'ID ' + fmtId(r.uid) + ' · ' + r.wins + ' vitórias · ' + r.kills + ' abates';
+    const pa = row.appendChild(ctEl('div', 'rkPat'));
+    pa.appendChild(ctEl('span', 'rkE', pt.e));
+    const pn = pa.appendChild(ctEl('div'));
+    pn.appendChild(ctEl('b')).textContent = pt.n;
+    pn.appendChild(ctEl('small')).textContent = pt.v;
+    pn.querySelector('b').style.color = pt.c;
+    if (CONTA.tk && !eu && !amigos.has(r.uid)) {
+      const ad = row.appendChild(ctEl('button', 'ctBtn sm ghost', '➕'));
+      ad.title = 'Adicionar amigo';
+      ad.onclick = async () => {
+        ad.disabled = true;
+        try {
+          const j = await contaApi('amigos', { acao: 'pedir', uid: r.uid });
+          toast('👥 ' + (j.msg || 'Pedido enviado!'));
+          ad.textContent = '✓';
+        } catch (e) {
+          toast('😕 ' + e.message);
+          ad.disabled = false;
+        }
+      };
+    }
+  });
+  // você
+  const me = box.appendChild(ctEl('div', 'rkMe'));
+  if (!CONTA.tk) {
+    me.appendChild(ctEl('span', '', '☁️ Crie uma conta para aparecer no ranking.'));
+    me.appendChild(ctEl('button', 'ctBtn y sm', 'Criar conta')).onclick = () => contaAbre('criar');
+  } else {
+    const pos = RKT.d.eu ? RKT.d.eu[RKT.tab] : 0,
+      pt = rkPat(RKT.tab, { rp: STATS.rp || 0, st4: STATS.st4 || 0 });
+    me.appendChild(ctEl('span', '', '')).textContent = (pos ? 'Você está em #' + pos : 'Você ainda não está no ranking') + ' · ' + pt.e + ' ' + pt.n + ' · ' + pt.v;
+  }
+  const at = box.appendChild(ctEl('small', 'rkAt'));
+  at.textContent = 'Atualiza a cada minuto · ' + (RKT.d.total || 0) + ' jogadores no ranking';
+}
+/* ======================================================================
+   SALAS PERSONALIZADAS (estilo FF) — tudo online:
+   Contra Squad 1v1, 2v2, 3v3, 4v4 (rodadas com loja) ou Battle Royale
+   (solo, dupla, esquadrão). Cada um escolhe o time na vaga; os bots só
+   completam o que ficou vazio (ou ninguém, se o dono desligar).
+   ====================================================================== */
+const SALA_DEF = { m: 'cs', n: 4, mp: 'rnd', b: 1 };
+NET.sala = null; // ajustes da sala (quem é o dono manda)
+NET.tt = undefined; // meu time na sala (0 = Time A, 1 = Time B)
+NET.cs = null; // partida de Contra Squad em rede
+NET.bots = 1;
+const SALA_UI = { cfg: null, criando: false };
+function salaEnc(S) {
+  return [S.m === 'cs' ? 1 : 0, S.n | 0, S.mp === 'rnd' ? -1 : MAP_IDS.indexOf(S.mp), S.b ? 1 : 0];
+}
+function salaDec(a) {
+  if (!Array.isArray(a) || a.length < 4) return null;
+  const m = a[0] === 1 ? 'cs' : 'br',
+    n = m === 'cs' ? Math.max(1, Math.min(4, a[1] | 0)) : [1, 2, 4].includes(a[1] | 0) ? a[1] | 0 : 1,
+    mi = a[2] | 0;
+  return { m, n, mp: mi >= 0 && MAP_IDS[mi] ? MAP_IDS[mi] : 'rnd', b: a[3] ? 1 : 0 };
+}
+const salaSouDono = () => !!NET.code && !!NET.me && netLobbyHost() === NET.me;
+// ajustes da sala em que estou
+function salaCfg() {
+  if (!NET.code) return null;
+  const h = netLobbyHost();
+  let S = null;
+  if (h === NET.me) S = NET.sala;
+  else if (NET.pres[h]) S = salaDec(NET.pres[h].sl);
+  if (S) NET.salaVista = S;
+  return S || NET.salaVista || Object.assign({}, SALA_DEF);
+}
+const salaCap = (S) => (S.m === 'cs' ? S.n * 2 : Math.min(20, NET_TOTAL()));
+const salaModoTxt = (S) => (S.m === 'cs' ? '⚔️ ' + S.n + 'v' + S.n + ' · Contra Squad' : '🪂 Battle Royale · ' + (S.n === 4 ? 'Esquadrão' : S.n === 2 ? 'Dupla' : 'Solo'));
+const salaMapaTxt = (S) => (S.mp === 'rnd' ? '🎲 Mapa aleatório' : MAPS[S.mp] ? MAPS[S.mp].ic + ' ' + MAPS[S.mp].name : '🎲 Mapa aleatório');
+// quem está na sala (eu incluído)
+function salaMembros() {
+  const ids = Object.keys(NET.pres).filter((id) => NET.pres[id] && NET.pres[id].s === NET.code);
+  if (NET.me) ids.push(NET.me);
+  return ids.sort();
+}
+// times da sala: cada um escolhe; quem passou do limite vai para o outro lado
+function salaTimes(S) {
+  S = S || salaCfg();
+  const T = [[], []],
+    ids = salaMembros();
+  for (const id of ids) {
+    const t = id === NET.me ? NET.tt : NET.pres[id] && NET.pres[id].tt;
+    T[t === 1 ? 1 : 0].push(id);
+  }
+  if (S.m === 'cs')
+    for (let k = 0; k < 2; k++)
+      while (T[k].length > S.n && T[1 - k].length < S.n) T[1 - k].push(T[k].pop());
+  return T;
+}
+function salaNome(id) {
+  if (id === NET.me) return PROF.name;
+  return NET.pres[id] ? netName(NET.pres[id].n) : 'Jogador';
+}
+// ---------- abrir / fechar ----------
+function salaAbre() {
+  let P = document.getElementById('salaP');
+  if (!P) {
+    P = ctEl('div', 'ctBg salaBg');
+    P.id = 'salaP';
+    document.body.appendChild(P);
+    P.addEventListener('keydown', (e) => e.stopPropagation());
+  }
+  P.classList.add('open');
+  salaRender();
+}
+function salaFecha() {
+  const P = document.getElementById('salaP');
+  if (P) P.classList.remove('open');
+}
+// ---------- desenha a tela (lista de salas ou a sala) ----------
+function salaRender() {
+  const P = document.getElementById('salaP');
+  if (!P || !P.classList.contains('open')) return;
+  const ae = document.activeElement;
+  if (ae && ae.closest && ae.closest('#salaP') && ae.tagName === 'INPUT') return; // não apaga o que a pessoa está digitando
+  P.innerHTML = '';
+  const box = P.appendChild(ctEl('div', 'ctBox sala'));
+  box.appendChild(ctEl('button', 'ctX', '✕')).onclick = salaFecha;
+  if (SALA_UI.criando) return salaAjustesUI(box);
+  if (NET.state === 'wait' || NET.state === 'off' || !NET.lobby) {
+    box.appendChild(ctEl('div', 'amgTop', '<b>🎮 SALAS PERSONALIZADAS</b>'));
+    box.appendChild(
+      ctEl('p', 'ctInfo', NET.state === 'wait' ? '⏳ Conectando ao servidor...' : '😕 Sem conexão. As salas funcionam pelo link do Claude ou pelo site do WorldBullet (se o servidor estava dormindo, espere 1 minuto).'),
+    );
+    return;
+  }
+  if (!NET.code) return salaListaUI(box);
+  salaDentroUI(box);
+}
+function salaListaUI(box) {
+  const top = box.appendChild(ctEl('div', 'amgTop'));
+  top.appendChild(ctEl('b', '', '🎮 SALAS PERSONALIZADAS'));
+  top.appendChild(ctEl('small', 'rkSub', '🟢 ' + (NET.online || 1) + ' online agora'));
+  const W = box.appendChild(ctEl('div', 'slWrap'));
+  const esq = W.appendChild(ctEl('div', 'slEsq'));
+  const cr = esq.appendChild(ctEl('button', 'slCriar', '<b>➕ CRIAR SALA</b><small>1v1 · 2v2 · 3v3 · 4v4 · BR</small>'));
+  cr.onclick = () => {
+    SALA_UI.cfg = Object.assign({}, NET.sala || SALA_DEF);
+    SALA_UI.criando = 'nova';
+    salaRender();
+  };
+  const f = esq.appendChild(ctEl('form', 'slCod'));
+  const inp = f.appendChild(ctEl('input'));
+  inp.placeholder = 'Código';
+  inp.maxLength = 8;
+  inp.autocomplete = 'off';
+  inp.setAttribute('autocapitalize', 'characters');
+  f.appendChild(ctEl('button', 'ctBtn y', 'ENTRAR')).type = 'submit';
+  f.onsubmit = (e) => {
+    e.preventDefault();
+    salaEntrar(inp.value);
+  };
+  if (contaPode())
+    esq.appendChild(ctEl('button', 'ctBtn', '👥 Amigos')).onclick = () => {
+      salaFecha();
+      amgAbre();
+    };
+  const L = W.appendChild(ctEl('div', 'slLista'));
+  L.appendChild(ctEl('div', 'amgSub', 'SALAS ABERTAS'));
+  if (!NET.lobbyList.length) L.appendChild(ctEl('p', 'ctInfo', 'Nenhuma sala aberta agora. Crie a sua e chame a galera! 🔥'));
+  NET.lobbyList.forEach((R) => {
+    const S = salaDec(R.sl) || SALA_DEF,
+      cap = salaCap(S),
+      n = R.names.length,
+      cheia = n >= cap,
+      c = L.appendChild(ctEl('div', 'slCard' + (S.m === 'cs' ? ' cs' : ' br')));
+    c.appendChild(ctEl('span', 'slBadge', S.m === 'cs' ? S.n + 'v' + S.n : 'BR'));
+    const tx = c.appendChild(ctEl('div', 'amgTx'));
+    const nm = tx.appendChild(ctEl('b'));
+    nm.textContent = 'Sala de ' + (R.host || R.names[0] || '?');
+    tx.appendChild(ctEl('small')).textContent = salaModoTxt(S) + ' · ' + salaMapaTxt(S) + (S.b ? ' · 🤖 bots' : ' · sem bots') + (R.jogando ? ' · 🔥 jogando' : '');
+    c.appendChild(ctEl('span', 'slN' + (cheia ? ' full' : ''))).textContent = n + '/' + cap;
+    const b = c.appendChild(ctEl('button', 'ctBtn y sm', cheia ? 'CHEIA' : 'ENTRAR'));
+    b.disabled = cheia;
+    b.onclick = () => salaEntrar(R.code);
+  });
+}
+async function salaEntrar(code) {
+  code = String(code || '')
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, '');
+  const R = NET.lobbyList.find((r) => r.code === code);
+  if (R) {
+    const S = salaDec(R.sl) || SALA_DEF;
+    if (R.names.length >= salaCap(S)) return toast('😕 Essa sala está cheia');
+  }
+  if (MM) mmCancel(true);
+  NET.tt = undefined;
+  await netJoin(code, false);
+  salaRender();
+}
+async function salaCriar(S) {
+  if (MM) mmCancel(true);
+  NET.sala = Object.assign({}, S);
+  NET.tt = 0;
+  await netJoin(netNewCode(), true);
+  salaRender();
+  toast('🎮 Sala criada! Chame os amigos ou espere a galera entrar.');
+}
+// ---------- ajustes (criar sala / dono mudar) ----------
+function salaAjustesUI(box) {
+  const S = SALA_UI.cfg,
+    nova = SALA_UI.criando === 'nova';
+  box.appendChild(ctEl('div', 'amgTop', '<b>' + (nova ? '➕ CRIAR SALA' : '⚙️ AJUSTES DA SALA') + '</b>'));
+  const linha = (tit, ops, cur, set) => {
+    const r = box.appendChild(ctEl('div', 'slOpt'));
+    r.appendChild(ctEl('span', 'ffFh', tit));
+    const g = r.appendChild(ctEl('div', 'slChips'));
+    ops.forEach(([v, t]) => {
+      const b = g.appendChild(ctEl('button', 'ffChip' + (cur === v ? ' on' : '')));
+      b.textContent = t;
+      b.onclick = () => {
+        set(v);
+        salaRender();
+      };
+    });
+  };
+  linha(
+    'MODO',
+    [
+      ['cs', '⚔️ Contra Squad'],
+      ['br', '🪂 Battle Royale'],
+    ],
+    S.m,
+    (v) => {
+      S.m = v;
+      S.n = v === 'cs' ? 4 : 4;
+    },
+  );
+  if (S.m === 'cs')
+    linha(
+      'FORMATO',
+      [
+        [1, '1v1'],
+        [2, '2v2'],
+        [3, '3v3'],
+        [4, '4v4'],
+      ],
+      S.n,
+      (v) => (S.n = v),
+    );
+  else
+    linha(
+      'TIME',
+      [
+        [1, '👤 Solo'],
+        [2, '👥 Dupla'],
+        [4, '🛡️ Esquadrão'],
+      ],
+      S.n,
+      (v) => (S.n = v),
+    );
+  linha('MAPA', [['rnd', '🎲 Aleatório']].concat(MAP_IDS.map((id) => [id, MAPS[id].ic + ' ' + MAPS[id].name])), S.mp, (v) => (S.mp = v));
+  linha(
+    'BOTS',
+    [
+      [1, '🤖 Completar vagas'],
+      [0, '🚫 Só gente'],
+    ],
+    S.b,
+    (v) => (S.b = v),
+  );
+  box.appendChild(
+    ctEl(
+      'p',
+      'ctNote',
+      S.m === 'cs'
+        ? 'Contra Squad: rodadas com loja, primeiro time a ganhar ' + TM_WIN + ' rodadas vence. ' + (S.b ? 'As vagas vazias viram bots.' : 'Sem bots: só quem estiver na sala.')
+        : 'Battle Royale: avião, zona e loot. ' + (S.b ? 'Bots completam até ' + Math.min(20, NET_TOTAL()) + ' jogadores.' : 'Sem bots: só quem estiver na sala.'),
+    ),
+  );
+  const r = box.appendChild(ctEl('div', 'ctRow c'));
+  r.appendChild(ctEl('button', 'ctBtn', 'Voltar')).onclick = () => {
+    SALA_UI.criando = false;
+    salaRender();
+  };
+  r.appendChild(ctEl('button', 'ctBtn y', nova ? '✔ CRIAR SALA' : '✔ SALVAR')).onclick = async () => {
+    SALA_UI.criando = false;
+    if (nova) await salaCriar(S);
+    else {
+      NET.sala = Object.assign({}, S);
+      netSend(true);
+      salaRender();
+    }
+  };
+}
+// ---------- dentro da sala ----------
+function salaDentroUI(box) {
+  const S = salaCfg(),
+    dono = salaSouDono(),
+    h = netLobbyHost(),
+    ids = salaMembros();
+  const top = box.appendChild(ctEl('div', 'amgTop slTop'));
+  const cod = top.appendChild(ctEl('button', 'amgId'));
+  cod.textContent = '🔑 SALA ' + NET.code + ' 📋';
+  cod.onclick = () => {
+    try {
+      navigator.clipboard.writeText(NET.code).then(() => toast('🔑 Código copiado: ' + NET.code));
+    } catch (e) {
+      toast('🔑 Código: ' + NET.code);
+    }
+  };
+  top.appendChild(ctEl('b', 'slModo')).textContent = salaModoTxt(S);
+  top.appendChild(ctEl('small', 'rkSub')).textContent = salaMapaTxt(S) + (S.b ? ' · 🤖 bots completam' : ' · 🚫 sem bots');
+  if (dono)
+    top.appendChild(ctEl('button', 'ctBtn sm', '⚙️ Ajustes')).onclick = () => {
+      SALA_UI.cfg = Object.assign({}, S);
+      SALA_UI.criando = 'edita';
+      salaRender();
+    };
+  const going = Object.keys(NET.pres).some((id) => Array.isArray(NET.pres[id].M) && NET.pres[id].M[2] === 1 && NET.pres[id].s === NET.code);
+  const slot = (id, extra) => {
+    const r = ctEl('div', 'slSlot on' + (id === NET.me ? ' eu' : ''));
+    r.appendChild(ctEl('span', 'amgAv')).textContent = salaNome(id).slice(0, 1).toUpperCase();
+    const tx = r.appendChild(ctEl('div', 'amgTx'));
+    const nm = tx.appendChild(ctEl('b'));
+    nm.textContent = (id === h ? '👑 ' : '') + salaNome(id);
+    verMark(nm, verPeer(id));
+    const pr = id === NET.me ? null : NET.pres[id];
+    tx.appendChild(ctEl('small')).textContent = id === NET.me ? 'você' : pr && (pr.st === 'play' || pr.st === 'dead') ? '🎮 jogando' : extra || 'pronto';
+    return r;
+  };
+  if (S.m === 'cs') {
+    if (NET.tt === undefined && NET.me && (dono || ids.length > 1)) {
+      // entrou agora: vai para o time com menos gente
+      const T = salaTimes(Object.assign({}, S, { n: 99 }));
+      const a = T[0].filter((x) => x !== NET.me).length,
+        b = T[1].filter((x) => x !== NET.me).length;
+      NET.tt = b < a ? 1 : 0;
+      netSend(true);
+    }
+    const T = salaTimes(S),
+      G = box.appendChild(ctEl('div', 'slTimes'));
+    [0, 1].forEach((k) => {
+      const col = G.appendChild(ctEl('div', 'slTime t' + k));
+      col.appendChild(ctEl('div', 'slTT', k ? '🟣 TIME B' : '🟡 TIME A'));
+      for (let i = 0; i < S.n; i++) {
+        const id = T[k][i];
+        if (id) col.appendChild(slot(id));
+        else {
+          const e = col.appendChild(ctEl('button', 'slSlot vazio', S.b ? '🤖 <span>Bot</span>' : '<span>— vaga —</span>'));
+          if (NET.tt !== k) e.appendChild(ctEl('small', 'slTroca', 'toque pra entrar aqui'));
+          e.onclick = () => {
+            if (NET.tt === k) return;
+            NET.tt = k;
+            netSend(true);
+            sfx('swap', 0.4);
+            salaRender();
+          };
+        }
+      }
+    });
+    if (ids.length > S.n * 2) box.appendChild(ctEl('p', 'ctErr', '⚠️ Tem mais gente que vagas: diminua para um formato menor ou alguém fica de fora.'));
+  } else {
+    const L = box.appendChild(ctEl('div', 'slBR'));
+    ids.forEach((id) => L.appendChild(slot(id)));
+    const sobra = Math.max(0, salaCap(S) - ids.length);
+    if (S.b && sobra) L.appendChild(ctEl('div', 'slSlot vazio', '🤖 <span>+' + sobra + ' bots completam</span>'));
+  }
+  if (going) box.appendChild(ctEl('p', 'ctInfo', '🔥 Tem uma partida rolando nessa sala. Você entra na próxima.'));
+  const f = box.appendChild(ctEl('div', 'ctRow slFoot'));
+  f.appendChild(ctEl('button', 'ctBtn', '🚪 Sair')).onclick = async () => {
+    await netLeave();
+    NET.tt = undefined;
+    salaRender();
+  };
+  if (contaPode())
+    f.appendChild(ctEl('button', 'ctBtn', '👥 Convidar amigos')).onclick = () => {
+      salaFecha();
+      amgAbre('amigos');
+    };
+  if (dono) {
+    const go = f.appendChild(ctEl('button', 'ctOk slGo', '▶ INICIAR'));
+    go.onclick = () => {
+      if (S.m === 'cs' && ids.length > S.n * 2) return toast('Tem gente demais para ' + S.n + 'v' + S.n);
+      if (!S.b && ids.length < 2) return toast('Sem bots precisa de pelo menos 2 jogadores');
+      netStart();
+    };
+  } else f.appendChild(ctEl('span', 'slEsp')).textContent = '⏳ Esperando ' + salaNome(h) + ' iniciar...';
+}
+// ---------- começo da partida da sala ----------
+// o dono aplica os ajustes: modo, times, bots e mapa
+function salaAplicaInicio() {
+  const S = salaCfg() || SALA_DEF;
+  NET.bots = S.b ? 1 : 0;
+  NET.sq = S.m === 'br' && S.n > 1 ? S.n : 0;
+  if (S.m === 'cs') {
+    const T = salaTimes(S),
+      teams = {};
+    T.forEach((L, g) => L.forEach((id) => (teams[id] = g)));
+    NET.cs = { n: S.n, bots: S.b ? 1 : 0, teams, g: teams[NET.me] | 0 };
+  } else NET.cs = null;
+  let id = S.mp;
+  if (id === 'rnd') {
+    const pool = typeof mapPool === 'function' ? mapPool() : MAP_IDS;
+    id = pool[Math.floor(Math.random() * pool.length)] || MAP.id;
+  }
+  if (MAPS[id] && id !== MAP.id) {
+    PROF.map = id;
+    switchMap(id);
+  }
+}
+// quem entrou na partida do dono lê o modo pelo "M" dele
+function salaDeM(M) {
+  NET.bots = M[7] === 0 ? 0 : 1;
+  const n = M[6] | 0;
+  if (n > 0) {
+    const teams = {};
+    if (Array.isArray(M[8])) for (const e of M[8]) if (Array.isArray(e) && typeof e[0] === 'string') teams[e[0]] = e[1] === 1 ? 1 : 0;
+    NET.cs = { n: Math.min(4, n), bots: NET.bots, teams, g: teams[NET.me] | 0 };
+  } else NET.cs = null;
+}
+const salaMEnc = () => (NET.cs ? Object.keys(NET.cs.teams).map((id) => [id, NET.cs.teams[id]]) : null);
+
+/* ---------- Contra Squad em rede ---------- */
+// time de alguém do ponto de vista deste aparelho (0 = meu time, 1 = adversário)
+function csTeamOf(peer) {
+  if (!NET.cs) return NET.sq ? 0 : undefined;
+  const g = NET.cs.teams[peer];
+  return (g === undefined ? 1 - NET.cs.g : g) ^ NET.cs.g;
+}
+// meu lugar na base (cada humano do time num lugar)
+function csMyK() {
+  if (!NET.cs) return 0;
+  const L = Object.keys(NET.cs.teams)
+    .filter((id) => NET.cs.teams[id] === NET.cs.g)
+    .sort();
+  return Math.max(0, L.indexOf(NET.me));
+}
+// bots que completam cada time (só o dono cria)
+function csRoster(names) {
+  const R = [];
+  if (!NET.host || !NET.cs.bots) return R;
+  let ni = 0;
+  for (let G = 0; G < 2; G++) {
+    const hum = Object.keys(NET.cs.teams).filter((id) => NET.cs.teams[id] === G).length,
+      nb = Math.max(0, NET.cs.n - hum),
+      t = G ^ NET.cs.g;
+    for (let j = 0; j < nb; j++) R.push({ team: t, k: hum + j, name: names[ni++ % names.length], w: 'pt1', look: tmLook(t), alive: false, vest: 0, helm: 0 });
+  }
+  return R;
+}
+// lado de cada time muda a cada rodada, igual para todos da sala
+const csSwap = (round) => (((NET.seed >>> 0) * 31 + round * 7919) % 100 < 50) !== !!NET.cs.g;
+// o dono manda o estado da rodada (em times "globais": A=0, B=1)
+function csBuildT() {
+  if (!TM || !NET.cs) return null;
+  const g = NET.cs.g,
+    s = g ? [TM.score[1], TM.score[0]] : TM.score;
+  return [TM.round, ['buy', 'fight', 'end', 'over'].indexOf(matchOver ? 'over' : TM.phase), nr1(Math.max(0, TM.t)), s[0], s[1], TM.lw === undefined ? -1 : TM.lw];
+}
+// quem não é o dono segue o dono
+function csApplyT(T) {
+  if (!TM || !NET.cs || !Array.isArray(T) || NET.host) return;
+  const rd = T[0] | 0,
+    ph = ['buy', 'fight', 'end', 'over'][T[1] | 0] || 'buy',
+    t = netNum(T[2]),
+    g = NET.cs.g,
+    sg = [T[3] | 0, T[4] | 0],
+    loc = g ? [sg[1], sg[0]] : sg;
+  if (rd > TM.round && ph !== 'over') {
+    TM.round = rd - 1;
+    tmRound();
+  }
+  if (rd !== TM.round) return;
+  if (ph === 'fight' && TM.phase === 'buy') tmFight();
+  if ((ph === 'end' || ph === 'over') && (TM.phase === 'buy' || TM.phase === 'fight')) {
+    const w = ((T[5] | 0) ^ g) & 1;
+    TM.score = loc.slice();
+    TM.score[w] = Math.max(0, TM.score[w] - 1);
+    tmRoundEnd(w);
+  }
+  TM.score = loc;
+  if (ph === TM.phase) TM.t = t;
+  if (ph === 'over' && !matchOver) tmMatchEnd();
+}
+const csSeguidor = () => !!(NET.cs && NET.mid && !NET.host);
 /* ---------- Conexão e salas ---------- */
 async function netSetup() {
   let rm = null;
@@ -31835,11 +32688,19 @@ function netLobbyPeers(ch) {
     const pr = p.presence || {},
       s = typeof pr.s === 'string' ? pr.s : '';
     if (!/^[A-Z0-9]{3,8}$/.test(s)) continue;
-    (R[s] = R[s] || []).push(netName(pr.n));
+    const E = (R[s] = R[s] || { names: [], sl: null, host: '', jogando: false });
+    E.names.push(netName(pr.n));
+    if (Array.isArray(pr.sl)) {
+      E.sl = pr.sl;
+      E.host = netName(pr.n);
+    }
+    if (pr.st === 'play' || pr.st === 'dead') E.jogando = true;
   }
+  // só as salas personalizadas (as do matchmaking não aparecem)
   NET.lobbyList = Object.keys(R)
     .sort()
-    .map((s) => ({ code: s, names: R[s] }));
+    .filter((s) => R[s].sl)
+    .map((s) => Object.assign({ code: s }, R[s]));
   if (NET.rm === NET.lobby) netOnPeers(ch); // sem salas separadas: a sala geral é a do jogo
   NET.dirty = true;
 }
@@ -31972,7 +32833,11 @@ function netStart() {
   if (netLobbyHost() !== NET.me) return toast('⏳ Só o dono da sala pode começar');
   NET.mid = 'm' + Math.random().toString(36).slice(2, 9);
   NET.seed = Math.floor(Math.random() * 1e9);
-  NET.sq = !isTeam() && (PROF.team || 1) > 1 ? PROF.team : 0; // o modo é o que o dono escolheu (0 solo, 2 dupla, 4 esquadrão)
+  if (NET.mmRoom) {
+    NET.sq = (PROF.team || 1) > 1 ? PROF.team : 0; // matchmaking: modo do dono
+    NET.cs = null;
+    NET.bots = 1;
+  } else salaAplicaInicio(); // sala personalizada: modo, times, bots e mapa da sala
   NET.host = true;
   closeNet();
   startMatch();
@@ -32007,6 +32872,7 @@ function netSpawnBots() {
   const SZ = NET.sq === 2 ? 2 : 4,
     allies = NET.sq ? Math.max(0, SZ - humans) : 0,
     tot = NET.sq ? allies + Math.max(SZ, NET_TOTAL() - Math.max(SZ, humans)) : nb;
+  if (NET.bots === 0) return; // sala sem bots
   for (let n = 0; n < tot; n++) {
     spawnBot({ look: botLook(n), name: botName(n), vest: lv(), helm: lv(), team: !NET.sq ? undefined : n < allies ? 0 : 1 + Math.floor((n - allies) / SZ) });
     const b = bots[bots.length - 1];
@@ -32394,6 +33260,7 @@ function netDied() {
   const la = lastAttacker,
     id = netIdOf(la);
   NET.kd = [id, NET.lastHit && NET.lastHit[0] === id ? NET.lastHit[1] : la && la.w ? la.w : id === 'z' ? 'z' : ''];
+  if (TM) return; // contra squad: ninguém larga espólio
   // espólio com as suas coisas
   const P = player.position,
     box = { k: NET.me || 'eu', n: PROF.name },
@@ -32513,6 +33380,7 @@ function netApplyPlayer(peer, pr) {
     }
     return;
   }
+  if (NET.cs && TM && pr.tr !== TM.round) return; // ainda na rodada passada
   if (pr.st === 'dead') {
     if (NET.deadP.has(peer)) return;
     NET.deadP.add(peer);
@@ -32532,7 +33400,7 @@ function netApplyPlayer(peer, pr) {
     y = netNum(p[1]),
     z = netNum(p[2]),
     ry = netNum(p[3]);
-  const b = b0 || netPuppet0({ look: lookFrom(pr.lk), name: netName(pr.n), x, y, z, ry, net: peer, team: NET.sq ? 0 : undefined });
+  const b = b0 || netPuppet0({ look: lookFrom(pr.lk), name: netName(pr.n), x, y, z, ry, net: peer, team: csTeamOf(peer) });
   netSnap(b, x, y, z, ry, p[4], p[5], netNum(p[6], MAX_HP) / (netNum(p[5]) & 512 ? SQ_KNOCK_HP : MAX_HP), p[7], p[9], p[8], pr.em);
   b.cyaw = typeof p[10] === 'number' && isFinite(p[10]) ? p[10] : undefined; // para onde a câmera dele olha (para quem assiste)
 }
@@ -32582,7 +33450,7 @@ function netApplyBots(B, D) {
       z = netNum(e[3]),
       ry = netNum(e[4]);
     const tm = netNum(e[11], -1),
-      b = bots.find((o) => o.nid === nid) || netPuppet0({ look: botLook(n), name: botName(n), x, y, z, ry, nid, team: tm >= 0 && tm < 99 ? tm | 0 : undefined });
+      b = bots.find((o) => o.nid === nid) || netPuppet0({ look: botLook(n), name: botName(n), x, y, z, ry, nid, team: tm >= 0 && tm < 99 ? (NET.cs ? (tm ^ NET.cs.g) & 1 : tm | 0) : undefined });
     if (!b.puppet) continue;
     b.missT = 0;
     netSnap(b, x, y, z, ry, e[5], e[6], netNum(e[7], 100) / 100, e[8], e[9], 0, e[10]);
@@ -32594,7 +33462,10 @@ function netApplyBots(B, D) {
 /* ---------- Mandando ---------- */
 function netEmptyPresence() {
   const o = { v: 1, n: netName(PROF.name), s: NET.code || null, cr: NET.cr ? 1 : 0, lk: myLook(), st: 'lobby', u: PROF.uid, q: MM ? MM.q : null, qt: MM ? MM.qt : null, qk: MM ? MM.qk : null };
-  ['m', 'p', 'em', 'h', 'pk', 'dl', 'gn', 'rv', 'kd', 'M', 'Z', 'B', 'D', 'A', 'vc', 'ch'].forEach((k) => (o[k] = null));
+  // sala personalizada: o dono mostra os ajustes, cada um o time que escolheu
+  o.sl = NET.code && !NET.mmRoom && NET.me && netLobbyHost() === NET.me ? salaEnc(NET.sala || NET.salaVista || SALA_DEF) : null;
+  o.tt = NET.code && NET.tt !== undefined ? NET.tt : null;
+  ['m', 'p', 'em', 'h', 'pk', 'dl', 'gn', 'rv', 'kd', 'M', 'Z', 'B', 'D', 'A', 'vc', 'ch', 'T', 'tr'].forEach((k) => (o[k] = null));
   return o;
 }
 function netBuild() {
@@ -32604,6 +33475,7 @@ function netBuild() {
     P = player.position;
   o.st = dead ? 'dead' : 'play';
   o.m = NET.mid;
+  if (TM && NET.cs) o.tr = TM.round;
   if (ESPERA && NET.host) {
     o.ew = Math.max(0, Math.round(ESPERA.t * 2) / 2);
     o.en = ESPERA.shown2 || 0;
@@ -32634,7 +33506,8 @@ function netBuild() {
   NET.rv = (NET.rv || []).filter((r) => now - r[2] < 3000);
   o.rv = NET.rv.map((r) => r.slice(0, 2));
   if (NET.host) {
-    o.M = [NET.mid, NET.seed, 1, nr1(matchT), NET.sq || 0, MAP_IDS.indexOf(MAP.id)];
+    o.M = [NET.mid, NET.seed, 1, nr1(matchT), NET.sq || 0, MAP_IDS.indexOf(MAP.id), NET.cs ? NET.cs.n : 0, NET.bots === 0 ? 0 : 1, salaMEnc()];
+    if (NET.cs && TM) o.T = csBuildT();
     o.Z = [zone.preT, zone.on ? 1 : 0, zone.cx, zone.cz, zone.r, zone.fx, zone.fz, zone.fr, zone.tx, zone.tz, zone.tr, zone.ph, zone.state === 'shrink' ? 1 : zone.state === 'final' ? 2 : 0, zone.t, zone.dps || 0].map(nr1);
     o.B = bots
       .filter((b) => b.nid && !b.puppet)
@@ -32653,7 +33526,7 @@ function netBuild() {
           b.w || '',
           b.fc || 0,
           b.emo ? b.emo.id : 0,
-          b.team === undefined ? -1 : b.team,
+          b.team === undefined ? -1 : NET.cs ? (b.team ^ NET.cs.g) & 1 : b.team,
         ];
       });
     o.D = NET.D.slice(-12);
@@ -32724,7 +33597,8 @@ function netTick() {
         if (typeof pr.en === 'number') ESPERA.hn = pr.en;
         else if (ESPERA.rev > 1) espEnd(); // o dono já decolou
       }
-      netApplyZone(pr.Z);
+      if (NET.cs) csApplyT(pr.T);
+      else netApplyZone(pr.Z);
       netApplyBots(pr.B, pr.D);
       netApplyAir(pr.A);
     }
@@ -32740,6 +33614,7 @@ function netTick() {
       NET.mid = M[0];
       NET.seed = netNum(M[1]) | 0;
       NET.sq = M[4] === 2 ? 2 : M[4] ? 4 : 0;
+      salaDeM(M);
       NET.host = false;
       {
         // a partida da sala é no mapa do dono: troca antes de entrar
@@ -32803,18 +33678,20 @@ function netMatchEnd() {
   NET.lastMid = NET.mid;
   NET.mid = '';
   NET.host = false;
+  NET.cs = null;
+  NET.bots = 1;
   netMatchReset();
   netSend(true);
 }
 
 /* ---------- Tela "Jogar com amigos" ---------- */
 function openNet() {
-  renderNet();
-  document.getElementById('netPanel').classList.add('open');
+  salaAbre(); // tela nova: salas personalizadas
 }
 function closeNet() {
   const e = document.getElementById('netPanel');
   if (e) e.classList.remove('open');
+  salaFecha();
 }
 function netOnlineTxt() {
   const c = NET.conn === false ? '🔴 Sem conexão com o servidor' + (NET.connErr ? ' (' + NET.connErr + ')' : '') : NET.conn ? '🟢 Conectado' : '🟡 Conectando';
@@ -32823,6 +33700,8 @@ function netOnlineTxt() {
 function renderNet() {
   const sm = document.getElementById('lbNetTxt');
   if (sm) sm.textContent = NET.code ? 'Sala ' + NET.code : NET.lobbyList.length ? NET.lobbyList.length + (NET.lobbyList.length > 1 ? ' salas' : ' sala') : 'Online';
+  salaRender();
+  if (!globalThis.SALA_VELHA) return;
   const B = document.getElementById('netBody');
   if (!B) return;
   B.innerHTML = '';
@@ -33693,6 +34572,7 @@ async function splashPronto() {
   splashPct(1, 'Pronto!');
   await spDorme(Math.max(450, (1 - SPL.p) * 900));
   while (S.classList.contains('st')) await spDorme(100); // espera o logo do estúdio acabar
+  if (SPL.fim || !document.getElementById('splash')) return; // já saiu da splash
   let entrou = false;
   try {
     entrou = sessionStorage.getItem('wb_entrou') === '1';
