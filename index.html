@@ -8291,7 +8291,7 @@
     <div class="spLoad"><div class="spTip" id="spTip">Preparando a ilha...</div><div class="spBar"><i id="spFill"></i></div><div class="spPct"><span id="spStep">Carregando</span><b id="spPct">0%</b></div></div>
     <div class="spTap" id="spTap"><b>TOQUE PARA JOGAR</b><div class="spWho" id="spWho"></div></div>
     <div class="spGate" id="spGate"></div>
-    <div class="spVer">v113 · Feito no Amapá 🇧🇷</div>
+    <div class="spVer">v113b · Feito no Amapá 🇧🇷</div>
   </div>
 </div>
 <!-- ===== GIRE O CELULAR: o jogo é só deitado ===== -->
@@ -8422,8 +8422,6 @@
     <div id="lbResult"></div>
     <input id="lbName" maxlength="14" placeholder="Seu apelido" autocomplete="off">
     <div id="profId"></div>
-    <div class="lb-dl">Dificuldade dos bots</div>
-    <div class="seg" id="lbDiff"></div>
     <div id="lbStats"></div>
   </div>
   <div class="asf"><button id="profDone">Pronto</button></div>
@@ -8739,21 +8737,6 @@ const SCHEMA = [
   { k: 'announcer', t: 'check', l: 'Voz de abate', d: 'First Blood, Double Kill, Triple Kill...' },
 
   { tab: 'jogo', ic: '⚔️', h: 'Partida', d: 'Vale para as partidas contra bots' },
-  {
-    k: 'diff',
-    t: 'seg',
-    l: 'Dificuldade dos bots',
-    opts: [
-      ['easy', 'Fácil'],
-      ['normal', 'Normal'],
-      ['hard', 'Difícil'],
-    ],
-    desc: {
-      easy: 'Bots erram mais e têm menos vida.',
-      normal: 'Equilibrado.',
-      hard: 'Bots miram melhor, pulam e puxam capa.',
-    },
-  },
   {
     k: 'nbots',
     t: 'range',
@@ -27995,7 +27978,7 @@ function diffKey() {
     ? ['easy', 'easy', 'normal', 'normal', 'hard', 'pro', 'pro'][rankInfo(STATS.rp).ti]
     : isTeamRank()
       ? ['easy', 'normal', 'normal', 'hard', 'pro', 'pro'][starInfo(STATS.st4 || 0).ti]
-      : S.diff;
+      : ['easy', 'easy', 'normal', 'normal', 'normal', 'hard', 'hard'][rankInfo(STATS.rp || 0).ti] || 'normal'; // casual: acompanha o seu nível
 }
 
 function applyRanked(place, quit) {
@@ -28573,7 +28556,7 @@ function refreshLobbyHUD() {
     const M = MODES.find((m) => m.id === PROF.mode) || MODES[0],
       mb = document.getElementById('lbModeBtn');
     mb.querySelector('.mi').textContent = M.ic;
-    mb.querySelector('b').textContent = M.n + (M.br ? ' · ' + teamName() : '') + (M.rank || M.star ? '' : ' · ' + D[S.diff]) + ' · ' + MAP.ic + ' ' + MAP.name;
+    mb.querySelector('b').textContent = M.n + (M.br ? ' · ' + teamName() : '') + '' + ' · ' + MAP.ic + ' ' + MAP.name;
   }
   const pb = document.getElementById('playBtn');
   pb.textContent = isRank() ? '🏆 RANQUEADA' : isTeamRank() ? '🏆 4v4 RANQUEADA' : isTeam() ? '👥 JOGAR 4v4' : '▶ JOGAR';
@@ -28662,26 +28645,6 @@ function renderLobby() {
   mk('swSkin', SKINS, 'skin');
   mk('swShirt', SHIRTS, 'shirt');
   mk('swCap', CAPS, 'cap');
-  const ds = document.getElementById('lbDiff');
-  ds.innerHTML = '';
-  [
-    ['easy', 'Fácil'],
-    ['normal', 'Normal'],
-    ['hard', 'Difícil'],
-  ].forEach((o) => {
-    const b = document.createElement('button');
-    b.textContent = o[1];
-    b.className = S.diff === o[0] ? 'on' : '';
-    b.onclick = () => {
-      S.diff = o[0];
-      [...ds.children].forEach((c) => (c.className = ''));
-      b.className = 'on';
-      commit('diff');
-      buildSettings();
-      refreshLobbyHUD();
-    };
-    ds.appendChild(b);
-  });
   document.getElementById('lbStats').textContent =
     '🏆 Recorde: ' +
     STATS.best +
@@ -28892,7 +28855,7 @@ function ffBuildDom() {
     '<div class="ffMs"><div class="ffMsTop"><div class="ffMsTabs"><b class="on">MODOS DE JOGO</b><span>' +
     '<i>🎲</i> Mapas marcados entram no sorteio</span></div><button id="msClose" aria-label="Fechar">✕</button></div>' +
     '<div class="ffMsMain"><div class="ffMsBig" id="ffMsBig"></div><div class="ffMsSmall" id="ffMsSmall"></div></div>' +
-    '<div class="ffMsFoot"><div id="msMap"></div><div id="msTeam"></div><div id="msDiff"></div><button id="msOk">OK</button></div></div>';
+    '<div class="ffMsFoot"><div id="msMap"></div><div id="msTeam"></div><button id="msOk">OK</button></div></div>';
   // cofre: abas com nome (em pé na esquerda)
   const VN = { o: ['👕', 'Roupas'], g: ['🔫', 'Armas'], p: ['🪂', 'Paraquedas'], e: ['😀', 'Emotes'], c: ['🧍', 'Pers.'] };
   document.querySelectorAll('#vTabs button').forEach((b) => {
@@ -29315,25 +29278,9 @@ function renderModes() {
     };
     Mp.appendChild(b);
   });
-  // dificuldade dos bots (o ranqueado escolhe sozinho)
-  const Dv = document.getElementById('msDiff'),
-    rk = isRank() || isTeamRank();
-  Dv.innerHTML = '<span class="ffFh">BOTS</span>';
-  if (rk) Dv.insertAdjacentHTML('beforeend', '<em>pelo seu ranque</em>');
-  else
-    [['easy', 'Fácil'], ['normal', 'Normal'], ['hard', 'Difícil']].forEach(([k, n]) => {
-      const b = document.createElement('button');
-      b.textContent = n;
-      b.className = 'ffChip' + (S.diff === k ? ' on' : '');
-      b.onclick = () => {
-        S.diff = k;
-        commit('diff');
-        buildSettings();
-        refreshLobbyHUD();
-        renderModes();
-      };
-      Dv.appendChild(b);
-    });
+  // sem botão de dificuldade: os bots acompanham o seu nível, igual nos jogos de battle royale
+  const Dv = document.getElementById('msDiff');
+  if (Dv) Dv.remove();
 }
 // =====================================================================
 //  MATCHMAKING: aperta JOGAR → o tempo conta → "PARTIDA ENCONTRADA" → sala de espera
