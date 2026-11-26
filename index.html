@@ -8351,6 +8351,224 @@
     display: flex !important;
     opacity: 1 !important;
   }
+  /* ===== loja de diamantes ===== */
+  body.ffUI #lobby .ffDm {
+    position: static;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 6px 6px 12px;
+    border-radius: 3px;
+    border: 1px solid #5ad8ff66;
+    background: #0c0a1acc;
+    font: 900 14px var(--ffF);
+    color: #fff;
+    cursor: pointer;
+    pointer-events: auto;
+  }
+  #lobby .ffDm i {
+    font-style: normal;
+    display: grid;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 3px;
+    background: linear-gradient(#5ad8ff, #2a8cff);
+    color: #04121f;
+    font-weight: 900;
+  }
+  .ctBox.loja {
+    width: min(720px, 94vw);
+  }
+  .ljSaldo {
+    margin-left: auto;
+    font: 900 16px var(--ffF, sans-serif);
+    color: #7fe3ff;
+  }
+  .ljL {
+    max-height: min(58vh, 420px);
+    overflow: auto;
+    padding: 4px 2px;
+  }
+  .ljPacs {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+    gap: 10px;
+  }
+  .ljPac {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 18px 6px 10px;
+    border-radius: 8px;
+    border: 1px solid #5ad8ff55;
+    background: linear-gradient(160deg, #13284a, #0b1022);
+    color: #fff;
+    cursor: pointer;
+    transition: transform 0.12s;
+  }
+  .ljPac:not(:disabled):active {
+    transform: scale(0.96);
+  }
+  .ljPac:disabled {
+    opacity: 0.55;
+    cursor: default;
+  }
+  .ljPac .ljGem {
+    font-size: 26px;
+    line-height: 1.1;
+  }
+  .ljPac b {
+    font: 900 22px var(--ffF, sans-serif);
+    color: #7fe3ff;
+  }
+  .ljPac small {
+    opacity: 0.7;
+    font-size: 11px;
+  }
+  .ljPreco {
+    margin-top: 6px;
+    width: 100%;
+    padding: 6px 0;
+    border-radius: 5px;
+    background: #ffc928;
+    color: #1a1200;
+    font: 900 15px var(--ffF, sans-serif);
+  }
+  .ljBonus {
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: #ff4d6d;
+    font: 800 10px sans-serif;
+  }
+  .ljItens {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .ljIt {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 8px;
+    border-radius: 6px;
+    background: #ffffff0d;
+    border: 1px solid #ffffff1a;
+  }
+  .ljIt.ja {
+    opacity: 0.6;
+  }
+  .ljIt b {
+    font-size: 13px;
+  }
+  .ljMet {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 10px 0;
+  }
+  .ljMb {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 14px 10px;
+    border-radius: 8px;
+    border: 1px solid #ffffff33;
+    background: #ffffff10;
+    color: #fff;
+    cursor: pointer;
+    text-align: left;
+  }
+  .ljMb b {
+    font-size: 17px;
+  }
+  .ljMb small {
+    opacity: 0.75;
+  }
+  .ljMb:disabled {
+    opacity: 0.5;
+  }
+  .ctBox.ljPay {
+    text-align: center;
+    max-height: 94vh;
+    overflow: auto;
+  }
+  .ljQr {
+    width: min(200px, 42vh);
+    height: auto;
+    background: #fff;
+    padding: 8px;
+    border-radius: 8px;
+    margin: 4px auto;
+    display: block;
+  }
+  .ljPixG {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 14px;
+    align-items: center;
+    text-align: left;
+  }
+  @media (max-width: 520px) {
+    .ljPixG {
+      grid-template-columns: 1fr;
+      text-align: center;
+    }
+  }
+  .ctBox.ljPay:has(.ljPixG) {
+    width: min(600px, 94vw);
+  }
+  .ljCod {
+    width: 100%;
+    height: 54px;
+    font: 11px monospace;
+    background: #0006;
+    color: #cfe;
+    border: 1px solid #ffffff22;
+    border-radius: 6px;
+    resize: none;
+    margin-bottom: 6px;
+  }
+  .ljSt {
+    margin-top: 10px;
+    font-weight: 800;
+    color: #ffc928;
+  }
+  .ljResp {
+    margin-top: 12px;
+    padding: 10px;
+    border-radius: 8px;
+    background: #ffffff0d;
+    text-align: left;
+  }
+  .ljResp label {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    margin-bottom: 8px;
+    font-size: 13px;
+  }
+  @media (max-height: 460px) {
+    .ljQr {
+      width: 150px;
+    }
+    .ljL {
+      max-height: 52vh;
+    }
+  }
+  @media (max-width: 840px) {
+    #lobby .ffDm i {
+      display: none;
+    }
+  }
 </style>
 </head>
 <body>
@@ -8364,7 +8582,7 @@
     <div class="spLoad"><div class="spTip" id="spTip">Preparando a ilha...</div><div class="spBar"><i id="spFill"></i></div><div class="spPct"><span id="spStep">Carregando</span><b id="spPct">0%</b></div></div>
     <div class="spTap" id="spTap"><b>TOQUE PARA JOGAR</b><div class="spWho" id="spWho"></div></div>
     <div class="spGate" id="spGate"></div>
-    <div class="spVer">v114 · Feito no Amapá 🇧🇷</div>
+    <div class="spVer">v116 · Feito no Amapá 🇧🇷</div>
   </div>
 </div>
 <!-- ===== GIRE O CELULAR: o jogo é só deitado ===== -->
@@ -10780,6 +10998,7 @@ function clearWorld() {
   for (const A of [coins, solids, circles, boxes, houseSpots, polys, bridges, POIS, lootSpots, roads, plats, camSolids, ramps, stairsList, FLATS, PATCHES, POSTES, DECKS]) A.length = 0;
   NAT.meshes.length = 0;
   NAT.buf.clear();
+  LC.buf.clear();
   NAT.cnt = {};
   NAT.err = null;
   bakedMeshes = [];
@@ -11129,6 +11348,77 @@ function shortestAngle(a, b) {
    init() monta o jogo; animate() roda a cada quadro
    ====================================================================== */
 
+/* ======================================================================
+   VISUAL v116 — luz, cor de cinema, céu e neblina mais realistas
+   (tudo dentro dos shaders que o jogo já usa: não pesa mais no celular)
+   ====================================================================== */
+const VIS = {
+  exp: 0.76, // exposição da "câmera"
+  sunI: 2.35, // força do sol
+  sunC: 0xffe7c7, // sol levemente quente
+  hemS: 0x9cbfe8, // luz que vem do céu (azulada)
+  hemG: 0x4a3f2c, // luz que volta do chão (terra)
+  hemI: 0.46,
+  fog: 0xb4cfe8, // cor do ar longe (azul, não cinza) — em sRGB, o jogo converte
+  sky: [0.018, 0.1, 0.42], // azul do alto do céu
+  hp: 4.2, // quão larga é a faixa clara do horizonte
+  sat: 1.06, // saturação
+  con: 1.1, // contraste (antes do filme: as luzes altas não estouram)
+  warm: 0.03, // sombras frias e luzes quentes
+  fogP: 1.5, // neblina mais fraca no meio do caminho, igual ar de verdade
+};
+try {
+  if (typeof window !== 'undefined' && window.__VIS) Object.assign(VIS, window.__VIS);
+} catch (e) {}
+(function visShaders() {
+  const C = THREE.ShaderChunk;
+  if (!C || C.__wbVis || !C.tonemapping_fragment || !C.fog_fragment) return;
+  C.__wbVis = 1;
+  const f = (n) => (+n).toFixed(4);
+  // cor de cinema: contraste e saturação antes da curva de filme (ACES), e "split toning" depois
+  C.tonemapping_pars_fragment += `
+vec3 wbPre(vec3 c) {
+  c = max(c, vec3(0.0));
+  float l = dot(c, vec3(0.2126, 0.7152, 0.0722));
+  c = mix(vec3(l), c, ${f(VIS.sat)});
+  c = max(c, vec3(0.0));
+  return exp2((log2(c + 1e-5) - log2(0.18)) * ${f(VIS.con)} + log2(0.18));
+}
+vec3 wbPost(vec3 c) {
+  float l = dot(c, vec3(0.2126, 0.7152, 0.0722));
+  vec3 cool = vec3(1.0 - ${f(VIS.warm)}, 1.0, 1.0 + ${f(VIS.warm * 1.4)});
+  vec3 warm = vec3(1.0 + ${f(VIS.warm)}, 1.0, 1.0 - ${f(VIS.warm * 1.2)});
+  return clamp(c * mix(cool, warm, smoothstep(0.03, 0.55, l)), 0.0, 1.0);
+}`;
+  C.tonemapping_fragment = C.tonemapping_fragment.replace('gl_FragColor.rgb = toneMapping( gl_FragColor.rgb );', 'gl_FragColor.rgb = wbPost( toneMapping( wbPre( gl_FragColor.rgb ) ) );');
+  // neblina: fraca perto, chega toda no limite da visão (os objetos somem certinho lá)
+  C.fog_fragment = C.fog_fragment.replace('float fogFactor = smoothstep( fogNear, fogFar, fogDepth );', 'float fogFactor = pow( smoothstep( fogNear, fogFar, fogDepth ), ' + f(VIS.fogP) + ' );');
+})();
+const visLin = (v) => (v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4));
+const visFogC = () => new THREE.Color(visLin(((VIS.fog >> 16) & 255) / 255), visLin(((VIS.fog >> 8) & 255) / 255), visLin((VIS.fog & 255) / 255));
+const visAguaC = () => visFogC().lerp(new THREE.Color(VIS.sky[0] * 2.4, VIS.sky[1] * 2.4, VIS.sky[2] * 2.4), 0.4);
+// aplica luz/céu/neblina do dia (chamado no começo e quando sai do lobby de Natal)
+function visDia(sun, hemi) {
+  if (sun) {
+    sun.intensity = VIS.sunI;
+    sun.color.setHex(VIS.sunC);
+  }
+  if (hemi) {
+    hemi.color.setHex(VIS.hemS);
+    hemi.groundColor.setHex(VIS.hemG);
+    hemi.intensity = VIS.hemI;
+  }
+  try {
+    if (scene && scene.fog) scene.fog.color.copy(visFogC());
+    const u = skyFX && skyFX.material.uniforms;
+    if (u) {
+      u.horizonDay.value.copy(visFogC());
+      u.skyDay.value.setRGB(VIS.sky[0], VIS.sky[1], VIS.sky[2]);
+    }
+    if (WATER.u) WATER.u.uSky.value.copy(visAguaC());
+  } catch (e) {}
+}
+let hemiL = null; // luz do céu/chão
 function init() {
   scene = new THREE.Scene();
   scene.fog = new THREE.Fog(0xbfd9ee, 45, 170);
@@ -11142,14 +11432,16 @@ function init() {
   renderer.setPixelRatio(Math.min(devicePixelRatio, 1.75));
   renderer.outputEncoding = THREE.sRGBEncoding;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 0.85;
+  renderer.toneMappingExposure = VIS.exp;
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   document.body.appendChild(renderer.domElement);
 
   makeSky();
-  scene.add(new THREE.HemisphereLight(0xcfe6ff, 0x4a5d3a, 0.65));
+  hemiL = new THREE.HemisphereLight(0xcfe6ff, 0x4a5d3a, 0.65);
+  scene.add(hemiL);
   sun = new THREE.DirectionalLight(0xfff0d6, 1.7);
+  visDia(sun, hemiL);
   sun.castShadow = true;
   sun.shadow.mapSize.set(2048, 2048);
   sun.shadow.bias = -0.0004;
@@ -11176,6 +11468,7 @@ function init() {
 
   // mesma semente para todo mundo: o mapa sai igual em todos os aparelhos (precisa para jogar junto)
   switchMap(MAPS[PROF.map] ? PROF.map : 'macapa');
+  visDia(null, null);
 
   makePlayer();
 
@@ -11678,7 +11971,7 @@ function cullFar() {
     if (!s) continue;
     const t = m.userData.nat,
       d = Math.hypot(s.center.x - c.x, s.center.z - c.z);
-    m.visible = t ? d - s.radius * 0.6 < Math.min(F, NAT.lim[t]) : d - s.radius < F;
+    m.visible = t ? d - s.radius * 0.6 < Math.min(F, NAT.lim[t]) : d - s.radius < F && !(m.userData.lc && !LC.on);
   }
   for (const b of bots) {
     if (b.drop && b.drop.state === 'plane') continue; // dentro do avião fica escondido
@@ -11799,7 +12092,7 @@ void main() {
   float glow = pow(sd, 6.0) * 0.35;
   vec3 hor = mix(horizonSunset, horizonDay, clamp(blend * 1.6, 0.0, 1.0));
   vec3 skyc = mix(skySunset, skyDay, clamp(blend * 1.6, 0.0, 1.0));
-  vec3 col = mix(skyc, hor, pow(1.0 - abs(E.y), 7.0));
+  vec3 col = mix(skyc, hor, pow(1.0 - abs(E.y), ${VIS.hp.toFixed(2)}));
   // nuvens: brancas com a parte de baixo/miolo mais cinza (volume) e douradas perto do sol
   vec3 cc = cloudColor * (1.0 - 0.38 * smoothstep(0.3, 1.0, cloud) * shade) + vec3(0.35, 0.25, 0.08) * pow(sd, 3.0);
   col = mix(col, cc, smoothstep(0.0, 0.6, cloud) * 0.97);
@@ -12203,7 +12496,7 @@ function aguaFX(m) {
       uProf: { value: WATER.tex },
       uNoiseW: { value: noiseTex },
       uMap0: { value: new THREE.Vector4(-MAPH, -MAPH, MAPW, 2 * MAPH) },
-      uSky: { value: new THREE.Color(0x8fb8e0) },
+      uSky: { value: visAguaC() },
       uSunD: { value: new THREE.Vector3(0.5, 0.75, 0.35).normalize() },
     };
     WATER.u = U;
@@ -12270,6 +12563,20 @@ float wProf(vec2 p) {
 normal = normalize((viewMatrix * vec4(wN, 0.0)).xyz);`,
         )
         .replace(
+          '#include <map_fragment>',
+          `#ifdef USE_MAP
+{
+  float wd = length(cameraPosition - vWW);
+  vec4 t1 = texture2D(map, vUv);
+  vec4 t2 = texture2D(map, vWW.xz * vec2(0.0191, -0.0163) + vec2(uTime * 0.004, uTime * 0.0027));
+  vec4 tf = texture2D(map, vUv, 7.0);
+  vec4 tc = mix(mix(t1, t2, 0.5), tf, smoothstep(18.0, 120.0, wd));
+  tc.rgb = mix(tf.rgb, tc.rgb, 1.35); // devolve o contraste que a mistura tira
+  diffuseColor *= mapTexelToLinear(clamp(tc, 0.0, 1.0));
+}
+#endif`,
+        )
+        .replace(
           'gl_FragColor = vec4( outgoingLight, diffuseColor.a );',
           `{
   vec3 V = normalize(cameraPosition - vWW);
@@ -12280,6 +12587,14 @@ normal = normalize((viewMatrix * vec4(wN, 0.0)).xyz);`,
   outgoingLight += vec3(1.0, 0.95, 0.85) * glint * 2.2 * (1.0 - wFoam);
 }
 gl_FragColor = vec4( outgoingLight, diffuseColor.a );`,
+        )
+        // o mar some no horizonte bem mais longe que o chão (não vira uma faixa cinza)
+        .replace(
+          '#include <fog_fragment>',
+          `#ifdef USE_FOG
+  float wFog = pow(smoothstep(fogNear, fogFar * 2.4, fogDepth), 1.3);
+  gl_FragColor.rgb = mix(gl_FragColor.rgb, fogColor, wFog);
+#endif`,
         );
     };
     m.needsUpdate = true;
@@ -13530,6 +13845,7 @@ function natBlob(B, cx, cy, cz, sx, sy, sz, ry, det, amt, seed, col, k, sw = 0, 
   }
   // copa grande: tufos menores saindo pela borda (a silhueta fica recortada, como folhagem de verdade)
   if (k === KIND.LEAF && det >= 1 && Math.max(sx, sz) > 0.9) {
+    lcBlob(cx, cy, cz, sx, sy, sz, ry, seed, col, sw); // cartões de folha por cima
     const m = Math.min(sx, sz);
     for (let i = 0; i < 5; i++) {
       const h = nHash(seed + i * 3.1, cx * 0.1 + cz * 0.1, 41),
@@ -14247,6 +14563,239 @@ function natureza() {
 }
 
 // Junta tudo nos blocos finais (um desenho por pedaço do mapa e camada)
+/* ======================================================================
+   FOLHAGEM DE VERDADE (v116): as copas das árvores ganham "cartões" de
+   folhas (desenho de galhinho com folhas, recortado), por cima da copa
+   antiga. A silhueta fica recortada e dá para ver folha por folha.
+   Sempre igual em todo aparelho (usa nHash, não mexe no sorteio do mapa).
+   ====================================================================== */
+const LC = { buf: new Map(), tex: null, mat: null, on: true, n: 0 };
+function lcTex() {
+  if (LC.tex) return LC.tex;
+  const N = 256,
+    c = document.createElement('canvas');
+  c.width = c.height = N;
+  const x = c.getContext('2d');
+  // gerador fixo (a textura sai igual sempre)
+  let sd = 9137;
+  const R = () => ((sd = (sd * 16807) % 2147483647) / 2147483647);
+  const folha = (px, py, ang, L, W, lum) => {
+    x.save();
+    x.translate(px, py);
+    x.rotate(ang);
+    const g = x.createLinearGradient(0, -W, 0, W);
+    const a = Math.round(lum * 255),
+      b = Math.round(lum * 200);
+    g.addColorStop(0, 'rgb(' + b + ',' + a + ',' + Math.round(b * 0.7) + ')');
+    g.addColorStop(0.5, 'rgb(' + a + ',' + a + ',' + Math.round(a * 0.78) + ')');
+    g.addColorStop(1, 'rgb(' + Math.round(b * 0.8) + ',' + Math.round(a * 0.85) + ',' + Math.round(b * 0.55) + ')');
+    x.fillStyle = g;
+    x.beginPath();
+    x.moveTo(0, 0);
+    x.quadraticCurveTo(L * 0.35, -W, L, 0);
+    x.quadraticCurveTo(L * 0.35, W, 0, 0);
+    x.fill();
+    x.strokeStyle = 'rgba(40,50,20,0.35)'; // nervura do meio
+    x.lineWidth = 1;
+    x.beginPath();
+    x.moveTo(0, 0);
+    x.lineTo(L * 0.9, 0);
+    x.stroke();
+    x.restore();
+  };
+  // galhinhos finos saindo do meio
+  x.strokeStyle = 'rgba(70,55,35,0.9)';
+  x.lineCap = 'round';
+  const ramos = [];
+  for (let i = 0; i < 7; i++) {
+    const a = (i / 7) * Math.PI * 2 + R() * 0.6,
+      L = N * (0.28 + R() * 0.14);
+    ramos.push([a, L]);
+    x.lineWidth = 2.2;
+    x.beginPath();
+    x.moveTo(N / 2, N / 2);
+    x.lineTo(N / 2 + Math.cos(a) * L, N / 2 + Math.sin(a) * L);
+    x.stroke();
+  }
+  // folhas: as de trás mais escuras, as da frente mais claras
+  for (let pass = 0; pass < 2; pass++)
+    ramos.forEach(([a, L]) => {
+      for (let j = 0; j < 9; j++) {
+        const t = 0.25 + (j / 9) * 0.8,
+          px = N / 2 + Math.cos(a) * L * t,
+          py = N / 2 + Math.sin(a) * L * t,
+          side = j % 2 ? 1 : -1,
+          ang = a + side * (0.5 + R() * 0.5);
+        folha(px, py, ang, N * (0.085 + R() * 0.05), N * (0.03 + R() * 0.012), pass ? 0.78 + R() * 0.22 : 0.5 + R() * 0.2);
+      }
+    });
+  // apaga a borda (o cartão não aparece quadrado)
+  x.globalCompositeOperation = 'destination-in';
+  const rg = x.createRadialGradient(N / 2, N / 2, N * 0.3, N / 2, N / 2, N * 0.5);
+  rg.addColorStop(0, 'rgba(0,0,0,1)');
+  rg.addColorStop(1, 'rgba(0,0,0,0)');
+  x.fillStyle = rg;
+  x.fillRect(0, 0, N, N);
+  const t = new THREE.CanvasTexture(c);
+  t.encoding = THREE.sRGBEncoding;
+  t.anisotropy = 4;
+  LC.tex = t;
+  return t;
+}
+function lcB(x, z) {
+  const key = Math.floor(x / NAT.cell) + '|' + Math.floor(z / NAT.cell);
+  let B = LC.buf.get(key);
+  if (!B) {
+    B = { P: [], N: [], C: [], U: [], W: [], lo: [1e9, 1e9, 1e9], hi: [-1e9, -1e9, -1e9] };
+    LC.buf.set(key, B);
+  }
+  return B;
+}
+// cartões em volta de uma copa (elipsoide centrado em cx,cy,cz com raios sx,sy,sz, girado ry)
+function lcBlob(cx, cy, cz, sx, sy, sz, ry, seed, col, sw) {
+  const B = lcB(cx, cz),
+    area = (sx * sz + sx * sy + sy * sz) * 1.6,
+    n = Math.max(10, Math.min(48, Math.round(area * 1.8))),
+    cr = Math.cos(ry),
+    sr = Math.sin(ry),
+    m = Math.min(sx, sy, sz);
+  for (let i = 0; i < n; i++) {
+    // pontos espalhados certinho na esfera (espiral), mais na parte de cima
+    const h1 = nHash(seed + i * 1.37, cx * 0.3, 51),
+      h2 = nHash(seed + i * 2.11, cz * 0.3, 52),
+      h3 = nHash(seed + i * 0.73, cy + i, 53),
+      dy = 1 - ((i + 0.5) / n) * 1.75,
+      rr = Math.sqrt(Math.max(0, 1 - dy * dy)),
+      th = i * 2.39996 + seed;
+    if (dy < -0.72) continue;
+    let dx = Math.cos(th) * rr,
+      dz = Math.sin(th) * rr;
+    const k = 1.02 + 0.16 * h1, // na casca da copa (um pouco pra fora)
+      lx = dx * sx * k,
+      ly = dy * sy * k,
+      lz = dz * sz * k,
+      px = cx + lx * cr + lz * sr,
+      py = cy + ly,
+      pz = cz - lx * sr + lz * cr;
+    // normal para fora (luz de copa redonda)
+    let nx = dx / sx,
+      ny = dy / sy + 0.35,
+      nz = dz / sz;
+    const nl = Math.hypot(nx, ny, nz);
+    nx /= nl;
+    ny /= nl;
+    nz /= nl;
+    const wnx = nx * cr + nz * sr,
+      wnz = -nx * sr + nz * cr;
+    // o cartão fica de frente para fora, girado aleatório em volta da normal
+    let tx = -wnz,
+      tz = wnx;
+    const ty = 0;
+    const tl = Math.hypot(tx, tz) || 1;
+    tx /= tl;
+    tz /= tl;
+    // b = n x t
+    let bx = ny * tz,
+      by = wnz * tx - wnx * tz,
+      bz = -ny * tx;
+    const bl = Math.hypot(bx, by, bz) || 1;
+    bx /= bl;
+    by /= bl;
+    bz /= bl;
+    const rot = h2 * 6.283,
+      cs = Math.cos(rot),
+      sn = Math.sin(rot),
+      ux = tx * cs + bx * sn,
+      uy = ty * cs + by * sn,
+      uz = tz * cs + bz * sn,
+      vx = -tx * sn + bx * cs,
+      vy = -ty * sn + by * cs,
+      vz = -tz * sn + bz * cs,
+      S = m * (1.1 + 0.6 * h3) + 0.7,
+      // inclina um pouco para fora (não fica colado na copa)
+      tilt = 0.35;
+    const q = [
+      [-1, -1],
+      [1, -1],
+      [1, 1],
+      [-1, 1],
+    ];
+    const tn = 0.86 + 0.28 * h3,
+      top = 0.92 + 0.16 * Math.max(0, dy),
+      c = [col[0] * tn * top, col[1] * tn * top, col[2] * tn * top];
+    const V = q.map(([a, b]) => [
+      px + (ux * a + vx * b) * S * 0.5 + wnx * tilt * b * S * 0.2,
+      py + (uy * a + vy * b) * S * 0.5 + ny * tilt * b * S * 0.2,
+      pz + (uz * a + vz * b) * S * 0.5 + wnz * tilt * b * S * 0.2,
+    ]);
+    const idx = [0, 1, 2, 0, 2, 3],
+      uv = [
+        [0, 0],
+        [1, 0],
+        [1, 1],
+        [0, 1],
+      ];
+    for (const j of idx) {
+      const v = V[j];
+      B.P.push(v[0], v[1], v[2]);
+      B.N.push(wnx, ny, wnz);
+      B.C.push(c[0], c[1], c[2]);
+      B.U.push(uv[j][0], uv[j][1]);
+      B.W.push(sw * (0.6 + 0.4 * Math.max(0, dy)) + 0.15);
+      for (let a = 0; a < 3; a++) {
+        if (v[a] < B.lo[a]) B.lo[a] = v[a];
+        if (v[a] > B.hi[a]) B.hi[a] = v[a];
+      }
+    }
+    LC.n++;
+  }
+}
+function lcMat() {
+  if (LC.mat) return LC.mat;
+  const m = new THREE.MeshStandardMaterial({ map: lcTex(), vertexColors: true, roughness: 0.85, metalness: 0, side: THREE.DoubleSide, alphaTest: 0.42 });
+  m.onBeforeCompile = (sh) => {
+    sh.uniforms.uWind = NAT.wind;
+    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nattribute float aSway;\nuniform float uWind;').replace(
+      '#include <begin_vertex>',
+      `#include <begin_vertex>
+{
+  float ph = transformed.x * 0.23 + transformed.z * 0.19;
+  float wv = sin(uWind * 1.7 + ph) * 0.65 + sin(uWind * 3.1 + ph * 1.9) * 0.35;
+  transformed.x += wv * 0.12 * aSway;
+  transformed.z += cos(uWind * 1.3 + ph * 1.2) * 0.09 * aSway;
+  transformed.y += sin(uWind * 2.3 + ph * 2.7) * 0.03 * aSway;
+}`,
+    );
+    // longe a textura fica borrada (mipmap): baixa o corte para as folhas não sumirem
+    sh.fragmentShader = sh.fragmentShader.replace('#include <alphatest_fragment>', `if (diffuseColor.a < ALPHATEST * mix(1.0, 0.55, smoothstep(15.0, 70.0, gl_FragCoord.z / gl_FragCoord.w))) discard;`);
+  };
+  LC.mat = m;
+  return m;
+}
+function lcFlush() {
+  if (!LC.buf.size) return;
+  const mat = lcMat();
+  LC.buf.forEach((B) => {
+    if (!B.P.length) return;
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(B.P, 3));
+    geo.setAttribute('normal', new THREE.Float32BufferAttribute(B.N, 3));
+    geo.setAttribute('color', new THREE.Float32BufferAttribute(B.C, 3));
+    geo.setAttribute('uv', new THREE.Float32BufferAttribute(B.U, 2));
+    geo.setAttribute('aSway', new THREE.Float32BufferAttribute(B.W, 1));
+    const c = new THREE.Vector3((B.lo[0] + B.hi[0]) / 2, (B.lo[1] + B.hi[1]) / 2, (B.lo[2] + B.hi[2]) / 2);
+    geo.boundingSphere = new THREE.Sphere(c, Math.hypot(B.hi[0] - B.lo[0], B.hi[1] - B.lo[1], B.hi[2] - B.lo[2]) / 2 + 0.5);
+    const msh = new THREE.Mesh(geo, mat);
+    msh.castShadow = false;
+    msh.receiveShadow = true;
+    msh.matrixAutoUpdate = false;
+    msh.raycast = () => {};
+    msh.userData.lc = 1;
+    scene.add(msh);
+    NAT.meshes.push(msh);
+  });
+  LC.buf.clear();
+}
 function natFlush() {
   if (!NAT.buf.size) return;
   const mats = [0, 1, 2].map((t) => {
@@ -14294,6 +14843,7 @@ function natFlush() {
   });
   NAT.verts = [...NAT.buf.values()].reduce((a, B) => a + B.n, 0);
   NAT.buf.clear(); // libera a memória de montagem
+  lcFlush();
 }
 // ---------- capim em volta de quem está jogando: bem cheio perto, cresce suave quando você chega ----------
 // O chão em volta é dividido em quadrados de 12 m; só os quadrados perto da câmera têm capim
@@ -20172,6 +20722,7 @@ function makePlayer() {
   );
   muzzleFlash.visible = false;
   player.userData.muzzle.add(muzzleFlash);
+  fx2MuzzleSetup();
   muzzleLight = new THREE.Object3D(); // antes era uma luz de verdade: pesava em todo quadro
   muzzleLight.intensity = 0;
   player.userData.muzzle.add(muzzleLight);
@@ -20928,6 +21479,7 @@ function shoot() {
   bloom = Math.min(1, bloom + W.kick * 5);
   muzzleFlash.visible = true;
   muzzleLight.intensity = 4;
+  fx2Muzzle();
   setTimeout(() => {
     muzzleFlash.visible = false;
     muzzleLight.intensity = 0;
@@ -21017,12 +21569,174 @@ function findAssistTarget(cp, cd) {
   return best;
 }
 
+/* ======================================================================
+   EFEITOS v116: fumaça e poeira de verdade (sprites macios), faíscas que
+   brilham, clarão de tiro em estrela, rastro da bala brilhando e reflexo
+   de metal nas armas. Tudo reaproveitado (sem lixo na memória).
+   ====================================================================== */
+const FX2 = { puff: null, flash: null, glow: null, env: null };
+function fx2Canvas(N, draw) {
+  const c = document.createElement('canvas');
+  c.width = c.height = N;
+  draw(c.getContext('2d'), N);
+  const t = new THREE.CanvasTexture(c);
+  t.encoding = THREE.sRGBEncoding;
+  return t;
+}
+// nuvem macia e irregular (fumaça/poeira)
+function fx2Puff() {
+  if (FX2.puff) return FX2.puff;
+  let sd = 4242;
+  const R = () => ((sd = (sd * 16807) % 2147483647) / 2147483647);
+  FX2.puff = fx2Canvas(128, (x, N) => {
+    for (let i = 0; i < 26; i++) {
+      const a = R() * 6.283,
+        r = R() * N * 0.22,
+        cx = N / 2 + Math.cos(a) * r,
+        cy = N / 2 + Math.sin(a) * r,
+        rr = N * (0.12 + R() * 0.16),
+        g = x.createRadialGradient(cx, cy, 0, cx, cy, rr),
+        v = Math.round(200 + R() * 55);
+      g.addColorStop(0, 'rgba(' + v + ',' + v + ',' + v + ',0.5)');
+      g.addColorStop(1, 'rgba(' + v + ',' + v + ',' + v + ',0)');
+      x.fillStyle = g;
+      x.fillRect(0, 0, N, N);
+    }
+  });
+  return FX2.puff;
+}
+// clarão do tiro: estrela com miolo branco
+function fx2Flash() {
+  if (FX2.flash) return FX2.flash;
+  FX2.flash = fx2Canvas(128, (x, N) => {
+    const c = N / 2;
+    x.translate(c, c);
+    for (let i = 0; i < 7; i++) {
+      x.rotate((Math.PI * 2) / 7 + (i % 2) * 0.2);
+      const L = N * (i % 2 ? 0.34 : 0.48),
+        g = x.createLinearGradient(0, 0, L, 0);
+      g.addColorStop(0, 'rgba(255,240,200,1)');
+      g.addColorStop(0.4, 'rgba(255,170,60,0.85)');
+      g.addColorStop(1, 'rgba(255,90,0,0)');
+      x.fillStyle = g;
+      x.beginPath();
+      x.moveTo(0, -N * 0.05);
+      x.lineTo(L, 0);
+      x.lineTo(0, N * 0.05);
+      x.fill();
+    }
+    const g = x.createRadialGradient(0, 0, 0, 0, 0, N * 0.22);
+    g.addColorStop(0, 'rgba(255,255,240,1)');
+    g.addColorStop(0.5, 'rgba(255,200,90,0.8)');
+    g.addColorStop(1, 'rgba(255,120,20,0)');
+    x.fillStyle = g;
+    x.fillRect(-c, -c, N, N);
+  });
+  return FX2.flash;
+}
+// ponto de luz (faísca)
+function fx2Glow() {
+  if (FX2.glow) return FX2.glow;
+  FX2.glow = fx2Canvas(32, (x, N) => {
+    const g = x.createRadialGradient(N / 2, N / 2, 0, N / 2, N / 2, N / 2);
+    g.addColorStop(0, 'rgba(255,255,230,1)');
+    g.addColorStop(0.35, 'rgba(255,190,80,0.9)');
+    g.addColorStop(1, 'rgba(255,120,0,0)');
+    x.fillStyle = g;
+    x.fillRect(0, 0, N, N);
+  });
+  return FX2.glow;
+}
+// nuvens de fumaça/poeira: sobem, crescem, giram e somem
+function fx2Puffs(p, hex, n, size, life, up = 0.6, spread = 1) {
+  const now = performance.now();
+  for (let i = 0; i < n; i++) {
+    const s = fxGet('m', () => new THREE.Sprite(new THREE.SpriteMaterial({ map: fx2Puff(), transparent: true, depthWrite: false, opacity: 0.5 })));
+    s.material.color.setHex(hex);
+    s.material.rotation = Math.random() * 6.28;
+    s.position.set(p.x + rnd(-0.12, 0.12) * spread, p.y + rnd(-0.05, 0.1), p.z + rnd(-0.12, 0.12) * spread);
+    const u = s.userData;
+    if (!u.vel) u.vel = new THREE.Vector3();
+    u.vel.set(rnd(-0.6, 0.6) * spread, rnd(0.2, 1) * up, rnd(-0.6, 0.6) * spread);
+    u.s0 = size * rnd(0.75, 1.25);
+    u.life = life * rnd(0.8, 1.2);
+    u.until = now + u.life;
+    u.op = 0.9;
+    u.rs = rnd(-1, 1);
+    s.scale.setScalar(u.s0 * 0.4);
+  }
+}
+// faíscas que brilham (metal)
+function fx2Sparks(p, dir, n) {
+  const now = performance.now();
+  for (let i = 0; i < n; i++) {
+    const s = fxGet('k', () => new THREE.Sprite(new THREE.SpriteMaterial({ map: fx2Glow(), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending })));
+    s.position.copy(p);
+    const u = s.userData;
+    if (!u.vel) u.vel = new THREE.Vector3();
+    u.vel.set(-dir.x * rnd(2, 7) + rnd(-3, 3), rnd(0.5, 4.5), -dir.z * rnd(2, 7) + rnd(-3, 3));
+    u.life = rnd(140, 320);
+    u.until = now + u.life;
+    s.scale.setScalar(rnd(0.12, 0.24));
+  }
+}
+// clarão do cano + fumacinha
+function fx2Muzzle() {
+  if (!muzzleFlash) return;
+  const sp = muzzleFlash.userData.sp;
+  if (sp) {
+    sp.material.rotation = Math.random() * 6.28;
+    const k = rnd(0.85, 1.25);
+    sp.scale.set(0.55 * k, 0.55 * k, 1);
+  }
+  if (effQ() === 'potato') return;
+  const p = muzzleFlash.getWorldPosition(new THREE.Vector3());
+  fx2Puffs(p, 0xbdbdbd, 1, 0.35, 650, 0.5, 0.4);
+}
+function fx2MuzzleSetup() {
+  if (!muzzleFlash || muzzleFlash.userData.sp) return;
+  muzzleFlash.material.visible = false; // a bolinha antiga some; fica só o clarão
+  const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: fx2Flash(), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false }));
+  sp.scale.set(0.55, 0.55, 1);
+  sp.raycast = () => {};
+  muzzleFlash.add(sp);
+  muzzleFlash.userData.sp = sp;
+}
+// reflexo de metal: um "céu" pequeno pré-calculado (só armas e peças de metal de personagem)
+function fx2Env() {
+  if (FX2.env !== null) return FX2.env;
+  FX2.env = undefined;
+  try {
+    const S = new THREE.Scene(),
+      m = new THREE.ShaderMaterial({
+        side: THREE.BackSide,
+        vertexShader: 'varying vec3 vP; void main(){ vP = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }',
+        fragmentShader:
+          'varying vec3 vP; void main(){ vec3 d = normalize(vP); vec3 sky = mix(vec3(0.55,0.68,0.85), vec3(0.12,0.3,0.7), clamp(d.y*1.4,0.0,1.0)); vec3 gr = mix(vec3(0.35,0.32,0.26), vec3(0.12,0.11,0.09), clamp(-d.y*2.0,0.0,1.0)); vec3 c = d.y > 0.0 ? sky : gr; c += vec3(1.4,1.25,1.0) * pow(max(dot(d, normalize(vec3(0.5,0.75,0.35))),0.0), 64.0) * 4.0; gl_FragColor = vec4(c,1.0); }',
+      });
+    S.add(new THREE.Mesh(new THREE.SphereGeometry(10, 24, 12), m));
+    const pm = new THREE.PMREMGenerator(renderer);
+    FX2.env = pm.fromScene(S, 0.02).texture;
+    pm.dispose();
+  } catch (e) {
+    FX2.env = undefined;
+  }
+  return FX2.env;
+}
+// impacto da bala: poeira/lasca de verdade (no lugar da bolinha antiga)
+function fx2Impact(p, dir, kind, q) {
+  const lo = q === 'potato' || q === 'low';
+  if (kind === 'metal') return fx2Sparks(p, dir, lo ? 4 : 9);
+  const C = { dirt: 0x9c8466, stone: 0xb9b4aa, blood: 0x8a0f0f, wood: 0x9a7650, leaf: 0x6f8a52 }[kind] || 0xaaaaaa;
+  if (kind === 'blood') return fx2Puffs(p, C, lo ? 1 : 2, 0.45, 380, 0.2, 0.6);
+  fx2Puffs(p, C, lo ? 1 : 3, kind === 'leaf' ? 0.7 : 1.3, kind === 'dirt' ? 1200 : 900, 0.7, 1);
+}
 // Rastro da bala (peças reaproveitadas: não cria lixo na memória a cada tiro)
 function tracer(a, b, col) {
   const len = a.distanceTo(b);
   if (len < 0.1) return;
   if (!fxGeoT) fxGeoT = new THREE.CylinderGeometry(0.012, 0.012, 1, 5);
-  const t = fxGet('t', () => new THREE.Mesh(fxGeoT, new THREE.MeshBasicMaterial({ color: 0xffe066, fog: false })));
+  const t = fxGet('t', () => new THREE.Mesh(fxGeoT, new THREE.MeshBasicMaterial({ color: 0xffe066, fog: false, transparent: true, opacity: 0.75, blending: THREE.AdditiveBlending, depthWrite: false })));
   t.material.color.setHex(col || 0xffe066);
   t.scale.set(1, len, 1);
   t.position.copy(a).add(b).multiplyScalar(0.5);
@@ -21074,6 +21788,19 @@ function fxTick(nowMs) {
       const k = 1 - (u.until - nowMs) / u.life;
       o.scale.setScalar(u.s0 * (0.5 + k));
       o.material.opacity = 0.42 * (1 - k);
+    } else if (u.kind === 'm') {
+      // fumaça/poeira: sobe devagar, cresce e some
+      const k = 1 - (u.until - nowMs) / u.life;
+      o.position.addScaledVector(u.vel, dt);
+      u.vel.multiplyScalar(Math.max(0, 1 - dt * 1.6));
+      o.scale.setScalar(u.s0 * (0.4 + 1.1 * Math.sqrt(k)));
+      o.material.opacity = u.op * (1 - k) * Math.min(1, k * 6);
+      o.material.rotation += u.rs * dt;
+    } else if (u.kind === 'k') {
+      // faísca caindo
+      u.vel.y -= 9.8 * dt;
+      o.position.addScaledVector(u.vel, dt);
+      o.material.opacity = Math.max(0, (u.until - nowMs) / u.life);
     } else if (u.kind === 'x') {
       // clarão da explosão
       const k = 1 - (u.until - nowMs) / u.life;
@@ -21117,7 +21844,8 @@ function impact(p, dir, kind) {
     q.scale.setScalar(rnd(0.6, 1.4) * (kind === 'metal' ? 0.5 : 1));
     q.userData.until = now + (kind === 'metal' ? 230 : 420);
   }
-  if (kind === 'dirt' || kind === 'stone' || kind === 'blood') {
+  fx2Impact(p, dir, kind, q0);
+  if (kind === 'none') {
     if (!fxGeoD) fxGeoD = new THREE.SphereGeometry(0.25, 8, 6);
     const d = fxGet(
       'd',
@@ -28607,9 +29335,17 @@ function setXmas(on) {
   if (on && !skyXmas) skyXmas = makeXmasSky();
   sky.material.map = on ? skyXmas : skyDay;
   sky.material.needsUpdate = true;
-  scene.fog.color.setHex(on ? 0xd98a8f : 0xbfd9ee);
-  sun.intensity = on ? 1.15 : 1.7;
-  sun.color.setHex(on ? 0xffd2a8 : 0xfff0d6);
+  if (on) scene.fog.color.setHex(0xd98a8f);
+  else visDia(null, null);
+  sun.intensity = on ? 1.15 : VIS.sunI;
+  sun.color.setHex(on ? 0xffd2a8 : VIS.sunC);
+  if (hemiL) {
+    if (on) {
+      hemiL.color.setHex(0xcfe6ff);
+      hemiL.groundColor.setHex(0x4a5d3a);
+      hemiL.intensity = 0.65;
+    } else visDia(null, hemiL);
+  }
 }
 
 function updateXmas(t) {
@@ -28894,6 +29630,11 @@ function ffBuildDom() {
   top.appendChild(prof);
   prof.querySelector('.pi').appendChild(el('span', 'ffXp', '<i id="ffXpFill"></i>'));
   top.appendChild(document.getElementById('lbCur'));
+  const dmB = el('button', 'ffDm', '💎 <b id="ffDmN">0</b><i>+</i>');
+  dmB.id = 'ffDm';
+  dmB.title = 'Diamantes';
+  dmB.onclick = () => lojaAbre('comprar');
+  top.appendChild(dmB);
   top.appendChild(el('div', 'ffGrow'));
   top.appendChild(el('div', 'ffLogo', 'WORLD<b>BULLET</b>'));
   const net = document.getElementById('lbNet');
@@ -30829,6 +31570,7 @@ function applyGraphics() {
   scene.fog.far = viewDist();
   scene.fog.near = Math.round(viewDist() * 0.26);
   DETAIL.value = effQ() === 'potato' || effQ() === 'low' ? 0 : 1;
+  LC.on = effQ() !== 'potato'; // folhas de verdade (só some no modo Batata)
   natLimits(); // até onde aparecem moitas, capim e flores
   // texturas de verdade: só em WebGL2 (celulares de hoje) e fora das qualidades Batata/Baixa
   TEXON.value = DETAIL.value && renderer.capabilities.isWebGL2 ? 1 : 0;
@@ -31041,8 +31783,14 @@ float wbT(vec3 p, vec3 a, float s) {
 #endif
   } else if (k < 9.5) {
     f = (0.86 + 0.22 * wbT(p, an, 18.0)) * (0.85 + 0.25 * wbT(p, an, 3.0));
+#ifdef WB_LOCAL
+    float dob = wbT(p * vec3(1.0, 3.2, 1.0), an, 6.0); // dobras do pano (mais na horizontal)
+    f *= 0.8 + 0.32 * smoothstep(0.25, 0.75, dob);
+    f *= 0.93 + 0.1 * sin(p.y * 260.0 + wbN(p.xz * 40.0) * 3.0); // trama do tecido
+#endif
   } else if (k < 10.5) {
     f = 0.95 + 0.08 * wbT(p, an, 6.0);
+    col *= vec3(1.04, 0.98, 0.95) * (0.94 + 0.1 * wbT(p, an, 22.0)); // pele com tom e poros
   } else if (k < 11.5) {
     float c = wbN(p.xz * 0.3);
     float crack = 1.0 - smoothstep(0.0, 0.025, abs(c - 0.5));
@@ -31107,6 +31855,19 @@ float wbT(vec3 p, vec3 a, float s) {
     sv *= 0.75 + 0.25 * wbN(p.xz * 0.05);
     col *= mix(vec3(1.0), vec3(1.7, 0.95, 0.35), sv * 0.85);
   }
+  if (k > 12.5) {
+    float isG = smoothstep(0.0, 0.06, col.g - max(col.r, col.b) * 1.05);
+    float l0 = dot(col, vec3(0.299, 0.587, 0.114));
+    col = mix(col, mix(vec3(l0), col, 0.8) * vec3(1.06, 0.93, 0.72), isG); // verde mais oliva (menos limão)
+    float dry = smoothstep(0.52, 0.8, wbN(p.xz * 0.011 + 0.71)) * (0.7 + 0.3 * wbN(p.xz * 0.09));
+    float damp = smoothstep(0.55, 0.85, wbN(p.xz * 0.017 + 0.13));
+    col = mix(col, col * vec3(1.35, 1.1, 0.55), dry * 0.6 * isG); // capim seco
+    col *= mix(1.0, 0.75, damp * isG); // mancha úmida, mais escura
+    f *= 0.9 + 0.2 * wbN(p.xz * 1.3); // detalhe fino perto
+  }
+#ifdef WB_LOCAL
+  f *= 0.74 + 0.26 * smoothstep(-0.85, 0.35, nn.y); // embaixo do braço/queixo mais escuro (volume)
+#endif
   diffuseColor.rgb = col * f;
 }
 #ifdef WB_GP
@@ -31181,6 +31942,13 @@ function detailAll(obj) {
     const M = o.material;
     if (!o.isMesh || !M || Array.isArray(M) || !M.isMeshStandardMaterial || M.map || M.userData.det) return;
     M.userData.kind = kindOf(M);
+    if (M.userData.kind === KIND.METAL && fx2Env()) {
+      // metal de arma com reflexo do céu (fica com cara de aço de verdade)
+      M.envMap = FX2.env;
+      M.envMapIntensity = 0.85;
+      M.metalness = Math.max(M.metalness, 0.6);
+      M.roughness = Math.min(Math.max(M.roughness, 0.28), 0.5);
+    }
     addDetail(M, M.userData.kind, true);
   });
 }
@@ -31706,6 +32474,10 @@ function contaAplica(d) {
     } catch (e) {}
   }
   try {
+    dmJuntaItens(d); // itens comprados com 💎 ficam guardados na conta
+    dmPill();
+  } catch (e) {}
+  try {
     renderProfId();
     contaRender();
     refreshLobbyHUD();
@@ -31853,6 +32625,10 @@ function contaMsg(m) {
       sfx('announce', 0.4);
     }
     if (m.aceito) toast('🤝 ' + m.aceito.nome + ' aceitou seu pedido de amizade!');
+    if (m.dm && m.dm.n) {
+      toast('💎 +' + m.dm.n + ' diamantes na sua conta!');
+      sfx('coin', 0.8);
+    }
     clearTimeout(CONTA.ctT);
     CONTA.ctT = setTimeout(contaAtualiza, 500);
   } else if (m.t === 'conv' && m.id && !CONTA.convVisto[m.id]) {
@@ -32445,6 +33221,7 @@ function admRender() {
   const at = box.appendChild(ctEl('div', 'amgTop', '<b>🛠️ PAINEL DO CRIADOR</b>'));
   at.appendChild(ctEl('button', 'ctBtn sm', '🚩 Denúncias')).onclick = admDenuncias;
   at.appendChild(ctEl('button', 'ctBtn sm', '🎉 Eventos')).onclick = admEventos;
+  at.appendChild(ctEl('button', 'ctBtn sm', '💰 Vendas')).onclick = admVendas;
   const f = box.appendChild(ctEl('form', 'amgAdd'));
   const i = f.appendChild(ctEl('input'));
   i.placeholder = 'ID do jogador (6 números)';
@@ -32486,7 +33263,7 @@ function admRender() {
   nm.textContent = a.nome;
   verMark(nm, a.vf > 0);
   tx.appendChild(ctEl('small')).textContent =
-    '@' + a.usuario + ' · ID ' + fmtId(a.uid) + (a.on ? ' · 🟢 online' : '') + (a.banido ? ' · ⛔ BANIDO' : '') + (a.acesso && a.acesso.length ? ' · 🔑 ' + a.acesso.join(', ') : '') + (a.sus ? ' · ⚠️ anti-trapaça cortou ' + a.sus + 'x' : '');
+    '@' + a.usuario + ' · ID ' + fmtId(a.uid) + (a.on ? ' · 🟢 online' : '') + (a.banido ? ' · ⛔ BANIDO' : '') + (a.acesso && a.acesso.length ? ' · 🔑 ' + a.acesso.join(', ') : '') + (a.sus ? ' · ⚠️ anti-trapaça cortou ' + a.sus + 'x' : '') + ' · 💎 ' + (a.diamantes | 0);
   const msg = out.appendChild(ctEl('input', 'admMsg'));
   msg.placeholder = 'Mensagem junto (opcional)';
   msg.maxLength = 200;
@@ -32514,6 +33291,16 @@ function admRender() {
   mb.onclick = () => {
     mb.disabled = true;
     chama(mb, { acao: 'moedas', n: +mq.value, msg: msg.value }, mq.value + ' moedas enviadas');
+  };
+  // diamantes (devolver uma compra, premiar ou corrigir: número negativo tira)
+  const dr = G.appendChild(ctEl('div', 'admLine'));
+  const dq = dr.appendChild(ctEl('input'));
+  dq.type = 'number';
+  dq.value = 100;
+  const db = dr.appendChild(ctEl('button', 'ctBtn', '💎 Dar/tirar diamantes'));
+  db.onclick = () => {
+    db.disabled = true;
+    chama(db, { acao: 'diamantes', n: +dq.value }, dq.value + ' diamantes');
   };
   // item
   const ir = G.appendChild(ctEl('div', 'admLine'));
@@ -34052,6 +34839,317 @@ function obsFim(txt) {
   toast('🏁 ' + (txt || 'A partida acabou!'));
   setTimeout(obsSai, 2500);
   return true;
+}
+/* ======================================================================
+   LOJA DE DIAMANTES 💎 — Pix e cartão pelo Mercado Pago (no servidor)
+   Diamantes compram só itens escolhidos. Nada aleatório com dinheiro:
+   o Royale continua só com moedas ganhas jogando.
+   ====================================================================== */
+const LJ = { info: null, tab: 'comprar', poll: 0, ped: null };
+const brl = (v) => 'R$ ' + Number(v).toFixed(2).replace('.', ',');
+function dmSaldo() {
+  return CONTA.d ? CONTA.d.diamantes | 0 : 0;
+}
+function dmPill() {
+  const n = document.getElementById('ffDmN');
+  if (n) n.textContent = dmSaldo().toLocaleString('pt-BR');
+}
+// itens comprados com diamante nunca se perdem: o servidor guarda e o jogo junta no perfil
+function dmJuntaItens(d) {
+  if (!d || !Array.isArray(d.itensPagos)) return;
+  let mudou = false;
+  for (const k of d.itensPagos) {
+    const [cat, id] = String(k).split(':');
+    if (cat === 'ch') {
+      PROF.chars = PROF.chars || [];
+      if (!PROF.chars.includes(id)) PROF.chars.push(id), (mudou = true);
+    } else {
+      PROF.owned = PROF.owned || [];
+      if (!PROF.owned.includes(id)) PROF.owned.push(id), (mudou = true);
+    }
+  }
+  if (mudou)
+    try {
+      localStorage.setItem('br3d_profile', JSON.stringify(PROF));
+    } catch (e) {}
+}
+async function lojaAbre(tab) {
+  if (tab) LJ.tab = tab;
+  const box = socAbre('dmP', 'loja');
+  box.appendChild(ctEl('p', 'ctInfo', '⏳ Abrindo a loja...'));
+  if (contaPode())
+    try {
+      LJ.info = await contaApi('loja', {});
+      if (CONTA.d) CONTA.d.diamantes = LJ.info.diamantes;
+      dmPill();
+    } catch (e) {
+      LJ.err = e.message;
+    }
+  lojaRender();
+}
+function lojaRender() {
+  const P = document.getElementById('dmP');
+  if (!P || !P.classList.contains('open')) return;
+  P.innerHTML = '';
+  const box = P.appendChild(ctEl('div', 'ctBox loja'));
+  box.appendChild(ctEl('button', 'ctX', '✕')).onclick = () => P.classList.remove('open');
+  const top = box.appendChild(ctEl('div', 'amgTop'));
+  top.appendChild(ctEl('b', '', '💎 DIAMANTES'));
+  if (CONTA.d) top.appendChild(ctEl('span', 'ljSaldo')).textContent = '💎 ' + dmSaldo().toLocaleString('pt-BR');
+  if (!contaPode()) return box.appendChild(ctEl('p', 'ctInfo', '🛒 A loja funciona no <b>site do WorldBullet</b> (servidor).'));
+  if (!CONTA.tk) {
+    box.appendChild(ctEl('p', 'ctCall', 'Para comprar diamantes você precisa de uma conta — é nela que eles ficam guardados.'));
+    const r = box.appendChild(ctEl('div', 'ctRow c'));
+    r.appendChild(ctEl('button', 'ctBtn y', '☁️ Criar conta')).onclick = () => contaAbre('criar');
+    r.appendChild(ctEl('button', 'ctBtn', 'Entrar')).onclick = () => contaAbre('entrar');
+    return;
+  }
+  if (!LJ.info) return box.appendChild(ctEl('p', 'ctErr')).textContent = LJ.err || 'Não deu para abrir a loja.';
+  const tabs = box.appendChild(ctEl('div', 'ctTabs'));
+  [
+    ['comprar', '💎 COMPRAR'],
+    ['usar', '🛍️ USAR DIAMANTES'],
+    ['compras', '🧾 MINHAS COMPRAS'],
+  ].forEach(([k, n]) => {
+    const b = tabs.appendChild(ctEl('button', LJ.tab === k ? 'on' : ''));
+    b.textContent = n;
+    b.onclick = () => {
+      LJ.tab = k;
+      lojaRender();
+    };
+  });
+  const L = box.appendChild(ctEl('div', 'ljL'));
+  if (LJ.tab === 'comprar') {
+    if (!LJ.info.ligada) L.appendChild(ctEl('p', 'ctInfo', '🔒 A loja ainda não foi aberta. Volte em breve!'));
+    const G = L.appendChild(ctEl('div', 'ljPacs'));
+    LJ.info.pacotes.forEach((p, i) => {
+      const c = G.appendChild(ctEl('button', 'ljPac'));
+      c.disabled = !LJ.info.ligada;
+      if (p.bonus) c.appendChild(ctEl('span', 'ljBonus')).textContent = '+' + p.bonus + ' bônus';
+      c.appendChild(ctEl('span', 'ljGem')).textContent = ['💎', '💎💎', '💎💎💎', '💰', '👑'][i] || '💎';
+      c.appendChild(ctEl('b')).textContent = p.total.toLocaleString('pt-BR');
+      c.appendChild(ctEl('small')).textContent = 'diamantes';
+      c.appendChild(ctEl('span', 'ljPreco')).textContent = brl(p.preco);
+      c.onclick = () => lojaEscolhe(p);
+    });
+    L.appendChild(ctEl('p', 'ctNote', '🔒 Pagamento seguro pelo <b>Mercado Pago</b> (Pix ou cartão). Os diamantes caem na hora que o pagamento for aprovado. Diamante compra só itens que você escolhe — não tem roleta paga com dinheiro.'));
+  } else if (LJ.tab === 'usar') {
+    const tem = (k) => {
+      const [c, id] = k.split(':');
+      return LJ.info.itensPagos.includes(k) || (c === 'ch' ? chOwned(id) : (PROF.owned || []).includes(id));
+    };
+    const grupos = [
+      ['ch', '🧍 Personagens'],
+      ['o', '👕 Roupas'],
+      ['g', '🔫 Skins de arma'],
+      ['p', '🪂 Paraquedas'],
+    ];
+    grupos.forEach(([cat, tit]) => {
+      const ks = Object.keys(LJ.info.itens).filter((k) => k.startsWith(cat + ':'));
+      if (!ks.length) return;
+      L.appendChild(ctEl('div', 'amgSub', tit));
+      const G = L.appendChild(ctEl('div', 'ljItens'));
+      ks.sort((a, b) => LJ.info.itens[a][0] - LJ.info.itens[b][0]).forEach((k) => {
+        const [preco, nome] = LJ.info.itens[k],
+          ja = tem(k),
+          c = G.appendChild(ctEl('div', 'ljIt' + (ja ? ' ja' : '')));
+        c.appendChild(ctEl('b')).textContent = nome;
+        const bt = c.appendChild(ctEl('button', 'ctBtn sm ' + (ja ? '' : 'y')));
+        bt.textContent = ja ? '✔ Seu' : '💎 ' + preco;
+        bt.disabled = ja;
+        bt.onclick = () => lojaGasta(k, preco, nome, bt);
+      });
+    });
+  } else {
+    L.appendChild(ctEl('p', 'ctInfo', '⏳ Carregando...'));
+    contaApi('compras', {}).then(
+      (j) => {
+        L.innerHTML = '';
+        if (!j.compras.length) L.appendChild(ctEl('p', 'ctInfo', 'Você ainda não comprou diamantes.'));
+        j.compras.forEach((q) => {
+          const r = L.appendChild(ctEl('div', 'amgRow on'));
+          const t = r.appendChild(ctEl('div', 'amgTx'));
+          t.appendChild(ctEl('b')).textContent = '💎 ' + q.diamantes + ' diamantes · ' + brl(q.valor);
+          t.appendChild(ctEl('small')).textContent = 'Pedido ' + q.id + ' · ' + new Date(q.pago).toLocaleString('pt-BR');
+        });
+        L.appendChild(ctEl('p', 'ctNote', 'Problema com uma compra? Fale com o Criador mandando o número do pedido.'));
+      },
+      (e) => ((L.innerHTML = ''), (L.appendChild(ctEl('p', 'ctErr')).textContent = e.message)),
+    );
+  }
+}
+// confirma a idade antes da primeira compra
+function lojaEscolhe(p) {
+  if (!LJ.info.idade) return lojaIdade(() => lojaEscolhe(p));
+  const box = socAbre('dmPay');
+  box.appendChild(ctEl('div', 'ctLogo', '💎 ' + p.total.toLocaleString('pt-BR') + ' DIAMANTES'));
+  box.appendChild(ctEl('p', 'ctCall')).textContent = 'Total: ' + brl(p.preco) + ' · como você quer pagar?';
+  const r = box.appendChild(ctEl('div', 'ljMet'));
+  const pix = r.appendChild(ctEl('button', 'ljMb', '<b>⚡ Pix</b><small>QR Code ou copia e cola · cai na hora</small>'));
+  const ca = r.appendChild(ctEl('button', 'ljMb', '<b>💳 Cartão</b><small>Abre o Mercado Pago</small>'));
+  const er = box.appendChild(ctEl('p', 'ctErr'));
+  const vai = async (metodo, b) => {
+    b.disabled = true;
+    er.textContent = '';
+    try {
+      const j = await contaApi('comprar', { pacote: p.id, metodo });
+      LJ.ped = j;
+      if (metodo === 'cartao' && j.link) window.open(j.link, '_blank');
+      lojaEsperando();
+    } catch (e) {
+      er.textContent = e.message;
+      b.disabled = false;
+    }
+  };
+  pix.onclick = () => vai('pix', pix);
+  ca.onclick = () => vai('cartao', ca);
+}
+function lojaIdade(depois) {
+  const box = socAbre('dmIdade');
+  box.appendChild(ctEl('div', 'ctLogo', '🔞 ANTES DE COMPRAR'));
+  box.appendChild(ctEl('p', 'ctCall', 'Compras usam dinheiro de verdade. Quem tem menos de 18 anos só pode comprar com autorização do pai, mãe ou responsável.'));
+  const a = box.appendChild(ctEl('button', 'ctOk', 'TENHO 18 ANOS OU MAIS'));
+  const sub = box.appendChild(ctEl('div', 'ljResp'));
+  const lb = sub.appendChild(ctEl('label'));
+  const ck = lb.appendChild(ctEl('input'));
+  ck.type = 'checkbox';
+  lb.appendChild(ctEl('span', '', ' Sou menor de 18, e <b>meu pai, mãe ou responsável</b> está aqui e autoriza esta conta a fazer compras.'));
+  const b = sub.appendChild(ctEl('button', 'ctBtn', 'O RESPONSÁVEL AUTORIZA'));
+  const er = box.appendChild(ctEl('p', 'ctErr'));
+  const manda = async (tipo, bt) => {
+    bt.disabled = true;
+    try {
+      await contaApi('idade', { tipo });
+      LJ.info.idade = tipo;
+      socFecha('dmIdade');
+      depois();
+    } catch (e) {
+      er.textContent = e.message;
+      bt.disabled = false;
+    }
+  };
+  a.onclick = () => manda('18', a);
+  b.onclick = () => (ck.checked ? manda('resp', b) : (er.textContent = 'O responsável precisa marcar a caixinha.'));
+  box.appendChild(ctEl('button', 'ctLater', 'Não quero comprar agora')).onclick = () => socFecha('dmIdade');
+}
+// tela de pagamento: QR do Pix (ou aviso do cartão) e espera a confirmação
+function lojaEsperando() {
+  const j = LJ.ped,
+    box = socAbre('dmPay', 'ljPay');
+  box.appendChild(ctEl('div', 'ctLogo', j.metodo === 'pix' ? '⚡ PAGUE COM PIX' : '💳 PAGUE NO MERCADO PAGO'));
+  box.appendChild(ctEl('p', 'ctCall')).textContent = '💎 ' + j.diamantes + ' diamantes · ' + brl(j.valor);
+  if (j.metodo === 'pix') {
+    const G = box.appendChild(ctEl('div', 'ljPixG')),
+      esq = G.appendChild(ctEl('div')),
+      dir = G.appendChild(ctEl('div'));
+    if (j.qr64) {
+      const im = esq.appendChild(ctEl('img', 'ljQr'));
+      im.src = 'data:image/png;base64,' + j.qr64;
+      im.alt = 'QR Code Pix';
+    }
+    dir.appendChild(ctEl('p', 'ctNote', 'Abra o app do seu banco (Nubank, Santander, PicPay...) → Pix → <b>Ler QR Code</b> ou <b>Pix Copia e Cola</b>. Vence em 30 minutos.'));
+    if (j.qr) {
+      const t = dir.appendChild(ctEl('textarea', 'ljCod'));
+      t.readOnly = true;
+      t.value = j.qr;
+      const c = dir.appendChild(ctEl('button', 'ctBtn y', '📋 Copiar código Pix'));
+      c.onclick = () => {
+        try {
+          navigator.clipboard.writeText(j.qr).then(() => toast('📋 Código Pix copiado! Cole no app do banco.'));
+        } catch (e) {
+          t.select();
+        }
+      };
+    }
+  } else {
+    box.appendChild(ctEl('p', 'ctNote', 'Abrimos o Mercado Pago numa aba nova. Termine o pagamento lá e volte aqui.'));
+    if (j.link) box.appendChild(ctEl('button', 'ctBtn y', '↗ Abrir o Mercado Pago de novo')).onclick = () => window.open(j.link, '_blank');
+  }
+  const st = (box.querySelector('.ljPixG > div:last-child') || box).appendChild(ctEl('p', 'ljSt', '⏳ Esperando o pagamento...'));
+  clearInterval(LJ.poll);
+  const t0 = Date.now();
+  LJ.poll = setInterval(async () => {
+    const P = document.getElementById('dmPay');
+    if (!P || !P.classList.contains('open') || Date.now() - t0 > 35 * 60e3) return clearInterval(LJ.poll);
+    try {
+      const s = await contaApi('pedido', { pedido: j.pedido });
+      if (s.status === 'pago') {
+        clearInterval(LJ.poll);
+        if (CONTA.d) CONTA.d.diamantes = s.diamantes;
+        dmPill();
+        lojaSucesso(j.diamantes);
+      } else if (j.expira && Date.now() > j.expira) st.textContent = '⌛ Esse Pix venceu. Feche e gere outro.';
+    } catch (e) {}
+  }, 4000);
+}
+function lojaSucesso(n) {
+  const box = socAbre('dmPay', 'ljPay gift');
+  box.appendChild(ctEl('div', 'giftT', '💎 PAGAMENTO APROVADO!'));
+  box.appendChild(ctEl('p', 'ctCall')).textContent = '+' + n + ' diamantes na sua conta. Valeu demais pelo apoio! 🙏';
+  box.appendChild(ctEl('button', 'ctOk', 'USAR MEUS DIAMANTES')).onclick = () => {
+    socFecha('dmPay');
+    lojaAbre('usar');
+  };
+  sfx('coin', 0.9);
+}
+async function lojaGasta(k, preco, nome, bt) {
+  if (dmSaldo() < preco) {
+    toast('💎 Faltam ' + (preco - dmSaldo()) + ' diamantes');
+    LJ.tab = 'comprar';
+    return lojaRender();
+  }
+  if (!confirm('Comprar ' + nome + ' por ' + preco + ' diamantes?')) return;
+  bt.disabled = true;
+  try {
+    const j = await contaApi('gastar', { cat: k.split(':')[0], id: k.split(':')[1] });
+    CONTA.d.diamantes = j.diamantes;
+    LJ.info.diamantes = j.diamantes;
+    LJ.info.itensPagos = (LJ.info.itensPagos || []).concat(k);
+    CONTA.d.itensPagos = LJ.info.itensPagos;
+    dmJuntaItens(CONTA.d);
+    saveProf();
+    dmPill();
+    toast('🛍️ ' + nome + ' é seu! Equipe no Cofre ou em Personagens.');
+    sfx('coin', 0.7);
+    lojaRender();
+    try {
+      refreshLobbyHUD();
+    } catch (e) {}
+  } catch (e) {
+    toast('😕 ' + e.message);
+    bt.disabled = false;
+  }
+}
+// voltou do Mercado Pago (cartão)
+setTimeout(() => {
+  try {
+    const q = new URLSearchParams(location.search).get('compra');
+    if (!q) return;
+    history.replaceState(null, '', location.pathname);
+    toast(q === 'ok' ? '💳 Pagamento aprovado! Seus diamantes já estão chegando.' : q === 'espera' ? '⏳ Pagamento em análise. Os diamantes caem quando aprovar.' : '😕 O pagamento não foi concluído.');
+    setTimeout(() => contaAtualiza(), 2500);
+  } catch (e) {}
+}, 4000);
+// Painel do Criador: vendas
+async function admVendas() {
+  const box = socAbre('admVdP', 'adm');
+  box.appendChild(ctEl('div', 'amgTop', '<b>💰 VENDAS</b>'));
+  const L = box.appendChild(ctEl('div', 'rkList'));
+  L.appendChild(ctEl('p', 'ctInfo', '⏳ Carregando...'));
+  try {
+    const j = await contaApi('admin', { acao: 'vendas' });
+    L.innerHTML = '';
+    L.appendChild(ctEl('p', 'ctCall')).textContent = (j.loja ? '🟢 Loja aberta' : '🔒 Loja fechada (falta MP_TOKEN no Render)') + ' · últimas ' + j.vendas.length + ' vendas: ' + brl(j.total);
+    j.vendas.forEach((v) => {
+      const r = L.appendChild(ctEl('div', 'amgRow on'));
+      const t = r.appendChild(ctEl('div', 'amgTx'));
+      t.appendChild(ctEl('b')).textContent = brl(v.valor) + ' · 💎 ' + v.diamantes + ' · ' + v.nome + ' (ID ' + fmtId(v.uid) + ')';
+      t.appendChild(ctEl('small')).textContent = (v.metodo === 'cartao' ? '💳 ' : '⚡ ') + 'Pedido ' + v.id + ' · ' + new Date(v.pago).toLocaleString('pt-BR');
+    });
+  } catch (e) {
+    L.innerHTML = '';
+    L.appendChild(ctEl('p', 'ctErr')).textContent = e.message;
+  }
 }
 /* ---------- Conexão e salas ---------- */
 async function netSetup() {
