@@ -8597,7 +8597,7 @@
     <div class="spLoad"><div class="spTip" id="spTip">Preparando a ilha...</div><div class="spBar"><i id="spFill"></i></div><div class="spPct"><span id="spStep">Carregando</span><b id="spPct">0%</b></div></div>
     <div class="spTap" id="spTap"><b>TOQUE PARA JOGAR</b><div class="spWho" id="spWho"></div></div>
     <div class="spGate" id="spGate"></div>
-    <div class="spVer">v119 · Feito no Amapá 🇧🇷</div>
+    <div class="spVer">v120 · Feito no Amapá 🇧🇷</div>
   </div>
 </div>
 <!-- ===== GIRE O CELULAR: o jogo é só deitado ===== -->
@@ -28100,7 +28100,7 @@ function isTeam() {
   return ((PROF.mode === 'tdm' || PROF.mode === 'tdmrank') && !NET.mid) || !!(NET.mid && NET.cs);
 }
 function isTeamRank() {
-  return PROF.mode === 'tdmrank' && !NET.mid;
+  return (PROF.mode === 'tdmrank' && !NET.mid) || (!!NET.mid && NET.rk === 2);
 }
 // roupas dos times: aliados de azul, inimigos de vermelho
 function tmLook(t) {
@@ -28836,7 +28836,7 @@ function trGuns() {
 }
 
 function isRank() {
-  return PROF.mode === 'rank' && !NET.mid;
+  return (PROF.mode === 'rank' && !NET.mid) || (!!NET.mid && NET.rk === 1);
 }
 
 function rankInfo(rp) {
@@ -29465,7 +29465,7 @@ function refreshLobbyHUD() {
   pb.classList.toggle('rank', isRank() || isTeamRank());
   if (NET.code) {
     const mine = netLobbyHost() === NET.me;
-    pb.textContent = mine ? '👥 JOGAR NA SALA' : '⏳ ESPERANDO O DONO';
+    pb.textContent = !mine ? '⏳ ESPERANDO O DONO' : NET.sala ? '👥 JOGAR NA SALA' : PROF.mode === 'rank' ? '🏆 RANQUEADA EM GRUPO' : PROF.mode === 'tdmrank' ? '🏆 4v4 RANQUEADA EM GRUPO' : '👥 JOGAR EM GRUPO';
     pb.classList.toggle('wait', !mine);
   } else pb.classList.remove('wait');
   if (isTeam()) {
@@ -32003,13 +32003,6 @@ function detailAll(obj) {
     const M = o.material;
     if (!o.isMesh || !M || Array.isArray(M) || !M.isMeshStandardMaterial || M.map || M.userData.det) return;
     M.userData.kind = kindOf(M);
-    if (M.userData.kind === KIND.METAL && fx2Env()) {
-      // metal de arma com reflexo do céu (fica com cara de aço de verdade)
-      M.envMap = FX2.env;
-      M.envMapIntensity = 0.85;
-      M.metalness = Math.max(M.metalness, 0.6);
-      M.roughness = Math.min(Math.max(M.roughness, 0.28), 0.5);
-    }
     addDetail(M, M.userData.kind, true);
   });
 }
@@ -33132,6 +33125,7 @@ async function amgConvida(a, b) {
   try {
     if (MM) mmCancel(true);
     if (!NET.code) {
+      NET.sala = null; // grupo do lobby (não é sala personalizada): joga o modo que o dono escolher
       await netJoin(netNewCode(), true); // cria uma sala para vocês
       await new Promise((r) => setTimeout(r, 400));
     }
@@ -35435,17 +35429,39 @@ function netPlayBtn() {
   if (netLobbyHost() === NET.me) netStart();
   else openNet();
 }
+// grupo chamado pelo lobby: todo mundo no mesmo time, no modo que o dono escolheu (BR, ranqueada, 4v4...)
+function partyAplicaInicio() {
+  const ids = [NET.me].concat(Object.keys(NET.pres || {}).filter((k) => k !== NET.me && NET.pres[k] && NET.pres[k].s === NET.code && NET.pres[k].st !== 'spec'));
+  NET.bots = 1;
+  NET.rk = PROF.mode === 'rank' ? 1 : PROF.mode === 'tdmrank' ? 2 : 0;
+  if (PROF.mode === 'tdm' || PROF.mode === 'tdmrank') {
+    const teams = {};
+    ids.forEach((id) => (teams[id] = 0));
+    NET.cs = { n: 4, bots: 1, teams, g: 0 };
+    NET.sq = 0;
+  } else {
+    NET.cs = null;
+    NET.sq = (PROF.team || 1) > 1 ? PROF.team : ids.length > 2 ? 4 : 2;
+  }
+  const id = mmPickMap();
+  if (MAPS[id] && id !== MAP.id) {
+    PROF.map = id;
+    switchMap(id);
+  }
+}
 function netStart() {
   if (!NET.code || !inLobby || !NET.me) return;
   if (netLobbyHost() !== NET.me) return toast('⏳ Só o dono da sala pode começar');
   NET.vistos = {};
   NET.mid = 'm' + Math.random().toString(36).slice(2, 9);
   NET.seed = Math.floor(Math.random() * 1e9);
+  NET.rk = 0;
   if (NET.mmRoom) {
     NET.sq = (PROF.team || 1) > 1 ? PROF.team : 0; // matchmaking: modo do dono
     NET.cs = null;
     NET.bots = 1;
-  } else salaAplicaInicio(); // sala personalizada: modo, times, bots e mapa da sala
+  } else if (!NET.sala) partyAplicaInicio(); // grupo do lobby: joga o modo escolhido pelo dono (ranqueada vale)
+  else salaAplicaInicio(); // sala personalizada: modo, times, bots e mapa da sala
   NET.host = true;
   closeNet();
   startMatch();
@@ -36216,7 +36232,7 @@ function netBuild() {
   NET.rv = (NET.rv || []).filter((r) => now - r[2] < 3000);
   o.rv = NET.rv.map((r) => r.slice(0, 2));
   if (NET.host) {
-    o.M = [NET.mid, NET.seed, 1, nr1(matchT), NET.sq || 0, MAP_IDS.indexOf(MAP.id), NET.cs ? NET.cs.n : 0, NET.bots === 0 ? 0 : 1, salaMEnc()];
+    o.M = [NET.mid, NET.seed, 1, nr1(matchT), NET.sq || 0, MAP_IDS.indexOf(MAP.id), NET.cs ? NET.cs.n : 0, NET.bots === 0 ? 0 : 1, salaMEnc(), NET.rk || 0];
     if (NET.cs && TM) o.T = csBuildT();
     o.Z = [zone.preT, zone.on ? 1 : 0, zone.cx, zone.cz, zone.r, zone.fx, zone.fz, zone.fr, zone.tx, zone.tz, zone.tr, zone.ph, zone.state === 'shrink' ? 1 : zone.state === 'final' ? 2 : 0, zone.t, zone.dps || 0].map(nr1);
     o.B = bots
@@ -36325,6 +36341,7 @@ function netTick() {
       NET.seed = netNum(M[1]) | 0;
       NET.sq = M[4] === 2 ? 2 : M[4] ? 4 : 0;
       salaDeM(M);
+      NET.rk = M[9] | 0; // 1 = ranqueada BR em grupo, 2 = 4v4 ranqueada em grupo
       NET.host = false;
       {
         // a partida da sala é no mapa do dono: troca antes de entrar
