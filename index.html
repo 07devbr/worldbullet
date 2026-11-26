@@ -7725,6 +7725,186 @@
     color: #ffc928;
   }
 
+  /* v113: denúncias, eventos, guildas, assistir */
+  .denMot {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 6px 0 8px;
+  }
+  .denDet {
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 56px;
+    padding: 8px 10px;
+    border: 1px solid #ffffff30;
+    background: #0a0716;
+    color: #fff;
+    font: 14px system-ui;
+    resize: vertical;
+  }
+  #evBar {
+    position: fixed;
+    top: 52px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 40;
+    padding: 5px 16px;
+    background: linear-gradient(90deg, #ff6a00, #ffb300, #ff6a00);
+    background-size: 200% 100%;
+    animation: evBrilho 3s linear infinite;
+    color: #2a1200;
+    font: 900 italic 12.5px var(--ffF, system-ui);
+    letter-spacing: 0.04em;
+    clip-path: polygon(4% 0, 100% 0, 96% 100%, 0 100%);
+    cursor: pointer;
+    white-space: nowrap;
+    box-shadow: 0 0 18px #ff8a1f88;
+  }
+  body:not(.inlobby) #evBar,
+  body.ffPanel #evBar {
+    display: none;
+  }
+  @keyframes evBrilho {
+    to {
+      background-position: -200% 0;
+    }
+  }
+  .ctBox.gd {
+    width: min(640px, 96vw);
+  }
+  .gdTop {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0 26px 10px 0;
+  }
+  .gdEm {
+    flex: 0 0 auto;
+    font-size: 26px;
+  }
+  .gdEm.big {
+    font-size: 40px;
+    filter: drop-shadow(0 0 10px #ffc92888);
+  }
+  .gdNome {
+    font: 900 italic 18px var(--ffF, system-ui) !important;
+    color: #ffc928;
+  }
+  .gdEms {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .gdEms .ffChip {
+    font-size: 18px;
+    padding: 4px 8px;
+  }
+  .gdSel {
+    padding: 5px;
+    background: #0a0716;
+    color: #fff;
+    border: 1px solid #ffffff30;
+  }
+  .gdChat {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    max-height: 44vh !important;
+  }
+  .gdMsg {
+    align-self: flex-start;
+    max-width: 82%;
+    padding: 6px 10px;
+    background: #ffffff12;
+    border-radius: 10px 10px 10px 2px;
+    font-size: 13.5px;
+  }
+  .gdMsg.eu {
+    align-self: flex-end;
+    background: #ffc92833;
+    border-radius: 10px 10px 2px 10px;
+  }
+  .gdMsg.sis {
+    align-self: center;
+    background: none;
+    color: #fff9;
+    font-size: 12px;
+    font-style: italic;
+  }
+  .gdMsg b {
+    display: block;
+    font-size: 12px;
+    color: #ffc928;
+  }
+  .gdMsg small {
+    display: block;
+    text-align: right;
+    font-size: 10px;
+    color: #fff7;
+  }
+  .gdIn {
+    margin-top: 8px;
+  }
+  #obsSai {
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    z-index: 60;
+    display: none;
+    padding: 9px 14px;
+    border: none;
+    background: #b3261e;
+    color: #fff;
+    font: 800 13px var(--ffF, system-ui);
+    border-radius: 3px;
+  }
+  body.obs #wpnBar,
+  body.obs #invBtn,
+  body.obs #emoBtn,
+  body.obs .mobileCtl,
+  body.obs #endPanel {
+    display: none !important;
+  }
+  #endDen {
+    background: #6b1d1d !important;
+  }
+  /* barra de baixo com 5 botões (Guilda): mais compacta para não bater no modo de jogo */
+  #lobby .ffBar button.ffB {
+    padding: 0 9px !important;
+    gap: 4px !important;
+  }
+  #lobby .ffBar button.ffB .ic {
+    font-size: 15px !important;
+  }
+  #lobby .ffBar button.ffB b {
+    font-size: 12px !important;
+    letter-spacing: 0 !important;
+  }
+  @media (max-width: 960px) {
+    #lobby .ffBar button.ffB {
+      padding: 0 7px !important;
+    }
+    #lobby .ffBar button.ffB b {
+      font-size: 11px !important;
+    }
+  }
+  #lbGuild {
+    position: relative;
+  }
+  @media (max-width: 840px) {
+    /* tela estreita: só os ícones na barra de baixo */
+    #lobby .ffBar button.ffB b {
+      display: none !important;
+    }
+    #lobby .ffBar button.ffB {
+      padding: 0 13px !important;
+    }
+    #lobby .ffBar button.ffB .ic {
+      font-size: 19px !important;
+    }
+  }
+
   /* ===================== SPLASH (abre antes de tudo) ===================== */
   #splash {
     position: fixed;
@@ -8111,7 +8291,7 @@
     <div class="spLoad"><div class="spTip" id="spTip">Preparando a ilha...</div><div class="spBar"><i id="spFill"></i></div><div class="spPct"><span id="spStep">Carregando</span><b id="spPct">0%</b></div></div>
     <div class="spTap" id="spTap"><b>TOQUE PARA JOGAR</b><div class="spWho" id="spWho"></div></div>
     <div class="spGate" id="spGate"></div>
-    <div class="spVer">v112b · Feito no Amapá 🇧🇷</div>
+    <div class="spVer">v113 · Feito no Amapá 🇧🇷</div>
   </div>
 </div>
 <!-- ===== GIRE O CELULAR: o jogo é só deitado ===== -->
@@ -11370,6 +11550,13 @@ function animate() {
   }
   if (vic.on) booyahCam(dt); // vitória: câmera girando no vencedor
   if (ESPERA && !inLobby) espTick(dt);
+  if (NET.obs && NET.obs.on && !inLobby) {
+    // assistindo: continua "fantasma" (o 4v4 revive todo mundo a cada rodada)
+    dead = true;
+    player.visible = false;
+    spec.on = true;
+    obsTick();
+  }
   if (inLobby) {
     ffCam(dt, t);
     player.rotation.y = emoteSt ? player.rotation.y * 0.9 : Math.sin(t * 0.6) * 0.45 - camYaw * 1.5; // no emote: de frente
@@ -16987,7 +17174,7 @@ function seasonCheck() {
 function passGain(xp, why) {
   seasonCheck();
   const lv0 = passLv();
-  STATS.pass.xp = Math.min(PASS_LV * PASS_XP, (STATS.pass.xp || 0) + Math.round(xp));
+  STATS.pass.xp = Math.min(PASS_LV * PASS_XP, (STATS.pass.xp || 0) + Math.round(xp * evMult('xp2x'))); // evento: XP em dobro
   const lv1 = passLv();
   saveStats();
   if (lv1 > lv0) setTimeout(() => toast('🎖️ Passe nível ' + lv1 + '! Pegue a recompensa no Passe'), 900);
@@ -26649,6 +26836,10 @@ function refreshStoreBadges() {
 
 function endMatch() {
   if (!inMatch) return;
+  if (NET.obs) {
+    inMatch = false; // assistindo não conta partida, moedas nem ranque
+    return;
+  }
   inMatch = false;
   if (TR) {
     trStop(); // treino não dá moedas, XP nem missão
@@ -26658,7 +26849,7 @@ function endMatch() {
   STATS.kills += kills;
   STATS.best = Math.max(STATS.best, kills);
   const place = TM ? (TM.score[0] >= TM_WIN ? 1 : 4) : matchPlace(),
-    earned = matchCoins(place);
+    earned = matchCoins(place) * evMult('moedas2x'); // evento: moedas em dobro
   STATS.coins += earned;
   const done = progressMissions(
     Object.assign({}, MS, { matches: 1, top5: place <= 5 ? 1 : 0, wins: place === 1 && !dead ? 1 : 0 }),
@@ -26708,6 +26899,8 @@ function finishSpectated() {
 }
 
 function showEnd(title, sub, rankTxt, win) {
+  if (NET.obs && NET.obs.on) return obsFim(title); // só estava assistindo
+  setTimeout(socFimPartida, 50); // botão de denunciar quem estava na partida
   document.getElementById('endTitle').textContent = title;
   document.getElementById('endSub').textContent = sub;
   const mm = Math.floor(matchT / 60),
@@ -26827,7 +27020,7 @@ function specInfoTick(dt) {
   document.getElementById('siK').textContent = T.kc ? '🎯 ' + T.kc + (T.kc > 1 ? ' abates' : ' abate') : '';
 }
 function pickSpec(dir) {
-  const l = TM || (SQ && bots.some((b) => b.team === 0)) ? bots.filter((b) => b.team === 0) : bots;
+  const l = NET.obs ? bots.filter((b) => b.net).concat(bots.filter((b) => !b.net)) : TM || (SQ && bots.some((b) => b.team === 0)) ? bots.filter((b) => b.team === 0) : bots;
   if (!l.length) {
     spec.target = null;
     return;
@@ -28601,6 +28794,7 @@ const FF_BAR = [
   ['armBtn', '🔫', 'Arsenal'],
   ['lbChar', '🧍', 'Personagens'],
   ['lbEmote', '😀', 'Emotes'],
+  ['lbGuild', '🛡️', 'Guilda'],
 ];
 const FF_BANS = [
   { k: 'maraca', t: 'NOVO MAPA', s: 'Ilha de Maracá', go: () => openModes() },
@@ -28668,7 +28862,12 @@ function ffBuildDom() {
   const bar = el('div', 'ffBar');
   L.appendChild(bar);
   FF_BAR.forEach(([id, ic, n]) => {
-    const b = document.getElementById(id);
+    let b = document.getElementById(id);
+    if (!b && id === 'lbGuild') {
+      b = el('button', '', '<span class="ic"></span><b></b>');
+      b.id = id;
+      b.onclick = () => gdAbre();
+    }
     if (!b) return;
     b.classList.add('ffB');
     if (id === 'lbEmote') b.innerHTML = '<span class="ic">' + ic + '</span><b>' + n + '</b>';
@@ -31349,7 +31548,7 @@ function wbSalaServidor(url) {
         } catch (e) {
           return;
         }
-        if (m.t === 'ct' || m.t === 'conv' || m.t === 'auth') {
+        if (m.t === 'ct' || m.t === 'conv' || m.t === 'auth' || m.t === 'gch' || m.t === 'ev') {
           if (typeof contaMsg === 'function') contaMsg(m);
           return;
         }
@@ -31472,6 +31671,7 @@ function contaInit(de) {
     contaAuthWs(); // a conexão do jogo chegou depois
     return CONTA.iniP;
   }
+  setTimeout(evBusca, 1500); // eventos rolando
   CONTA.iniP = (async () => {
     if (!CONTA.tk) return;
     try {
@@ -31524,10 +31724,12 @@ function contaTemProgresso() {
   return (STATS.matches || 0) > 0 || (STATS.coins || 0) > 0 || (PROF.owned || []).length > 0;
 }
 async function contaEntrar(usuario, senha) {
-  const j = await contaApi('entrar', { usuario, senha });
+  contaPosLogin(await contaApi('entrar', { usuario, senha }));
+}
+// entrou (com senha ou pelo código do e-mail): o progresso da conta vem para este aparelho
+function contaPosLogin(j) {
   CONTA.tk = j.token;
   contaGuarda();
-  // o progresso da conta vem para este aparelho (e o jogo recomeça com ele)
   const c = j.conta,
     P = Object.assign({}, c.perfil && Object.keys(c.perfil).length ? c.perfil : PROF, { uid: c.uid });
   try {
@@ -31578,7 +31780,22 @@ async function contaAtualiza() {
 }
 // mensagens que o servidor manda pela conexão do jogo
 function contaMsg(m) {
+  if (m.t === 'ev') return evBusca(); // o Criador ligou/desligou um evento
+  if (m.t === 'gch') {
+    // chat ou mudança na guilda
+    const P = document.getElementById('gdP');
+    if (P && P.classList.contains('open')) gdCarrega();
+    else if (m.msg && m.msg.u !== PROF.uid) {
+      GD.novo++;
+      gdBadge();
+      toast('🛡️ ' + m.msg.n + ': ' + m.msg.m);
+    }
+    return;
+  }
   if (m.t === 'ct') {
+    if (m.gped) toast('🛡️ ' + m.gped.nome + ' pediu pra entrar na sua guilda');
+    if (m.gok) toast('🛡️ Você entrou na guilda ' + m.gok.nome + '!');
+    if (m.gfora) toast('🛡️ Você saiu da guilda ' + m.gfora.nome);
     if (m.pedido) {
       toast('👋 ' + m.pedido.nome + ' quer ser seu amigo!');
       sfx('announce', 0.4);
@@ -31686,6 +31903,7 @@ function contaAbre(aba, convite) {
       ok.textContent = cri ? 'CRIAR CONTA' : 'ENTRAR';
     }
   };
+  if (!cri) box.appendChild(ctEl('button', 'ctLater', '🔐 Esqueci a senha')).onclick = () => esqueciAbre(u.value.trim().toLowerCase());
   if (porta) box.appendChild(ctEl('button', 'ctLater', 'Jogar como convidado (sem salvar na nuvem)')).onclick = () => splashSai();
   else if (convite) box.appendChild(ctEl('button', 'ctLater', 'Agora não, jogar como convidado')).onclick = () => P.classList.remove('open');
   P.classList.add('open');
@@ -31726,6 +31944,18 @@ function contaRender() {
   if (d.acesso && d.acesso.length) {
     const a = B.appendChild(ctEl('div', 'ctTags'));
     d.acesso.forEach((t) => (a.appendChild(ctEl('span', '', '')).textContent = '🔑 Acesso antecipado: ' + t));
+  }
+  const em = B.appendChild(ctEl('div', 'ctMini'));
+  const ea = em.appendChild(ctEl('a'));
+  ea.textContent = d.email ? '📧 ' + d.email + ' · trocar' : '📧 Adicionar e-mail (pra recuperar a senha)';
+  ea.onclick = emailAbre;
+  if (d.guilda) {
+    const ga = em.appendChild(ctEl('a'));
+    ga.textContent = d.guilda.emblema + ' ' + d.guilda.nome + ' [' + d.guilda.tag + ']';
+    ga.onclick = () => {
+      document.getElementById('profile').style.display = 'none';
+      gdAbre();
+    };
   }
   const r = B.appendChild(ctEl('div', 'ctRow'));
   if (d.caixa && d.caixa.length) r.appendChild(ctEl('button', 'ctBtn y', '🎁 Presentes (' + d.caixa.length + ')')).onclick = giftShow;
@@ -31937,6 +32167,10 @@ function amgRender() {
           const b = r.appendChild(ctEl('button', 'ctBtn y sm', 'Convidar'));
           b.onclick = () => amgConvida(a, b);
         }
+        if (a.on && a.st === 'play' && a.sala) {
+          const b = r.appendChild(ctEl('button', 'ctBtn sm', '👁️ Assistir'));
+          b.onclick = () => obsAssistir(a);
+        }
         const x = r.appendChild(ctEl('button', 'ctBtn sm ghost', '✕'));
         x.title = 'Remover amigo';
         x.onclick = () => confirm('Remover ' + a.nome + ' dos amigos?') && acao('remover', a.uid, x);
@@ -31980,6 +32214,11 @@ function amgRender() {
       else {
         const b = r.appendChild(ctEl('button', 'ctBtn y sm', 'Adicionar'));
         b.onclick = () => acao('pedir', a.uid, b);
+      }
+      if (a.uid !== PROF.uid) {
+        const dn = r.appendChild(ctEl('button', 'ctBtn sm ghost', '🚩'));
+        dn.title = 'Denunciar';
+        dn.onclick = () => denAbre(a.uid, a.nome);
       }
     };
     mostra(CONTA.busca && CONTA.busca.j);
@@ -32151,7 +32390,9 @@ function admRender() {
   P.innerHTML = '';
   const box = P.appendChild(ctEl('div', 'ctBox adm'));
   box.appendChild(ctEl('button', 'ctX', '✕')).onclick = () => P.classList.remove('open');
-  box.appendChild(ctEl('div', 'amgTop', '<b>🛠️ PAINEL DO CRIADOR</b>'));
+  const at = box.appendChild(ctEl('div', 'amgTop', '<b>🛠️ PAINEL DO CRIADOR</b>'));
+  at.appendChild(ctEl('button', 'ctBtn sm', '🚩 Denúncias')).onclick = admDenuncias;
+  at.appendChild(ctEl('button', 'ctBtn sm', '🎉 Eventos')).onclick = admEventos;
   const f = box.appendChild(ctEl('form', 'amgAdd'));
   const i = f.appendChild(ctEl('input'));
   i.placeholder = 'ID do jogador (6 números)';
@@ -32350,7 +32591,7 @@ function rkTopRender() {
     row.appendChild(ctEl('span', 'rkPos', i < 3 ? ['🥇', '🥈', '🥉'][i] : '#' + (i + 1)));
     const tx = row.appendChild(ctEl('div', 'amgTx'));
     const nm = tx.appendChild(ctEl('b'));
-    nm.textContent = r.nome + (eu ? ' (você)' : '');
+    nm.textContent = (r.tag ? '[' + r.tag + '] ' : '') + r.nome + (eu ? ' (você)' : '');
     verMark(nm, r.vf > 0);
     if (r.on) nm.appendChild(ctEl('i', 'rkOn', '●')).title = 'online agora';
     tx.appendChild(ctEl('small')).textContent = 'ID ' + fmtId(r.uid) + ' · ' + r.wins + ' vitórias · ' + r.kills + ' abates';
@@ -32360,6 +32601,11 @@ function rkTopRender() {
     pn.appendChild(ctEl('b')).textContent = pt.n;
     pn.appendChild(ctEl('small')).textContent = pt.v;
     pn.querySelector('b').style.color = pt.c;
+    if (CONTA.tk && !eu) {
+      const dn = row.appendChild(ctEl('button', 'ctBtn sm ghost', '🚩'));
+      dn.title = 'Denunciar';
+      dn.onclick = () => denAbre(r.uid, r.nome);
+    }
     if (CONTA.tk && !eu && !amigos.has(r.uid)) {
       const ad = row.appendChild(ctEl('button', 'ctBtn sm ghost', '➕'));
       ad.title = 'Adicionar amigo';
@@ -32870,7 +33116,7 @@ function lobMatesTick(dt) {
   const quer = {};
   if (inLobby && NET.code && !NET.mmRoom && NET.me)
     Object.keys(NET.pres)
-      .filter((id) => NET.pres[id] && NET.pres[id].s === NET.code && NET.pres[id].st !== 'play' && NET.pres[id].st !== 'dead')
+      .filter((id) => NET.pres[id] && NET.pres[id].s === NET.code && NET.pres[id].st !== 'play' && NET.pres[id].st !== 'dead' && NET.pres[id].st !== 'spec')
       .sort()
       .slice(0, 3)
       .forEach((id, i) => (quer[id] = i));
@@ -32940,6 +33186,820 @@ function lobMatesTick(dt) {
     lobMatesTick.le = le;
     if (NET.code) netSend(true);
   }
+}
+/* ======================================================================
+   v113 — DENUNCIAR, E-MAIL/RECUPERAR SENHA, EVENTOS, GUILDAS e ASSISTIR
+   (tudo pelo servidor do WorldBullet; no link do Claude aparece um aviso)
+   ====================================================================== */
+function socAbre(id, cls) {
+  let P = document.getElementById(id);
+  if (!P) {
+    P = ctEl('div', 'ctBg');
+    P.id = id;
+    document.body.appendChild(P);
+    P.addEventListener('click', (e) => {
+      if (e.target === P) P.classList.remove('open');
+    });
+    P.addEventListener('keydown', (e) => e.stopPropagation());
+  }
+  P.innerHTML = '';
+  const box = P.appendChild(ctEl('div', 'ctBox ' + (cls || '')));
+  box.appendChild(ctEl('button', 'ctX', '✕')).onclick = () => P.classList.remove('open');
+  P.classList.add('open');
+  return box;
+}
+const socFecha = (id) => {
+  const P = document.getElementById(id);
+  if (P) P.classList.remove('open');
+};
+const socTempo = (ms) => {
+  const s = Math.max(0, Math.floor(ms / 1000)),
+    d = Math.floor(s / 86400),
+    h = Math.floor((s % 86400) / 3600),
+    m = Math.floor((s % 3600) / 60);
+  return d ? d + 'd ' + h + 'h' : h ? h + 'h ' + m + 'min' : m + 'min ' + (s % 60) + 's';
+};
+const socHora = (t) => {
+  const d = new Date(t);
+  return ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
+};
+
+/* ---------------- 🚩 DENUNCIAR ---------------- */
+const DEN_MOT = [
+  ['trapaca', '🤖 Trapaça / hack'],
+  ['nome', '🤬 Nome ofensivo'],
+  ['ofensa', '😡 Ofensa / preconceito'],
+  ['antijogo', '🙄 Atrapalhando o time'],
+  ['outro', '❓ Outro'],
+];
+function denAbre(uid, nome) {
+  if (!contaPode()) return toast('Denúncias funcionam no site do jogo.');
+  if (!CONTA.tk) return toast('Crie uma conta para denunciar.'), contaAbre('criar');
+  if (uid === PROF.uid) return toast('Esse é você 😅');
+  const box = socAbre('denP');
+  box.appendChild(ctEl('div', 'ctLogo', '🚩 DENUNCIAR'));
+  const quem = box.appendChild(ctEl('p', 'ctCall'));
+  quem.textContent = (nome || 'Jogador') + ' · ID ' + fmtId(uid);
+  let mot = null;
+  const G = box.appendChild(ctEl('div', 'denMot'));
+  DEN_MOT.forEach(([k, t]) => {
+    const b = G.appendChild(ctEl('button', 'ffChip'));
+    b.textContent = t;
+    b.onclick = () => {
+      mot = k;
+      G.querySelectorAll('button').forEach((x) => x.classList.toggle('on', x === b));
+    };
+  });
+  const det = box.appendChild(ctEl('textarea', 'denDet'));
+  det.placeholder = 'Conte o que aconteceu (opcional)';
+  det.maxLength = 200;
+  const er = box.appendChild(ctEl('p', 'ctErr'));
+  const ok = box.appendChild(ctEl('button', 'ctOk ctOkRed', 'ENVIAR DENÚNCIA'));
+  ok.onclick = async () => {
+    if (!mot) return (er.textContent = 'Escolha um motivo.');
+    ok.disabled = true;
+    try {
+      const j = await contaApi('denunciar', { uid, motivo: mot, detalhe: det.value, mid: NET.lastMid || NET.mid || '' });
+      socFecha('denP');
+      toast(j.msg || '🚩 Denúncia enviada!');
+    } catch (e) {
+      er.textContent = e.message;
+      ok.disabled = false;
+    }
+  };
+  box.appendChild(ctEl('p', 'ctNote', 'Só o Criador vê as denúncias. Denúncia falsa também pode dar banimento.'));
+}
+// jogadores de verdade que estiveram na partida (para denunciar no fim)
+NET.vistos = {};
+function socVisto(pr) {
+  if (pr && typeof pr.u === 'string' && /^[1-9]\d{5}$/.test(pr.u) && pr.u !== PROF.uid) NET.vistos[pr.u] = netName(pr.n);
+}
+function socFimPartida() {
+  const bx = document.querySelector('#endPanel .endBtns');
+  if (!bx) return;
+  const old = document.getElementById('endDen');
+  if (old) old.remove();
+  const L = Object.keys(NET.vistos || {});
+  if (!L.length || !contaPode()) return;
+  const b = bx.appendChild(ctEl('button', '', '🚩 Denunciar'));
+  b.id = 'endDen';
+  b.onclick = () => {
+    const box = socAbre('denP');
+    box.appendChild(ctEl('div', 'ctLogo', '🚩 QUEM?'));
+    L.forEach((u) => {
+      const r = box.appendChild(ctEl('button', 'slSlot', ''));
+      r.textContent = NET.vistos[u] + ' · ID ' + fmtId(u);
+      r.onclick = () => denAbre(u, NET.vistos[u]);
+    });
+  };
+}
+// Painel do Criador: lista de denúncias
+async function admDenuncias() {
+  const box = socAbre('admDenP', 'adm');
+  box.appendChild(ctEl('div', 'amgTop', '<b>🚩 DENÚNCIAS</b>'));
+  const L = box.appendChild(ctEl('div', 'rkList'));
+  L.appendChild(ctEl('p', 'ctInfo', '⏳ Carregando...'));
+  let j;
+  try {
+    j = await contaApi('admin', { acao: 'denuncias' });
+  } catch (e) {
+    L.innerHTML = '';
+    return (L.appendChild(ctEl('p', 'ctErr')).textContent = e.message);
+  }
+  L.innerHTML = '';
+  if (!j.denuncias.length) L.appendChild(ctEl('p', 'ctInfo', 'Nenhuma denúncia aberta. Tudo tranquilo! ✅'));
+  j.denuncias.forEach((d) => {
+    const r = L.appendChild(ctEl('div', 'amgRow on'));
+    const tx = r.appendChild(ctEl('div', 'amgTx'));
+    tx.appendChild(ctEl('b')).textContent = '🚩 ' + d.alvo.nome + ' (ID ' + fmtId(d.alvo.uid) + ') · ' + d.motivo;
+    tx.appendChild(ctEl('small')).textContent = (d.detalhe ? '“' + d.detalhe + '” · ' : '') + 'por ' + d.autor.nome + ' · ' + new Date(d.criado).toLocaleString('pt-BR');
+    const v = r.appendChild(ctEl('button', 'ctBtn y sm', 'Ver'));
+    v.onclick = () => {
+      socFecha('admDenP');
+      CONTA.adm = { uid: d.alvo.uid };
+      admAbre();
+      contaApi('admin', { uid: d.alvo.uid, acao: 'ver' }).then((x) => ((CONTA.adm = x.jogador), admRender()), () => {});
+    };
+    const ok = r.appendChild(ctEl('button', 'ctBtn sm', '✔'));
+    ok.title = 'Resolvida';
+    const ig = r.appendChild(ctEl('button', 'ctBtn sm ghost', '✕'));
+    ig.title = 'Ignorar';
+    const fecha = (st, b) => async () => {
+      b.disabled = true;
+      try {
+        await contaApi('admin', { acao: 'denuncia', id: d.id, st });
+        r.remove();
+      } catch (e) {
+        toast('😕 ' + e.message);
+      }
+    };
+    ok.onclick = fecha('resolvida', ok);
+    ig.onclick = fecha('ignorada', ig);
+  });
+}
+
+/* ---------------- 📧 E-MAIL E RECUPERAR SENHA ---------------- */
+function emailAbre() {
+  const box = socAbre('emailP');
+  box.appendChild(ctEl('div', 'ctLogo', '📧 E-MAIL'));
+  box.appendChild(ctEl('p', 'ctCall', 'Com e-mail, se você esquecer a senha a gente manda um código pra criar outra. É opcional e ninguém mais vê.'));
+  const f = box.appendChild(ctEl('form', 'ctForm'));
+  const e = f.appendChild(ctEl('input'));
+  e.type = 'email';
+  e.placeholder = 'seu@email.com (deixe vazio para tirar)';
+  e.autocomplete = 'email';
+  const s = f.appendChild(ctEl('input'));
+  s.type = 'password';
+  s.placeholder = 'Sua senha (para confirmar)';
+  s.autocomplete = 'current-password';
+  const er = f.appendChild(ctEl('p', 'ctErr'));
+  const ok = f.appendChild(ctEl('button', 'ctOk', 'SALVAR'));
+  ok.type = 'submit';
+  f.onsubmit = async (ev) => {
+    ev.preventDefault();
+    ok.disabled = true;
+    try {
+      const j = await contaApi('email', { email: e.value.trim(), senha: s.value });
+      CONTA.d.email = j.email;
+      socFecha('emailP');
+      contaRender();
+      toast(j.email ? '📧 E-mail salvo: ' + j.email : '📧 E-mail removido');
+    } catch (x) {
+      er.textContent = x.message;
+      ok.disabled = false;
+    }
+  };
+  setTimeout(() => e.focus(), 60);
+}
+// "Esqueci a senha": 1) usuário → código no e-mail  2) código + senha nova
+function esqueciAbre(usuario) {
+  const box = socAbre('esqP');
+  box.appendChild(ctEl('div', 'ctLogo', '🔐 ESQUECI A SENHA'));
+  const f = box.appendChild(ctEl('form', 'ctForm'));
+  const u = f.appendChild(ctEl('input'));
+  u.placeholder = 'Nome de usuário';
+  u.value = usuario || '';
+  u.setAttribute('autocapitalize', 'none');
+  const er = f.appendChild(ctEl('p', 'ctErr'));
+  const ok = f.appendChild(ctEl('button', 'ctOk', 'MANDAR CÓDIGO'));
+  ok.type = 'submit';
+  box.appendChild(ctEl('p', 'ctNote', 'O código vai para o e-mail que você colocou na conta. Se nunca colocou e-mail, fale com o Criador do jogo.'));
+  f.onsubmit = async (ev) => {
+    ev.preventDefault();
+    er.textContent = '';
+    const us = u.value.trim().toLowerCase();
+    if (!/^[a-z0-9_.]{3,16}$/.test(us)) return (er.textContent = 'Digite o seu nome de usuário.');
+    ok.disabled = true;
+    try {
+      const j = await contaApi('esqueci', { usuario: us });
+      esqueciPasso2(us, j.msg);
+    } catch (x) {
+      er.textContent = x.message;
+      ok.disabled = false;
+    }
+  };
+  setTimeout(() => u.focus(), 60);
+}
+function esqueciPasso2(us, msg) {
+  const box = socAbre('esqP');
+  box.appendChild(ctEl('div', 'ctLogo', '📬 CÓDIGO'));
+  box.appendChild(ctEl('p', 'ctCall')).textContent = msg;
+  const f = box.appendChild(ctEl('form', 'ctForm'));
+  const c = f.appendChild(ctEl('input'));
+  c.placeholder = 'Código de 6 números';
+  c.inputMode = 'numeric';
+  c.maxLength = 6;
+  const s1 = f.appendChild(ctEl('input'));
+  s1.type = 'password';
+  s1.placeholder = 'Senha nova';
+  s1.autocomplete = 'new-password';
+  const s2 = f.appendChild(ctEl('input'));
+  s2.type = 'password';
+  s2.placeholder = 'Repita a senha nova';
+  s2.autocomplete = 'new-password';
+  const er = f.appendChild(ctEl('p', 'ctErr'));
+  const ok = f.appendChild(ctEl('button', 'ctOk', 'TROCAR A SENHA'));
+  ok.type = 'submit';
+  f.onsubmit = async (ev) => {
+    ev.preventDefault();
+    er.textContent = '';
+    if (s1.value.length < 6) return (er.textContent = 'A senha precisa de 6 caracteres ou mais.');
+    if (s1.value !== s2.value) return (er.textContent = 'As duas senhas estão diferentes.');
+    ok.disabled = true;
+    try {
+      const j = await contaApi('redefinir', { usuario: us, codigo: c.value, nova: s1.value });
+      socFecha('esqP');
+      contaPosLogin(j);
+    } catch (x) {
+      er.textContent = x.message;
+      ok.disabled = false;
+    }
+  };
+  setTimeout(() => c.focus(), 60);
+}
+
+/* ---------------- 🎉 EVENTOS ---------------- */
+const EVT = { list: [], pegos: [], t: 0, delta: 0 };
+const evAtivo = (tipo) => EVT.list.some((e) => e.tipo === tipo && e.fim > Date.now() + EVT.delta);
+const evMult = (tipo) => (evAtivo(tipo) ? 2 : 1);
+async function evBusca() {
+  if (!contaPode()) return;
+  try {
+    const j = await contaApi('eventos', {});
+    EVT.list = j.eventos || [];
+    EVT.pegos = j.pegos || [];
+    EVT.delta = (j.agora || Date.now()) - Date.now();
+    EVT.t = Date.now();
+  } catch (e) {}
+  evBar();
+  // presente de evento: quem tem conta ganha uma vez
+  if (CONTA.tk)
+    for (const e of EVT.list)
+      if (e.tipo === 'presente' && !EVT.pegos.includes(e.id)) {
+        EVT.pegos.push(e.id);
+        contaApi('evento_resgatar', { id: e.id }).then(() => contaAtualiza(), () => {});
+      }
+}
+function evBar() {
+  let B = document.getElementById('evBar');
+  const A = EVT.list.filter((e) => e.fim > Date.now() + EVT.delta);
+  if (!A.length) {
+    if (B) B.remove();
+    return;
+  }
+  if (!B) {
+    B = ctEl('div');
+    B.id = 'evBar';
+    document.body.appendChild(B);
+    B.onclick = evInfo;
+  }
+  const ic = { moedas2x: '🪙', xp2x: '⭐', presente: '🎁' };
+  const e = A[Math.floor(Date.now() / 4000) % A.length];
+  B.textContent = (ic[e.tipo] || '🎉') + ' ' + e.nome.toUpperCase() + ' · termina em ' + socTempo(e.fim - Date.now() - EVT.delta) + (A.length > 1 ? ' · +' + (A.length - 1) : '');
+}
+function evInfo() {
+  const box = socAbre('evP');
+  box.appendChild(ctEl('div', 'ctLogo', '🎉 EVENTOS'));
+  const desc = { moedas2x: 'Toda partida dá o dobro de moedas.', xp2x: 'Toda partida dá o dobro de XP no Passe.', presente: 'Quem entrar com conta durante o evento ganha um presente.' };
+  EVT.list.forEach((e) => {
+    const r = box.appendChild(ctEl('div', 'giftR'));
+    r.appendChild(ctEl('b')).textContent = e.nome + (e.premio ? ' — ' + e.premio : '');
+    r.appendChild(ctEl('p')).textContent = desc[e.tipo] || '';
+    r.appendChild(ctEl('small')).textContent = 'Termina em ' + socTempo(e.fim - Date.now() - EVT.delta);
+  });
+  if (EVT.list.some((e) => e.tipo === 'presente') && !CONTA.tk) box.appendChild(ctEl('button', 'ctBtn y', '☁️ Criar conta para ganhar o presente')).onclick = () => contaAbre('criar');
+}
+setInterval(() => {
+  if (document.getElementById('evBar')) evBar();
+  if (contaPode() && Date.now() - EVT.t > 300e3 && EVT.t) evBusca();
+}, 1000);
+// Painel do Criador: criar e encerrar eventos
+async function admEventos() {
+  const box = socAbre('admEvP', 'adm');
+  box.appendChild(ctEl('div', 'amgTop', '<b>🎉 EVENTOS</b>'));
+  const L = box.appendChild(ctEl('div'));
+  const mostra = (lista) => {
+    L.innerHTML = '';
+    if (!lista.length) L.appendChild(ctEl('p', 'ctInfo', 'Nenhum evento rolando agora.'));
+    lista.forEach((e) => {
+      const r = L.appendChild(ctEl('div', 'amgRow on'));
+      const tx = r.appendChild(ctEl('div', 'amgTx'));
+      tx.appendChild(ctEl('b')).textContent = e.nome + (e.premio ? ' — ' + e.premio : '');
+      tx.appendChild(ctEl('small')).textContent = 'termina em ' + socTempo(e.fim - Date.now());
+      const x = r.appendChild(ctEl('button', 'ctBtn sm', 'Encerrar'));
+      x.onclick = async () => {
+        x.disabled = true;
+        try {
+          mostra((await contaApi('admin', { acao: 'evento_fim', id: e.id })).eventos);
+          evBusca();
+        } catch (er) {
+          toast('😕 ' + er.message);
+        }
+      };
+    });
+  };
+  try {
+    mostra((await contaApi('admin', { acao: 'eventos' })).eventos);
+  } catch (e) {
+    L.appendChild(ctEl('p', 'ctErr')).textContent = e.message;
+  }
+  box.appendChild(ctEl('div', 'amgSub', 'CRIAR EVENTO'));
+  const G = box.appendChild(ctEl('div', 'admGrid'));
+  const ln = () => G.appendChild(ctEl('div', 'admLine'));
+  const l1 = ln();
+  const tipo = l1.appendChild(ctEl('select'));
+  [
+    ['moedas2x', '🪙 Moedas em dobro'],
+    ['xp2x', '⭐ XP em dobro'],
+    ['presente', '🎁 Presente para quem entrar'],
+  ].forEach(([v, t]) => {
+    const o = tipo.appendChild(ctEl('option'));
+    o.value = v;
+    o.textContent = t;
+  });
+  const dur = l1.appendChild(ctEl('select'));
+  [
+    [1, '1 hora'],
+    [6, '6 horas'],
+    [24, '1 dia'],
+    [48, '2 dias'],
+    [72, '3 dias'],
+    [168, '1 semana'],
+  ].forEach(([v, t]) => {
+    const o = dur.appendChild(ctEl('option'));
+    o.value = v;
+    o.textContent = t;
+  });
+  dur.value = 48;
+  const l2 = ln();
+  const nome = l2.appendChild(ctEl('input'));
+  nome.placeholder = 'Nome do evento (ex.: Fim de semana dobrado)';
+  nome.maxLength = 40;
+  const l3 = ln();
+  const it = l3.appendChild(ctEl('select'));
+  const om = it.appendChild(ctEl('option'));
+  om.value = 'moedas';
+  om.textContent = '🪙 Moedas';
+  admItens().forEach(([c, id, n]) => {
+    const o = it.appendChild(ctEl('option'));
+    o.value = c + ':' + id;
+    o.textContent = n;
+  });
+  const qt = l3.appendChild(ctEl('input'));
+  qt.type = 'number';
+  qt.value = 500;
+  const mostraIt = () => {
+    l3.style.display = tipo.value === 'presente' ? 'flex' : 'none';
+    qt.style.display = it.value === 'moedas' ? 'block' : 'none';
+  };
+  tipo.onchange = it.onchange = mostraIt;
+  mostraIt();
+  const cr = box.appendChild(ctEl('button', 'ctOk', '🎉 CRIAR EVENTO'));
+  cr.onclick = async () => {
+    cr.disabled = true;
+    const b = { acao: 'evento_criar', tipo: tipo.value, horas: +dur.value, nome: nome.value };
+    if (tipo.value === 'presente') {
+      if (it.value === 'moedas') b.n = +qt.value;
+      else {
+        const [c, id] = it.value.split(':');
+        b.cat = c;
+        b.id = id;
+        b.nomeItem = it.options[it.selectedIndex].textContent.replace(/^\S+\s/, '');
+      }
+    }
+    try {
+      mostra((await contaApi('admin', b)).eventos);
+      toast('🎉 Evento no ar! Todo mundo já vê no lobby.');
+      evBusca();
+    } catch (e) {
+      toast('😕 ' + e.message);
+    }
+    cr.disabled = false;
+  };
+}
+
+/* ---------------- 🛡️ GUILDAS ---------------- */
+const GD = { d: null, tab: 'membros', bt: 'buscar', lista: null, q: '', novo: 0 };
+const EMBLEMAS = ['🛡️', '⚔️', '🔥', '🐊', '🦅', '💀', '👑', '⚡', '🌊', '🌴', '🐆', '🎯', '🐍', '🦈', '🌙', '⭐'];
+const CARGO = { lider: '👑 Líder', vice: '⭐ Vice', membro: 'Membro' };
+function gdAbre() {
+  if (!contaPode()) return toast('Guildas funcionam no site do jogo.');
+  let P = document.getElementById('gdP');
+  if (!P) {
+    P = ctEl('div', 'ctBg');
+    P.id = 'gdP';
+    document.body.appendChild(P);
+    P.addEventListener('click', (e) => {
+      if (e.target === P) P.classList.remove('open');
+    });
+    P.addEventListener('keydown', (e) => e.stopPropagation());
+  }
+  P.classList.add('open');
+  GD.novo = 0;
+  gdBadge();
+  gdRender();
+  if (CONTA.tk) gdCarrega();
+}
+async function gdCarrega() {
+  try {
+    GD.d = (await contaApi('guilda', { acao: 'minha' })).guilda;
+    if (!GD.d && !GD.lista) GD.lista = (await contaApi('guilda', { acao: 'buscar', q: '' })).guildas;
+  } catch (e) {
+    GD.err = e.message;
+  }
+  gdRender();
+}
+async function gdAcao(b, btn) {
+  if (btn) btn.disabled = true;
+  try {
+    const j = await contaApi('guilda', b);
+    if (j.msg) toast('🛡️ ' + j.msg);
+    if ('guilda' in j) GD.d = j.guilda;
+    if (b.acao === 'sair' || b.acao === 'criar' || b.acao === 'entrar') contaAtualiza();
+    gdRender();
+    return j;
+  } catch (e) {
+    toast('😕 ' + e.message);
+    if (btn) btn.disabled = false;
+  }
+}
+function gdBadge() {
+  const b = document.getElementById('lbGuild');
+  if (!b) return;
+  let s = b.querySelector('.amgN');
+  if (!GD.novo) return s && s.remove();
+  if (!s) s = b.appendChild(ctEl('i', 'amgN'));
+  s.textContent = GD.novo;
+}
+function gdRender() {
+  const P = document.getElementById('gdP');
+  if (!P || !P.classList.contains('open')) return;
+  const ae = document.activeElement;
+  if (ae && ae.closest && ae.closest('#gdP') && (ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA') && GD.tab !== 'chat') return;
+  P.innerHTML = '';
+  const box = P.appendChild(ctEl('div', 'ctBox gd'));
+  box.appendChild(ctEl('button', 'ctX', '✕')).onclick = () => P.classList.remove('open');
+  if (!CONTA.tk) {
+    box.appendChild(ctEl('div', 'amgTop', '<b>🛡️ GUILDA</b>'));
+    box.appendChild(ctEl('p', 'ctCall', 'Crie ou entre numa guilda pra jogar com a mesma galera, conversar no chat da guilda e subir no ranking de guildas. Precisa de conta.'));
+    const r = box.appendChild(ctEl('div', 'ctRow c'));
+    r.appendChild(ctEl('button', 'ctBtn y', '☁️ Criar conta')).onclick = () => contaAbre('criar');
+    r.appendChild(ctEl('button', 'ctBtn', 'Entrar')).onclick = () => contaAbre('entrar');
+    return;
+  }
+  if (GD.d) return gdDentro(box);
+  gdFora(box);
+}
+function gdCard(L, g, bt) {
+  const c = L.appendChild(ctEl('div', 'slCard br'));
+  c.appendChild(ctEl('span', 'gdEm')).textContent = g.emblema;
+  const tx = c.appendChild(ctEl('div', 'amgTx'));
+  tx.appendChild(ctEl('b')).textContent = g.nome + ' [' + g.tag + ']';
+  tx.appendChild(ctEl('small')).textContent = (g.descr ? g.descr + ' · ' : '') + g.n + '/30 membros · ' + g.pontos + ' pts' + (g.aberta ? ' · 🔓 aberta' : ' · 🔒 pede aprovação');
+  if (bt) {
+    const b = c.appendChild(ctEl('button', 'ctBtn y sm', g.aberta ? 'ENTRAR' : 'PEDIR'));
+    b.disabled = g.n >= 30;
+    b.onclick = () => gdAcao({ acao: 'entrar', id: g.id }, b);
+  }
+  return c;
+}
+function gdFora(box) {
+  const top = box.appendChild(ctEl('div', 'amgTop'));
+  top.appendChild(ctEl('b', '', '🛡️ GUILDAS'));
+  const tabs = box.appendChild(ctEl('div', 'ctTabs'));
+  [
+    ['buscar', '🔎 PROCURAR'],
+    ['criar', '➕ CRIAR'],
+    ['ranking', '🏆 RANKING'],
+  ].forEach(([k, n]) => {
+    const b = tabs.appendChild(ctEl('button', GD.bt === k ? 'on' : ''));
+    b.textContent = n;
+    b.onclick = async () => {
+      GD.bt = k;
+      if (k === 'ranking') GD.rk = null;
+      gdRender();
+      if (k === 'ranking') {
+        try {
+          GD.rk = (await contaApi('guilda', { acao: 'ranking' })).guildas;
+        } catch (e) {
+          GD.rk = [];
+        }
+        gdRender();
+      }
+    };
+  });
+  const L = box.appendChild(ctEl('div', 'rkList'));
+  if (GD.bt === 'buscar') {
+    const f = L.appendChild(ctEl('form', 'amgAdd'));
+    const i = f.appendChild(ctEl('input'));
+    i.placeholder = 'Nome ou sigla da guilda';
+    i.value = GD.q;
+    f.appendChild(ctEl('button', 'ctBtn y', '🔎')).type = 'submit';
+    f.onsubmit = async (e) => {
+      e.preventDefault();
+      GD.q = i.value;
+      i.blur();
+      try {
+        GD.lista = (await contaApi('guilda', { acao: 'buscar', q: GD.q })).guildas;
+      } catch (x) {
+        toast('😕 ' + x.message);
+      }
+      gdRender();
+    };
+    if (!GD.lista) L.appendChild(ctEl('p', 'ctInfo', '⏳ Carregando...'));
+    else if (!GD.lista.length) L.appendChild(ctEl('p', 'ctInfo', 'Nenhuma guilda encontrada. Que tal criar a primeira? 🛡️'));
+    else GD.lista.forEach((g) => gdCard(L, g, true));
+  } else if (GD.bt === 'ranking') {
+    if (!GD.rk) L.appendChild(ctEl('p', 'ctInfo', '⏳ Carregando...'));
+    else if (!GD.rk.length) L.appendChild(ctEl('p', 'ctInfo', 'Ainda não tem guildas.'));
+    else
+      GD.rk.forEach((g, i) => {
+        const c = gdCard(L, g, false);
+        c.insertBefore(ctEl('span', 'rkPos', i < 3 ? ['🥇', '🥈', '🥉'][i] : '#' + (i + 1)), c.firstChild);
+      });
+  } else {
+    const f = L.appendChild(ctEl('form', 'ctForm'));
+    const n = f.appendChild(ctEl('input'));
+    n.placeholder = 'Nome da guilda (3 a 16)';
+    n.maxLength = 16;
+    const t = f.appendChild(ctEl('input'));
+    t.placeholder = 'Sigla (2 a 4, ex.: TUC)';
+    t.maxLength = 4;
+    t.setAttribute('autocapitalize', 'characters');
+    t.addEventListener('input', () => (t.value = t.value.toUpperCase().replace(/[^A-Z0-9]/g, '')));
+    const d = f.appendChild(ctEl('input'));
+    d.placeholder = 'Frase da guilda (opcional)';
+    d.maxLength = 80;
+    let em = EMBLEMAS[0];
+    const E = f.appendChild(ctEl('div', 'gdEms'));
+    EMBLEMAS.forEach((x) => {
+      const b = E.appendChild(ctEl('button', 'ffChip' + (x === em ? ' on' : '')));
+      b.type = 'button';
+      b.textContent = x;
+      b.onclick = () => {
+        em = x;
+        E.querySelectorAll('button').forEach((y) => y.classList.toggle('on', y === b));
+      };
+    });
+    let ab = true;
+    const tg = f.appendChild(ctEl('button', 'ctBtn', '🔓 Aberta: qualquer um entra'));
+    tg.type = 'button';
+    tg.onclick = () => {
+      ab = !ab;
+      tg.textContent = ab ? '🔓 Aberta: qualquer um entra' : '🔒 Fechada: você aprova quem entra';
+    };
+    const ok = f.appendChild(ctEl('button', 'ctOk', '🛡️ CRIAR GUILDA'));
+    ok.type = 'submit';
+    f.onsubmit = (e) => {
+      e.preventDefault();
+      ok.blur();
+      gdAcao({ acao: 'criar', nome: n.value, tag: t.value, descr: d.value, emblema: em, aberta: ab }, ok);
+    };
+  }
+}
+function gdDentro(box) {
+  const g = GD.d,
+    chefe = g.eu === 'lider' || g.eu === 'vice';
+  const top = box.appendChild(ctEl('div', 'gdTop'));
+  top.appendChild(ctEl('span', 'gdEm big')).textContent = g.emblema;
+  const tx = top.appendChild(ctEl('div', 'amgTx'));
+  tx.appendChild(ctEl('b', 'gdNome')).textContent = g.nome + ' [' + g.tag + ']';
+  tx.appendChild(ctEl('small')).textContent = (g.descr ? '“' + g.descr + '” · ' : '') + g.n + '/' + g.max + ' membros · ' + g.pontos + ' pts · você é ' + CARGO[g.eu];
+  const tabs = box.appendChild(ctEl('div', 'ctTabs'));
+  const T = [
+    ['membros', '👥 MEMBROS'],
+    ['chat', '💬 CHAT'],
+  ];
+  if (chefe) T.push(['pedidos', 'PEDIDOS' + (g.pedidos && g.pedidos.length ? ' (' + g.pedidos.length + ')' : '')]);
+  T.push(['mais', '⚙️']);
+  T.forEach(([k, n]) => {
+    const b = tabs.appendChild(ctEl('button', GD.tab === k ? 'on' : ''));
+    b.textContent = n;
+    if (k === 'pedidos' && g.pedidos && g.pedidos.length) b.classList.add('dot');
+    b.onclick = () => {
+      GD.tab = k;
+      gdRender();
+    };
+  });
+  const L = box.appendChild(ctEl('div', 'rkList gdL'));
+  if (GD.tab === 'membros') {
+    g.membros.forEach((m) => {
+      const r = L.appendChild(ctEl('div', 'amgRow' + (m.on ? ' on' : '')));
+      r.appendChild(ctEl('span', 'amgAv')).textContent = String(m.nome).slice(0, 1).toUpperCase();
+      const t = r.appendChild(ctEl('div', 'amgTx'));
+      const nm = t.appendChild(ctEl('b'));
+      nm.textContent = m.nome + (m.uid === PROF.uid ? ' (você)' : '');
+      verMark(nm, m.vf > 0);
+      t.appendChild(ctEl('small')).textContent = CARGO[m.c] + ' · ' + m.pts + ' pts · ' + (m.on ? '🟢 online' : '⚫ offline');
+      if (m.uid === PROF.uid) return;
+      if (g.eu === 'lider') {
+        const s = r.appendChild(ctEl('select', 'gdSel'));
+        [
+          ['', '⋯'],
+          [m.c === 'vice' ? 'membro' : 'vice', m.c === 'vice' ? '⬇ Tirar vice' : '⭐ Virar vice'],
+          ['lider', '👑 Passar liderança'],
+          ['expulsar', '🚪 Expulsar'],
+        ].forEach(([v, t2]) => {
+          const o = s.appendChild(ctEl('option'));
+          o.value = v;
+          o.textContent = t2;
+        });
+        s.onchange = () => {
+          const v = s.value;
+          s.value = '';
+          if (v === 'expulsar') confirm('Expulsar ' + m.nome + '?') && gdAcao({ acao: 'expulsar', uid: m.uid });
+          else if (v === 'lider') confirm('Passar a liderança para ' + m.nome + '? Você vira vice.') && gdAcao({ acao: 'cargo', uid: m.uid, c: 'lider' });
+          else if (v) gdAcao({ acao: 'cargo', uid: m.uid, c: v });
+        };
+      } else if (g.eu === 'vice' && m.c === 'membro') {
+        const x = r.appendChild(ctEl('button', 'ctBtn sm ghost', '🚪'));
+        x.title = 'Expulsar';
+        x.onclick = () => confirm('Expulsar ' + m.nome + '?') && gdAcao({ acao: 'expulsar', uid: m.uid }, x);
+      }
+    });
+  } else if (GD.tab === 'chat') {
+    L.classList.add('gdChat');
+    (g.chat || []).forEach((m) => {
+      const r = L.appendChild(ctEl('div', m.s ? 'gdMsg sis' : 'gdMsg' + (m.u === PROF.uid ? ' eu' : '')));
+      if (!m.s) {
+        const n = r.appendChild(ctEl('b'));
+        n.textContent = m.n;
+        verMark(n, m.vf > 0);
+      }
+      r.appendChild(ctEl('span')).textContent = m.m;
+      r.appendChild(ctEl('small')).textContent = socHora(m.t);
+    });
+    setTimeout(() => (L.scrollTop = L.scrollHeight), 0);
+    const f = box.appendChild(ctEl('form', 'amgAdd gdIn'));
+    const i = f.appendChild(ctEl('input'));
+    i.placeholder = 'Mensagem pra guilda...';
+    i.maxLength = 140;
+    i.value = GD.rasc || '';
+    i.oninput = () => (GD.rasc = i.value);
+    f.appendChild(ctEl('button', 'ctBtn y', '➤')).type = 'submit';
+    f.onsubmit = async (e) => {
+      e.preventDefault();
+      const m = i.value.trim();
+      if (!m) return;
+      i.value = '';
+      GD.rasc = '';
+      try {
+        await contaApi('guilda', { acao: 'chat', m });
+        gdCarrega();
+      } catch (x) {
+        toast('😕 ' + x.message);
+      }
+    };
+  } else if (GD.tab === 'pedidos') {
+    if (!g.pedidos || !g.pedidos.length) L.appendChild(ctEl('p', 'ctInfo', 'Nenhum pedido pra entrar agora.'));
+    (g.pedidos || []).forEach((a) => {
+      const r = L.appendChild(ctEl('div', 'amgRow'));
+      r.appendChild(ctEl('span', 'amgAv')).textContent = String(a.nome).slice(0, 1).toUpperCase();
+      const t = r.appendChild(ctEl('div', 'amgTx'));
+      t.appendChild(ctEl('b')).textContent = a.nome;
+      t.appendChild(ctEl('small')).textContent = 'ID ' + fmtId(a.uid);
+      const y = r.appendChild(ctEl('button', 'ctBtn y sm', 'Aceitar'));
+      y.onclick = () => gdAcao({ acao: 'aceitar', uid: a.uid }, y);
+      const n = r.appendChild(ctEl('button', 'ctBtn sm', 'Recusar'));
+      n.onclick = () => gdAcao({ acao: 'recusar', uid: a.uid }, n);
+    });
+  } else {
+    if (chefe) {
+      const f = L.appendChild(ctEl('form', 'ctForm'));
+      const d = f.appendChild(ctEl('input'));
+      d.placeholder = 'Frase da guilda';
+      d.maxLength = 80;
+      d.value = g.descr;
+      let em = g.emblema,
+        ab = g.aberta;
+      const E = f.appendChild(ctEl('div', 'gdEms'));
+      EMBLEMAS.forEach((x) => {
+        const b = E.appendChild(ctEl('button', 'ffChip' + (x === em ? ' on' : '')));
+        b.type = 'button';
+        b.textContent = x;
+        b.onclick = () => {
+          em = x;
+          E.querySelectorAll('button').forEach((y) => y.classList.toggle('on', y === b));
+        };
+      });
+      const tg = f.appendChild(ctEl('button', 'ctBtn', ab ? '🔓 Aberta' : '🔒 Fechada (aprova pedidos)'));
+      tg.type = 'button';
+      tg.onclick = () => {
+        ab = !ab;
+        tg.textContent = ab ? '🔓 Aberta' : '🔒 Fechada (aprova pedidos)';
+      };
+      const ok = f.appendChild(ctEl('button', 'ctOk', 'SALVAR'));
+      ok.type = 'submit';
+      f.onsubmit = (e) => {
+        e.preventDefault();
+        ok.blur();
+        gdAcao({ acao: 'editar', descr: d.value, emblema: em, aberta: ab }, ok);
+      };
+    }
+    const r = L.appendChild(ctEl('div', 'ctRow'));
+    r.appendChild(ctEl('button', 'ctBtn', '🏆 Ranking de guildas')).onclick = async () => {
+      GD.d = null;
+      GD.bt = 'ranking';
+      GD.rk = null;
+      gdRender();
+      try {
+        GD.rk = (await contaApi('guilda', { acao: 'ranking' })).guildas;
+      } catch (e) {
+        GD.rk = [];
+      }
+      gdRender();
+      gdCarrega();
+    };
+    const sai = r.appendChild(ctEl('button', 'ctBtn sair', '🚪 Sair da guilda'));
+    sai.onclick = () =>
+      confirm(g.eu === 'lider' && g.n > 1 ? 'Sair da guilda? A liderança passa para o vice (ou o membro mais antigo).' : g.n === 1 ? 'Sair? Você é o último: a guilda vai ser apagada.' : 'Sair da guilda?') &&
+      gdAcao({ acao: 'sair' }, sai);
+  }
+}
+
+/* ---------------- 👁️ ASSISTIR AMIGO ---------------- */
+NET.obs = null; // { u: ID do amigo, nome }
+async function obsAssistir(a) {
+  if (!inLobby) return toast('Termine a sua partida primeiro.');
+  if (!a.sala) return toast('Não deu pra achar a sala do seu amigo.');
+  if (MM) mmCancel(true);
+  ['amgP', 'salaP', 'contaP'].forEach(socFecha);
+  NET.obs = { u: a.uid, nome: a.nome, t: Date.now() };
+  toast('👁️ Entrando para assistir ' + a.nome + '...');
+  if (NET.code !== a.sala) await netJoin(a.sala, false);
+  setTimeout(() => {
+    if (NET.obs && !NET.obs.on) {
+      NET.obs = null;
+      toast('😕 A partida de ' + a.nome + ' já acabou.');
+    }
+  }, 9000);
+}
+// entrou na partida do amigo: fica "fantasma" assistindo
+function obsInicia() {
+  NET.obs.on = true;
+  if (typeof ESPERA !== 'undefined' && ESPERA) espStop();
+  dead = true;
+  player.visible = false;
+  hp = 0;
+  spec.on = true;
+  document.body.classList.add('spec', 'obs');
+  document.getElementById('spec').style.display = 'flex';
+  obsAlvo();
+  let x = document.getElementById('obsSai');
+  if (!x) {
+    x = ctEl('button', '', '🚪 Parar de assistir');
+    x.id = 'obsSai';
+    x.onclick = obsSai;
+    document.body.appendChild(x);
+  }
+  x.style.display = 'block';
+}
+function obsAlvo() {
+  const am = bots.find((b) => b.net && NET.pres[b.net] && NET.pres[b.net].u === NET.obs.u);
+  spec.target = am || bots.find((b) => b.net) || bots[0] || null;
+  if (spec.target) document.getElementById('specName').textContent = '👁 ' + spec.target.name;
+}
+function obsTick() {
+  if (!NET.obs || !NET.obs.on) return;
+  if (!spec.target || bots.indexOf(spec.target) < 0) obsAlvo();
+}
+async function obsSai() {
+  const x = document.getElementById('obsSai');
+  if (x) x.style.display = 'none';
+  document.body.classList.remove('obs');
+  NET.obs = null;
+  try {
+    await netLeave();
+  } catch (e) {}
+  enterLobby();
+}
+// a partida acabou enquanto assistia
+function obsFim(txt) {
+  if (!NET.obs) return false;
+  matchOver = true;
+  toast('🏁 ' + (txt || 'A partida acabou!'));
+  setTimeout(obsSai, 2500);
+  return true;
 }
 /* ---------- Conexão e salas ---------- */
 async function netSetup() {
@@ -33166,6 +34226,7 @@ function netPlayBtn() {
 function netStart() {
   if (!NET.code || !inLobby || !NET.me) return;
   if (netLobbyHost() !== NET.me) return toast('⏳ Só o dono da sala pode começar');
+  NET.vistos = {};
   NET.mid = 'm' + Math.random().toString(36).slice(2, 9);
   NET.seed = Math.floor(Math.random() * 1e9);
   if (NET.mmRoom) {
@@ -33708,6 +34769,11 @@ function netRecvNades(peer, pr) {
 }
 function netApplyPlayer(peer, pr) {
   const b0 = netAvatar(peer);
+  if (pr.st === 'spec') {
+    if (b0) netRemove(b0, undefined, '', true); // espectador não aparece
+    return;
+  }
+  if (pr.m === NET.mid) socVisto(pr);
   if (pr.m !== NET.mid) {
     if (b0) {
       netRemove(b0, undefined, '', true);
@@ -33811,6 +34877,10 @@ function netBuild() {
     P = player.position;
   o.st = dead ? 'dead' : 'play';
   o.m = NET.mid;
+  if (NET.obs && NET.obs.on) {
+    o.st = 'spec'; // só assistindo: ninguém vê nem conta
+    return o;
+  }
   if (TM && NET.cs) o.tr = TM.round;
   if (ESPERA && NET.host) {
     o.ew = Math.max(0, Math.round(ESPERA.t * 2) / 2);
@@ -33945,7 +35015,7 @@ function netTick() {
     for (const id in NET.pres) {
       const M = NET.pres[id].M;
       if (!Array.isArray(M) || M[2] !== 1 || typeof M[0] !== 'string' || M[0] === NET.lastMid) continue;
-      if (netNum(M[3]) > 25) continue; // já começou faz tempo: espera a próxima
+      if (netNum(M[3]) > 25 && !NET.obs) continue; // já começou faz tempo: espera a próxima (quem só vai assistir entra)
       NET.lastMid = M[0];
       NET.mid = M[0];
       NET.seed = netNum(M[1]) | 0;
@@ -33970,7 +35040,13 @@ function netTick() {
       try {
         closeShop();
       } catch (e) {}
+      NET.vistos = {};
       startMatch();
+      if (NET.obs) {
+        obsInicia();
+        netSend(true);
+        return;
+      }
       // chegou um pouco depois: adianta o avião até onde o dele está
       const lag = Math.max(0, Math.min(20, netNum(M[3])));
       if (lag > 0 && plane) {
@@ -33982,8 +35058,8 @@ function netTick() {
       return;
     }
   }
-  // 3) o dono da partida sumiu: o primeiro da lista assume os bots
-  if (inNet && !NET.host) {
+  // 3) o dono da partida sumiu: o primeiro da lista assume os bots (quem só assiste não)
+  if (inNet && !NET.host && !NET.obs) {
     if (mh) NET.noHostT = 0;
     else if ((NET.noHostT += dtS) > 2.5) {
       const cand = Object.keys(NET.pres)

@@ -46,6 +46,12 @@ const server = http.createServer((req, res) => {
     return res.end(gz ? gameGz : gameHtml);
   }
   if (url.startsWith('/api/')) return apiHttp(req, res, url);
+  if (url === '/ping') {
+    // despertador (cron-job.org): mantém o servidor e o banco acordados
+    res.writeHead(200, { 'Content-Type': 'text/plain', 'Cache-Control': 'no-store' });
+    if (DB.nome === 'supabase') sbReq('GET', '?select=uid&limit=1').catch(() => {});
+    return res.end('ok');
+  }
   if (url === '/privacidade' || url === '/privacidade/') {
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-cache' });
     return res.end(paginaPrivacidade());
@@ -53,7 +59,7 @@ const server = http.createServer((req, res) => {
   if (url === '/status') {
     return testaBanco().then((d) => {
       res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8', 'Access-Control-Allow-Origin': '*' });
-      res.end(JSON.stringify({ ok: true, jogadores: clients.size, salas: roomCount(), contas: DB.nome, banco: d.msg, enderecoBanco: SB_URL || null, admin: ADMIN || null, enviadoMB: +(sentBytes / 1e6).toFixed(1) }, null, 1));
+      res.end(JSON.stringify({ ok: true, jogadores: clients.size, salas: roomCount(), contas: DB.nome, banco: d.msg, enderecoBanco: SB_URL || null, admin: ADMIN || null, email: MAIL_OK ? 'ligado (' + EMAIL_DE + ')' : 'desligado (sem BREVO_KEY/EMAIL_DE)', enviadoMB: +(sentBytes / 1e6).toFixed(1) }, null, 1));
     });
   }
   res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
@@ -227,10 +233,13 @@ const enc = encodeURIComponent;
 const agora = () => new Date().toISOString();
 
 async function sbReq(method, query, body, prefer) {
+  return sbT('contas', method, query, body, prefer);
+}
+async function sbT(tabela, method, query, body, prefer) {
   const h = { apikey: SB_KEY, 'Content-Type': 'application/json', Accept: 'application/json' };
   if (/^eyJ/.test(SB_KEY)) h.Authorization = 'Bearer ' + SB_KEY; // chave antiga (service_role)
   if (prefer) h.Prefer = prefer;
-  const r = await fetch(SB_URL + '/rest/v1/contas' + query, { method, headers: h, body: body == null ? undefined : JSON.stringify(body) });
+  const r = await fetch(SB_URL + '/rest/v1/' + tabela + query, { method, headers: h, body: body == null ? undefined : JSON.stringify(body) });
   const t = await r.text();
   if (!r.ok) {
     const e = new Error('banco ' + r.status + ' ' + t.slice(0, 300));
@@ -283,7 +292,12 @@ function bancoSupabase() {
       return sbReq('GET', '?select=uid,usuario,criado,amigos,pedidos,enviados,perfil&order=criado.asc&limit=10000');
     },
     async ranking() {
-      return sbReq('GET', '?select=uid,nome,vf,banido,rp:stats->rp,st4:stats->st4,wins:stats->wins,kills:stats->kills&limit=5000');
+      const q = 'uid,nome,vf,banido,rp:stats->rp,st4:stats->st4,wins:stats->wins,kills:stats->kills';
+      try {
+        return await sbReq('GET', '?select=' + q + ',guilda&limit=5000');
+      } catch (e) {
+        return sbReq('GET', '?select=' + q + '&limit=5000'); // banco ainda sem a atualização v113
+      }
     },
   };
 }
@@ -359,11 +373,109 @@ function bancoLocal() {
       return null;
     },
     async ranking() {
-      return [...M.values()].map((r) => ({ uid: r.uid, nome: r.nome, vf: r.vf, banido: r.banido, rp: (r.stats || {}).rp, st4: (r.stats || {}).st4, wins: (r.stats || {}).wins, kills: (r.stats || {}).kills }));
+      return [...M.values()].map((r) => ({ uid: r.uid, nome: r.nome, vf: r.vf, banido: r.banido, guilda: r.guilda || null, rp: (r.stats || {}).rp, st4: (r.stats || {}).st4, wins: (r.stats || {}).wins, kills: (r.stats || {}).kills }));
     },
   };
 }
 const DB = SB_URL && SB_KEY ? bancoSupabase() : bancoLocal();
+// ---- guildas, denúncias e configurações (eventos) ----
+function extraSupabase() {
+  const um = async (t, q) => (await sbT(t, 'GET', q))[0] || null;
+  return {
+    g: {
+      get: (id) => um('guildas', '?id=eq.' + enc(id) + '&select=*'),
+      byChave: (k) => um('guildas', '?chave=eq.' + enc(k) + '&select=*'),
+      list: () => sbT('guildas', 'GET', '?select=id,nome,tag,emblema,descr,membros,aberta,criado&limit=2000'),
+      async insert(row) {
+        try {
+          return (await sbT('guildas', 'POST', '', row, 'return=representation'))[0];
+        } catch (e) {
+          if (e.status === 409) return null;
+          throw e;
+        }
+      },
+      update: async (id, p) => (await sbT('guildas', 'PATCH', '?id=eq.' + enc(id), p, 'return=representation'))[0] || null,
+      remove: (id) => sbT('guildas', 'DELETE', '?id=eq.' + enc(id)),
+    },
+    d: {
+      insert: async (row) => (await sbT('denuncias', 'POST', '', row, 'return=representation'))[0],
+      list: (st) => sbT('denuncias', 'GET', '?status=eq.' + enc(st || 'aberta') + '&order=criado.desc&limit=100&select=*'),
+      update: (id, p) => sbT('denuncias', 'PATCH', '?id=eq.' + enc(id), p),
+    },
+    c: {
+      get: async (k) => {
+        const r = await um('config', '?k=eq.' + enc(k) + '&select=v');
+        return r ? r.v : null;
+      },
+      set: (k, v) => sbT('config', 'POST', '', { k, v }, 'resolution=merge-duplicates'),
+    },
+  };
+}
+function extraLocal() {
+  const ARQ = path.join(__dirname, 'dados', 'extra.json');
+  let X = { guildas: {}, denuncias: [], config: {}, n: 0 };
+  try {
+    X = Object.assign(X, JSON.parse(fs.readFileSync(ARQ, 'utf8')));
+  } catch (e) {}
+  let t = null;
+  const save = () => {
+    if (t) return;
+    t = setTimeout(() => {
+      t = null;
+      try {
+        fs.mkdirSync(path.dirname(ARQ), { recursive: true });
+        fs.writeFileSync(ARQ, JSON.stringify(X));
+      } catch (e) {}
+    }, 800);
+  };
+  const cp = (r) => (r == null ? null : JSON.parse(JSON.stringify(r)));
+  return {
+    g: {
+      get: async (id) => cp(X.guildas[id]),
+      byChave: async (k) => cp(Object.values(X.guildas).find((g) => g.chave === k) || null),
+      list: async () => cp(Object.values(X.guildas)),
+      async insert(row) {
+        if (X.guildas[row.id] || Object.values(X.guildas).some((g) => g.chave === row.chave)) return null;
+        X.guildas[row.id] = cp(row);
+        save();
+        return cp(row);
+      },
+      async update(id, p) {
+        if (!X.guildas[id]) return null;
+        Object.assign(X.guildas[id], cp(p));
+        save();
+        return cp(X.guildas[id]);
+      },
+      async remove(id) {
+        delete X.guildas[id];
+        save();
+      },
+    },
+    d: {
+      async insert(row) {
+        const r = Object.assign({ id: ++X.n, status: 'aberta', criado: agora() }, cp(row));
+        X.denuncias.push(r);
+        X.denuncias = X.denuncias.slice(-500);
+        save();
+        return cp(r);
+      },
+      list: async (st) => cp(X.denuncias.filter((d) => d.status === (st || 'aberta')).reverse().slice(0, 100)),
+      async update(id, p) {
+        const d = X.denuncias.find((x) => String(x.id) === String(id));
+        if (d) Object.assign(d, cp(p));
+        save();
+      },
+    },
+    c: {
+      get: async (k) => cp(X.config[k] === undefined ? null : X.config[k]),
+      async set(k, v) {
+        X.config[k] = cp(v);
+        save();
+      },
+    },
+  };
+}
+const XB = DB.nome === 'supabase' ? extraSupabase() : extraLocal();
 if (DB.nome === 'arquivo') console.log('⚠️  Contas num arquivo local (sem SUPABASE_URL/SUPABASE_KEY): no Render grátis elas somem quando ele reinicia.');
 // diagnóstico do banco: explica em português o que está errado (aparece em /status e no Log)
 let DIAG = { ok: DB.nome !== 'supabase', msg: DB.nome === 'supabase' ? 'testando...' : 'sem Supabase: contas num arquivo (somem quando o Render reinicia)' };
@@ -384,6 +496,15 @@ async function testaBanco() {
   try {
     await sbReq('GET', '?select=uid&limit=1');
     DIAG = { ok: true, msg: 'Supabase funcionando ✅' };
+    // a atualização v113 (guildas, denúncias, eventos, e-mail) já foi rodada?
+    try {
+      await sbReq('GET', '?select=email,guilda,reset,eventos&limit=1');
+      await sbT('guildas', 'GET', '?select=id&limit=1');
+      await sbT('denuncias', 'GET', '?select=id&limit=1');
+      await sbT('config', 'GET', '?select=k&limit=1');
+    } catch (e) {
+      DIAG = { ok: false, msg: 'Falta rodar o arquivo atualizacao_v113.sql no SQL Editor do Supabase (guildas, denúncias, eventos e e-mail não funcionam sem ele).' };
+    }
   } catch (e) {
     DIAG = { ok: false, msg: explicaErro(e) };
   }
@@ -494,7 +615,7 @@ function onlineDe(uid) {
   let st = 'lobby',
     sala = null;
   for (const c of S) {
-    if (c.pr && (c.pr.st === 'play' || c.pr.st === 'dead')) st = 'play';
+    if (c.pr && (c.pr.st === 'play' || c.pr.st === 'dead' || c.pr.st === 'spec')) st = 'play';
     if (c.code) sala = c.code;
   }
   return { st, sala };
@@ -516,6 +637,14 @@ async function minha(r, full) {
     pedidos: pe.map(publico),
     enviados: en.map(publico),
   };
+  o.email = mascara(r.email);
+  o.recupera = MAIL_OK;
+  if (r.guilda) {
+    try {
+      const g = await XB.g.get(r.guilda);
+      if (g && cargoDe(g, r.uid)) o.guilda = { id: g.id, nome: g.nome, tag: g.tag, emblema: g.emblema, c: cargoDe(g, r.uid) };
+    } catch (e) {}
+  }
   if (full) {
     o.perfil = r.perfil || {};
     o.stats = r.stats || {};
@@ -586,10 +715,11 @@ function confereStats(old, n, seg, uid) {
   corta(n, 'kills', o.kills, dm * 40, 'abates');
   corta(n, 'wins', o.wins, dm, 'vitórias');
   const presente = PRESENTE_MOEDAS.get(uid) || 0;
-  corta(n, 'coins', o.coins, 6000 + dm * 2500 + presente, 'moedas');
+  corta(n, 'coins', o.coins, (6000 + dm * 2500) * fatorMoedas() + presente, 'moedas');
   PRESENTE_MOEDAS.delete(uid);
   if (n0(n.wins) > n0(n.matches)) n.wins = n0(n.matches);
-  n._sus = n0(o._sus) + (sus.length ? 1 : 0); // quantas vezes já foi cortado (o Criador vê)
+  n._sus = n0(o._sus) + (sus.length ? 1 : 0);
+  if (o._ev) n._ev = o._ev; // quantas vezes já foi cortado (o Criador vê)
   if (sus.length) console.warn('anti-trapaça', uid, sus.join(', '));
   return sus;
 }
@@ -609,6 +739,132 @@ function confereNovo(st) {
   return st;
 }
 const RANK = { t: 0, br: null, cs: null, p: null }; // ranking guardado por 45 s (não pesa no banco)
+// =====================================================================
+//  v113: DENÚNCIAS, RECUPERAR SENHA POR E-MAIL, EVENTOS E GUILDAS
+// =====================================================================
+// ---- ranking carregado (também serve para os pontos das guildas) ----
+async function carregaRank() {
+  if (Date.now() - RANK.t < 45e3 && RANK.br) return;
+  if (!RANK.p)
+    RANK.p = DB.ranking()
+      .then((rows) => {
+        const L = (rows || [])
+          .filter((r) => r && !r.banido)
+          .map((r) => ({ uid: r.uid, nome: r.nome, vf: r.vf | 0, g: r.guilda || null, rp: Math.max(0, +r.rp || 0), st4: Math.max(0, +r.st4 || 0), wins: +r.wins || 0, kills: +r.kills || 0 }));
+        RANK.br = L.filter((r) => r.rp > 0).sort((a, b) => b.rp - a.rp || b.wins - a.wins);
+        RANK.cs = L.filter((r) => r.st4 > 0).sort((a, b) => b.st4 - a.st4 || b.wins - a.wins);
+        RANK.pts = {};
+        for (const r of L) RANK.pts[r.uid] = r.rp + r.st4 * 40;
+        RANK.t = Date.now();
+      })
+      .finally(() => (RANK.p = null));
+  await RANK.p;
+}
+// ---- guildas em cache (tags no ranking e na busca) ----
+const GC = { t: 0, list: [], by: {} };
+async function guildasCache(forca) {
+  if (!forca && Date.now() - GC.t < 30e3) return GC;
+  try {
+    GC.list = (await XB.g.list()) || [];
+  } catch (e) {
+    GC.list = GC.list || [];
+  }
+  GC.by = {};
+  for (const g of GC.list) GC.by[g.id] = g;
+  GC.t = Date.now();
+  return GC;
+}
+const gTag = (id) => (id && GC.by[id] ? GC.by[id].tag : null);
+
+// ---------------- DENÚNCIAS ----------------
+const MOTIVOS = { trapaca: 'Trapaça / hack', nome: 'Nome ofensivo', ofensa: 'Ofensa / preconceito', antijogo: 'Atrapalhando o time', outro: 'Outro' };
+// ---------------- E-MAIL (Brevo) ----------------
+const BREVO_KEY = envLimpo('BREVO_KEY'),
+  EMAIL_DE = envLimpo('EMAIL_DE').toLowerCase(),
+  BREVO_URL = envLimpo('BREVO_URL') || 'https://api.brevo.com/v3/smtp/email',
+  MAIL_OK = !!(BREVO_KEY && EMAIL_DE);
+const okEmail = (e) => typeof e === 'string' && e.length <= 80 && /^[^\s@<>]+@[^\s@<>]+\.[a-z]{2,}$/i.test(e);
+const mascara = (e) => (e ? String(e).replace(/^(.)(.*)(@.*)$/, (m, a, b, c) => a + '*'.repeat(Math.min(6, b.length || 1)) + c) : null);
+async function mandaEmail(para, assunto, html) {
+  const r = await fetch(BREVO_URL, {
+    method: 'POST',
+    headers: { 'api-key': BREVO_KEY, 'content-type': 'application/json', accept: 'application/json' },
+    body: JSON.stringify({ sender: { name: 'WorldBullet', email: EMAIL_DE }, to: [{ email: para }], subject: assunto, htmlContent: html }),
+  });
+  if (!r.ok) throw new Error('email ' + r.status + ' ' + (await r.text()).slice(0, 200));
+}
+const hashCodigo = (uid, cod) => crypto.createHmac('sha256', SEGREDO).update('reset|' + uid + '|' + cod).digest('hex');
+// ---------------- EVENTOS ----------------
+const EV = { t: 0, list: [] };
+async function eventosAtivos(forca) {
+  if (forca || Date.now() - EV.t > 20e3) {
+    try {
+      EV.list = arr(await XB.c.get('eventos'));
+    } catch (e) {}
+    EV.t = Date.now();
+  }
+  const now = Date.now();
+  return EV.list.filter((e) => e && e.fim > now && e.ini <= now);
+}
+const fatorMoedas = () => (EV.list.some((e) => e && e.tipo === 'moedas2x' && e.fim > Date.now() && e.ini <= Date.now()) ? 2 : 1);
+const evPub = (e) => ({ id: e.id, tipo: e.tipo, nome: e.nome, ini: e.ini, fim: e.fim, premio: e.tipo === 'presente' ? (e.item ? e.item.nome : (e.n | 0) + ' moedas') : null });
+// ---------------- GUILDAS ----------------
+const EMBLEMAS = ['🛡️', '⚔️', '🔥', '🐊', '🦅', '💀', '👑', '⚡', '🌊', '🌴', '🐆', '🎯', '🐍', '🦈', '🌙', '⭐'];
+const GMAX = 30;
+const chaveG = (n) =>
+  String(n)
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+const cargoDe = (g, uid) => (arr(g.membros).find((m) => m.u === uid) || {}).c || null;
+const gPontos = (g) => arr(g.membros).reduce((t, m) => t + ((RANK.pts || {})[m.u] || 0), 0);
+async function gAvisa(g, msg, so) {
+  for (const m of arr(g.membros)) if (!so || so.includes(m.c)) avisa(m.u, msg);
+}
+async function gDetalhe(g, eu) {
+  await carregaRank();
+  const ids = arr(g.membros).map((m) => m.u),
+    P = await DB.many(ids),
+    by = {};
+  for (const p of P) by[p.uid] = p;
+  const ordem = { lider: 0, vice: 1, membro: 2 };
+  const membros = arr(g.membros)
+    .filter((m) => by[m.u])
+    .map((m) => ({ uid: m.u, nome: by[m.u].nome, vf: by[m.u].vf | 0, c: m.c, on: !!onlineDe(m.u), pts: (RANK.pts || {})[m.u] || 0 }))
+    .sort((a, b) => ordem[a.c] - ordem[b.c] || b.pts - a.pts);
+  const o = { id: g.id, nome: g.nome, tag: g.tag, emblema: g.emblema, descr: g.descr || '', aberta: !!g.aberta, n: membros.length, max: GMAX, pontos: gPontos(g), membros };
+  const c = eu ? cargoDe(g, eu) : null;
+  if (c) {
+    o.eu = c;
+    o.chat = arr(g.chat).slice(-40);
+    if (c === 'lider' || c === 'vice') o.pedidos = (await DB.many(arr(g.pedidos))).map(publico);
+  }
+  return o;
+}
+// tira alguém da guilda (sair, expulso ou conta excluída)
+async function gTira(g, uid, motivo) {
+  const resto = arr(g.membros).filter((m) => m.u !== uid);
+  await DB.update(uid, { guilda: null }).catch(() => {});
+  if (!resto.length) {
+    await XB.g.remove(g.id);
+    GC.t = 0;
+    return null;
+  }
+  if (cargoDe(g, uid) === 'lider') {
+    const nv = resto.find((m) => m.c === 'vice') || resto[0];
+    nv.c = 'lider';
+  }
+  const chat = arr(g.chat)
+    .concat({ s: 1, m: motivo, t: Date.now() })
+    .slice(-40);
+  const ng = await XB.g.update(g.id, { membros: resto, chat });
+  GC.t = 0;
+  gAvisa(ng || g, { t: 'gch' });
+  return ng;
+}
+
 const API = {
   async registrar(b, ip) {
     if (estourou('reg:' + ip, 6, 3600e3)) throw new Erro(429, 'Muitas contas criadas daqui. Tente mais tarde.');
@@ -717,22 +973,10 @@ const API = {
     return { ok: true };
   },
   async ranking(b) {
-    if (Date.now() - RANK.t > 45e3 || !RANK.br) {
-      if (!RANK.p)
-        RANK.p = DB.ranking()
-          .then((rows) => {
-            const L = (rows || [])
-              .filter((r) => r && !r.banido)
-              .map((r) => ({ uid: r.uid, nome: r.nome, vf: r.vf | 0, rp: Math.max(0, +r.rp || 0), st4: Math.max(0, +r.st4 || 0), wins: +r.wins || 0, kills: +r.kills || 0 }));
-            RANK.br = L.filter((r) => r.rp > 0).sort((a, b) => b.rp - a.rp || b.wins - a.wins);
-            RANK.cs = L.filter((r) => r.st4 > 0).sort((a, b) => b.st4 - a.st4 || b.wins - a.wins);
-            RANK.t = Date.now();
-          })
-          .finally(() => (RANK.p = null));
-      await RANK.p;
-    }
+    await carregaRank();
+    await guildasCache();
     const uid = leToken(b.token),
-      top = (A) => A.slice(0, 100).map((r) => Object.assign({}, r, { on: !!onlineDe(r.uid) })),
+      top = (A) => A.slice(0, 100).map((r) => Object.assign({}, r, { on: !!onlineDe(r.uid), tag: gTag(r.g) })),
       pos = (A) => (uid ? A.findIndex((r) => r.uid === uid) + 1 : 0);
     return { br: top(RANK.br), cs: top(RANK.cs), eu: uid ? { br: pos(RANK.br), cs: pos(RANK.cs) } : null, total: RANK.br.length, t: RANK.t };
   },
@@ -746,6 +990,253 @@ const API = {
     if (mo) PRESENTE_MOEDAS.set(r.uid, (PRESENTE_MOEDAS.get(r.uid) || 0) + mo);
     return { itens: pega };
   },
+  // ---------- denunciar ----------
+  async denunciar(b) {
+    const r = await quem(b),
+      a = await alvo(String(b.uid || '').replace(/\D/g, ''));
+    if (a.uid === r.uid) throw new Erro(400, 'Não dá para denunciar você mesmo 😅');
+    const motivo = String(b.motivo || '');
+    if (!MOTIVOS[motivo]) throw new Erro(400, 'Escolha um motivo.');
+    if (estourou('dn:' + r.uid + ':' + a.uid, 1, 864e5)) throw new Erro(429, 'Você já denunciou esse jogador hoje. O Criador vai olhar.');
+    if (estourou('dn:' + r.uid, 10, 3600e3)) throw new Erro(429, 'Muitas denúncias seguidas. Espere um pouco.');
+    await XB.d.insert({ alvo: a.uid, autor: r.uid, motivo, detalhe: limpaTxt(b.detalhe, 200), mid: limpaTxt(b.mid, 20) || null, status: 'aberta' });
+    return { ok: true, msg: 'Denúncia enviada. Obrigado por ajudar! 🚩' };
+  },
+  // ---------- e-mail e recuperar senha ----------
+  async email(b) {
+    const r = await quem(b);
+    if (!(await confereSenha(String(b.senha || '').slice(0, 64), r.senha))) throw new Erro(401, 'Senha errada.');
+    const e = String(b.email || '').trim().toLowerCase();
+    if (e && !okEmail(e)) throw new Erro(400, 'E-mail inválido.');
+    await DB.update(r.uid, { email: e || null });
+    return { ok: true, email: mascara(e) };
+  },
+  async esqueci(b, ip) {
+    if (!MAIL_OK) throw new Erro(503, 'A recuperação por e-mail ainda não foi ligada. Fale com o Criador do jogo.');
+    if (estourou('esq:' + ip, 6, 3600e3)) throw new Erro(429, 'Muitos pedidos. Tente daqui a uma hora.');
+    const usuario = String(b.usuario || '').toLowerCase().trim();
+    const msg = 'Se essa conta tiver e-mail, mandamos um código de 6 números pra ele. Olhe também o spam. Vale por 15 minutos.';
+    const r = okUser(usuario) ? await DB.byUser(usuario) : null;
+    if (!r || !r.email || r.banido) return { ok: true, msg };
+    if (estourou('esqU:' + r.uid, 3, 3600e3)) return { ok: true, msg };
+    const cod = String(crypto.randomInt(100000, 1000000));
+    await DB.update(r.uid, { reset: { h: hashCodigo(r.uid, cod), exp: Date.now() + 15 * 60e3, n: 0 } });
+    try {
+      await mandaEmail(
+        r.email,
+        'WorldBullet · código para trocar a senha',
+        '<div style="font-family:Arial,sans-serif;font-size:16px"><h2 style="color:#e0a800">WorldBullet</h2><p>Olá, <b>' +
+          String(r.nome).replace(/[<>&]/g, '') +
+          '</b>! Seu código para criar uma senha nova é:</p><p style="font-size:32px;font-weight:bold;letter-spacing:6px">' +
+          cod +
+          '</p><p>Ele vale por 15 minutos. Se não foi você que pediu, é só ignorar este e-mail.</p></div>',
+      );
+    } catch (e) {
+      console.warn('e-mail não foi:', e.message);
+      throw new Erro(503, 'Não deu para mandar o e-mail agora. Tente de novo mais tarde.');
+    }
+    return { ok: true, msg };
+  },
+  async redefinir(b, ip) {
+    if (estourou('red:' + ip, 20, 3600e3)) throw new Erro(429, 'Muitas tentativas. Tente mais tarde.');
+    const usuario = String(b.usuario || '').toLowerCase().trim(),
+      cod = String(b.codigo || '').replace(/\D/g, ''),
+      nova = String(b.nova || '');
+    if (nova.length < 6 || nova.length > 64) throw new Erro(400, 'A senha nova precisa ter de 6 a 64 caracteres.');
+    const r = okUser(usuario) ? await DB.byUser(usuario) : null,
+      R = r && r.reset;
+    if (!R || !R.h) throw new Erro(400, 'Peça um código primeiro.');
+    if (R.exp < Date.now() || R.n >= 5) {
+      await DB.update(r.uid, { reset: null });
+      throw new Erro(400, 'Esse código venceu. Peça outro.');
+    }
+    const a = Buffer.from(hashCodigo(r.uid, cod)),
+      c = Buffer.from(R.h);
+    if (a.length !== c.length || !crypto.timingSafeEqual(a, c)) {
+      await DB.update(r.uid, { reset: Object.assign({}, R, { n: (R.n | 0) + 1 }) });
+      throw new Erro(401, 'Código errado.');
+    }
+    const r2 = await DB.update(r.uid, { senha: await hashSenha(nova), reset: null, visto: agora() });
+    RL.delete('falha:' + usuario);
+    return { token: fazToken(r.uid), conta: await minha(r2 || r, true) };
+  },
+  // ---------- eventos ----------
+  async eventos(b) {
+    const A = await eventosAtivos();
+    let meus = [];
+    const uid = leToken(b.token);
+    if (uid) {
+      const r = await contaDoToken(uid).catch(() => null);
+      if (r) meus = arr(r.eventos);
+    }
+    return { eventos: A.map(evPub), pegos: meus, agora: Date.now() };
+  },
+  async evento_resgatar(b) {
+    const r = await quem(b),
+      e = (await eventosAtivos()).find((x) => x.id === b.id && x.tipo === 'presente');
+    if (!e) throw new Erro(404, 'Esse evento acabou.');
+    if (arr(r.eventos).includes(e.id)) return { ok: true, ja: true };
+    await DB.update(r.uid, { eventos: arr(r.eventos).concat(e.id).slice(-100) });
+    const item = e.item ? { tipo: 'item', cat: e.item.cat, item: e.item.id, nome: e.item.nome } : { tipo: 'moedas', n: e.n | 0 };
+    await daPresente(await DB.get(r.uid), Object.assign(item, { msg: 'Presente do evento ' + e.nome + ' 🎉' }), 'Evento');
+    return { ok: true };
+  },
+  // ---------- guildas ----------
+  async guilda(b) {
+    const r = await quem(b),
+      ac = String(b.acao || '');
+    if (estourou('gd:' + r.uid, 60, 60e3)) throw new Erro(429, 'Calma, muitas ações seguidas.');
+    await guildasCache();
+    const minhaG = async () => {
+      const g = r.guilda ? await XB.g.get(r.guilda) : null;
+      return g && cargoDe(g, r.uid) ? g : null;
+    };
+    const lista = async () => {
+      await carregaRank();
+      return GC.list.map((g) => ({ id: g.id, nome: g.nome, tag: g.tag, emblema: g.emblema, descr: g.descr || '', aberta: !!g.aberta, n: arr(g.membros).length, pontos: gPontos(g) }));
+    };
+    if (ac === 'minha') {
+      const g = await minhaG();
+      return { guilda: g ? await gDetalhe(g, r.uid) : null };
+    }
+    if (ac === 'ver') {
+      const g = await XB.g.get(String(b.id || ''));
+      if (!g) throw new Erro(404, 'Guilda não encontrada.');
+      return { guilda: await gDetalhe(g, r.uid) };
+    }
+    if (ac === 'buscar') {
+      const q = chaveG(limpaTxt(b.q, 16));
+      const L = (await lista()).filter((g) => !q || chaveG(g.nome).includes(q) || g.tag.toLowerCase() === q);
+      return { guildas: L.sort((a, c) => c.pontos - a.pontos || c.n - a.n).slice(0, 30) };
+    }
+    if (ac === 'ranking') return { guildas: (await lista()).sort((a, c) => c.pontos - a.pontos || c.n - a.n).slice(0, 50) };
+    if (ac === 'criar') {
+      if (await minhaG()) throw new Erro(400, 'Você já está numa guilda. Saia dela primeiro.');
+      const nome = limpaTxt(b.nome, 16).replace(/\s+/g, ' '),
+        tag = String(b.tag || '')
+          .toUpperCase()
+          .replace(/[^A-Z0-9]/g, '');
+      if (nome.length < 3) throw new Erro(400, 'O nome da guilda precisa de 3 a 16 letras.');
+      if (tag.length < 2 || tag.length > 4) throw new Erro(400, 'A sigla precisa de 2 a 4 letras ou números.');
+      const g = {
+        id: 'g' + crypto.randomBytes(4).toString('hex'),
+        nome,
+        chave: chaveG(nome),
+        tag,
+        emblema: EMBLEMAS.includes(b.emblema) ? b.emblema : EMBLEMAS[0],
+        descr: limpaTxt(b.descr, 80),
+        dono: r.uid,
+        membros: [{ u: r.uid, c: 'lider', t: Date.now() }],
+        pedidos: [],
+        chat: [{ s: 1, m: r.nome + ' criou a guilda 🎉', t: Date.now() }],
+        aberta: b.aberta !== false,
+        criado: agora(),
+      };
+      if (await XB.g.byChave(g.chave)) throw new Erro(409, 'Já existe uma guilda com esse nome.');
+      const ok = await XB.g.insert(g);
+      if (!ok) throw new Erro(409, 'Já existe uma guilda com esse nome.');
+      await DB.update(r.uid, { guilda: g.id });
+      GC.t = 0;
+      return { guilda: await gDetalhe(g, r.uid) };
+    }
+    if (ac === 'entrar') {
+      if (await minhaG()) throw new Erro(400, 'Você já está numa guilda.');
+      const g = await XB.g.get(String(b.id || ''));
+      if (!g) throw new Erro(404, 'Guilda não encontrada.');
+      if (arr(g.membros).length >= GMAX) throw new Erro(400, 'Essa guilda está cheia (' + GMAX + ' membros).');
+      if (!g.aberta) {
+        if (!arr(g.pedidos).includes(r.uid)) await XB.g.update(g.id, { pedidos: com(g.pedidos, r.uid, 50) });
+        gAvisa(g, { t: 'ct', gped: { nome: r.nome } }, ['lider', 'vice']);
+        return { msg: 'Pedido enviado! O líder da ' + g.nome + ' precisa aceitar.' };
+      }
+      const ng = await XB.g.update(g.id, {
+        membros: arr(g.membros).concat({ u: r.uid, c: 'membro', t: Date.now() }),
+        pedidos: sem(g.pedidos, r.uid),
+        chat: arr(g.chat).concat({ s: 1, m: r.nome + ' entrou na guilda 👋', t: Date.now() }).slice(-40),
+      });
+      await DB.update(r.uid, { guilda: g.id });
+      GC.t = 0;
+      gAvisa(ng, { t: 'gch' });
+      return { msg: 'Bem-vindo à ' + g.nome + '!', guilda: await gDetalhe(ng, r.uid) };
+    }
+    // daqui pra baixo: só quem está numa guilda
+    const g = await minhaG();
+    if (!g) throw new Erro(400, 'Você não está numa guilda.');
+    const eu = cargoDe(g, r.uid),
+      chefe = eu === 'lider' || eu === 'vice';
+    if (ac === 'sair') {
+      await gTira(g, r.uid, r.nome + ' saiu da guilda');
+      return { msg: 'Você saiu da ' + g.nome + '.', guilda: null };
+    }
+    if (ac === 'chat') {
+      const m = limpaTxt(b.m, 140);
+      if (!m) throw new Erro(400, 'Escreva a mensagem.');
+      if (estourou('gc:' + r.uid, 20, 60e3)) throw new Erro(429, 'Calma, muitas mensagens seguidas.');
+      const msg = { u: r.uid, n: r.nome, vf: r.vf | 0, m, t: Date.now() };
+      await XB.g.update(g.id, { chat: arr(g.chat).concat(msg).slice(-40) });
+      gAvisa(g, { t: 'gch', g: g.id, msg });
+      return { ok: true };
+    }
+    if (ac === 'aceitar' || ac === 'recusar') {
+      if (!chefe) throw new Erro(403, 'Só o líder ou o vice podem fazer isso.');
+      const uid = String(b.uid || '');
+      if (!arr(g.pedidos).includes(uid)) throw new Erro(400, 'Esse pedido não existe mais.');
+      if (ac === 'recusar') {
+        await XB.g.update(g.id, { pedidos: sem(g.pedidos, uid) });
+        return { guilda: await gDetalhe(await XB.g.get(g.id), r.uid) };
+      }
+      const a = await DB.get(uid);
+      if (!a) throw new Erro(404, 'Esse jogador não existe mais.');
+      if (a.guilda && a.guilda !== g.id) {
+        await XB.g.update(g.id, { pedidos: sem(g.pedidos, uid) });
+        throw new Erro(400, a.nome + ' já entrou em outra guilda.');
+      }
+      if (arr(g.membros).length >= GMAX) throw new Erro(400, 'A guilda está cheia.');
+      const ng = await XB.g.update(g.id, {
+        membros: arr(g.membros).concat({ u: uid, c: 'membro', t: Date.now() }),
+        pedidos: sem(g.pedidos, uid),
+        chat: arr(g.chat).concat({ s: 1, m: a.nome + ' entrou na guilda 👋', t: Date.now() }).slice(-40),
+      });
+      await DB.update(uid, { guilda: g.id });
+      avisa(uid, { t: 'ct', gok: { nome: g.nome } });
+      gAvisa(ng, { t: 'gch' });
+      GC.t = 0;
+      return { guilda: await gDetalhe(ng, r.uid) };
+    }
+    if (ac === 'expulsar') {
+      const uid = String(b.uid || ''),
+        c = cargoDe(g, uid);
+      if (!c || uid === r.uid) throw new Erro(400, 'Esse jogador não está na guilda.');
+      if (!(eu === 'lider' || (eu === 'vice' && c === 'membro'))) throw new Erro(403, 'Você não pode expulsar esse jogador.');
+      const a = await DB.get(uid);
+      await gTira(g, uid, (a ? a.nome : 'Alguém') + ' foi removido da guilda');
+      avisa(uid, { t: 'ct', gfora: { nome: g.nome } });
+      return { guilda: await gDetalhe(await XB.g.get(g.id), r.uid) };
+    }
+    if (ac === 'cargo') {
+      if (eu !== 'lider') throw new Erro(403, 'Só o líder pode mudar cargos.');
+      const uid = String(b.uid || ''),
+        c = String(b.c || '');
+      if (!cargoDe(g, uid) || uid === r.uid || !['vice', 'membro', 'lider'].includes(c)) throw new Erro(400, 'Cargo inválido.');
+      const M = arr(g.membros).map((m) => Object.assign({}, m));
+      for (const m of M) if (m.u === uid) m.c = c;
+      if (c === 'lider') for (const m of M) if (m.u === r.uid) m.c = 'vice'; // passou a liderança
+      const ng = await XB.g.update(g.id, { membros: M });
+      gAvisa(ng, { t: 'gch' });
+      return { guilda: await gDetalhe(ng, r.uid) };
+    }
+    if (ac === 'editar') {
+      if (!chefe) throw new Erro(403, 'Só o líder ou o vice podem editar.');
+      const p = {};
+      if (b.descr !== undefined) p.descr = limpaTxt(b.descr, 80);
+      if (b.aberta !== undefined) p.aberta = !!b.aberta;
+      if (EMBLEMAS.includes(b.emblema)) p.emblema = b.emblema;
+      const ng = await XB.g.update(g.id, p);
+      GC.t = 0;
+      return { guilda: await gDetalhe(ng, r.uid) };
+    }
+    throw new Erro(400, 'Ação desconhecida.');
+  },
   // excluir a conta de vez (pede a senha). Também sai da lista de amigos de todo mundo.
   async excluir(b, ip) {
     const r = await quem(b);
@@ -756,6 +1247,10 @@ const API = {
     for (const f of outros) {
       const a = await DB.get(f).catch(() => null);
       if (a) await DB.update(f, { amigos: sem(a.amigos, r.uid), pedidos: sem(a.pedidos, r.uid), enviados: sem(a.enviados, r.uid) });
+    }
+    if (r.guilda) {
+      const g = await XB.g.get(r.guilda).catch(() => null);
+      if (g) await gTira(g, r.uid, r.nome + ' saiu da guilda').catch(() => {});
     }
     await DB.remove(r.uid);
     const S = porConta.get(r.uid);
@@ -768,6 +1263,45 @@ const API = {
   async admin(b) {
     const r = await quem(b);
     if (!r.admin) throw new Erro(403, 'Só o Criador pode usar isso.');
+    if (b.acao === 'denuncias') {
+      const L = await XB.d.list('aberta'),
+        P = await DB.many([...new Set(L.flatMap((d) => [d.alvo, d.autor]))]),
+        by = {};
+      for (const p of P) by[p.uid] = p;
+      return {
+        denuncias: L.map((d) => ({ id: d.id, alvo: { uid: d.alvo, nome: (by[d.alvo] || {}).nome || '(conta excluída)' }, autor: { uid: d.autor, nome: (by[d.autor] || {}).nome || '?' }, motivo: MOTIVOS[d.motivo] || d.motivo, detalhe: d.detalhe || '', criado: d.criado })),
+      };
+    }
+    if (b.acao === 'denuncia') {
+      await XB.d.update(b.id, { status: b.st === 'ignorada' ? 'ignorada' : 'resolvida' });
+      return { ok: true };
+    }
+    if (b.acao === 'eventos') return { eventos: (await eventosAtivos(true)).map(evPub), tipos: ['moedas2x', 'xp2x', 'presente'] };
+    if (b.acao === 'evento_criar') {
+      const tipo = String(b.tipo || '');
+      if (!['moedas2x', 'xp2x', 'presente'].includes(tipo)) throw new Erro(400, 'Tipo de evento inválido.');
+      const h = Math.max(1, Math.min(720, +b.horas || 0)),
+        nome = limpaTxt(b.nome, 40) || (tipo === 'moedas2x' ? 'Moedas em dobro' : tipo === 'xp2x' ? 'XP em dobro' : 'Presente');
+      const e = { id: novoId(), tipo, nome, ini: Date.now(), fim: Date.now() + h * 3600e3 };
+      if (tipo === 'presente') {
+        if (b.cat && ['o', 'g', 'p', 'ch'].includes(b.cat) && b.id) e.item = { cat: b.cat, id: limpaTxt(b.id, 40), nome: limpaTxt(b.nomeItem, 40) || 'Item' };
+        else e.n = Math.max(1, Math.min(1e5, Math.floor(+b.n || 0)));
+      }
+      await eventosAtivos(true);
+      const L = EV.list.filter((x) => x && x.fim > Date.now()).concat(e);
+      await XB.c.set('eventos', L);
+      EV.t = 0;
+      for (const S of porConta.values()) for (const c of S) send(c, { t: 'ev' }); // todo mundo online vê na hora
+      return { ok: true, eventos: (await eventosAtivos(true)).map(evPub) };
+    }
+    if (b.acao === 'evento_fim') {
+      await eventosAtivos(true);
+      const L = EV.list.map((x) => (x && x.id === b.id ? Object.assign({}, x, { fim: Date.now() - 1 }) : x)).filter((x) => x && x.fim > Date.now() - 864e5);
+      await XB.c.set('eventos', L);
+      EV.t = 0;
+      for (const S of porConta.values()) for (const c of S) send(c, { t: 'ev' });
+      return { ok: true, eventos: (await eventosAtivos(true)).map(evPub) };
+    }
     const a = await alvo(String(b.uid || '').replace(/\D/g, '')),
       ac = String(b.acao || ''),
       de = r.nome,
@@ -835,8 +1369,10 @@ h1{color:#ffc928;font-style:italic}h2{color:#ffc928;margin-top:28px;font-size:19
 <li><b>Senha</b> — guardada embaralhada (hash scrypt). Ninguém consegue ler, nem o Criador.</li>
 <li><b>Progresso do jogo</b>: moedas, itens, personagens, patentes, partidas, abates e vitórias.</li>
 <li><b>Amigos, pedidos de amizade e presentes</b> recebidos.</li>
-<li>Datas de criação da conta e do último acesso.</li></ul>
-<p>Não pedimos e-mail, telefone, nome verdadeiro, localização nem fotos. Não tem anúncios nem rastreamento de terceiros. Sem conta, o progresso fica só no seu aparelho.</p>
+<li>Datas de criação da conta e do último acesso.</li>
+<li><b>E-mail (opcional)</b> — só se você colocar, e só é usado para mandar o código de trocar a senha.</li>
+<li><b>Guilda</b> e mensagens do chat da guilda (os membros veem). <b>Denúncias</b> que você fizer (só o Criador vê).</li></ul>
+<p>Não pedimos telefone, nome verdadeiro, localização nem fotos (o e-mail é opcional). Não tem anúncios nem rastreamento de terceiros. Sem conta, o progresso fica só no seu aparelho.</p>
 <h2>Para que usamos</h2><ul><li>Salvar seu progresso e deixar você entrar em qualquer aparelho.</li><li>Mostrar o ranking, os amigos online e os convites para sala.</li><li>Evitar trapaça (o servidor confere se os números do jogo são possíveis).</li></ul>
 <p>Seus dados <b>não são vendidos nem passados</b> para ninguém. Eles ficam guardados nos serviços que hospedam o jogo (Render, servidor do jogo, e Supabase, banco de dados).</p>
 <h2>Menores de idade</h2><p>Se você tem menos de 12 anos, crie a conta junto com seu pai, mãe ou responsável. Nunca use seu nome completo, endereço ou telefone como nome de usuário ou apelido.</p>
