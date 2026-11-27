@@ -7905,6 +7905,28 @@
     }
   }
 
+  /* aba ONLINE dos amigos */
+  .amgOnTop {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+  .amgOnN {
+    font-weight: 900;
+    color: #4ade80;
+    margin-right: auto;
+  }
+  .amgOnVis {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    opacity: 0.85;
+    cursor: pointer;
+  }
+
   /* ===================== SPLASH (abre antes de tudo) ===================== */
   #splash {
     position: fixed;
@@ -8584,6 +8606,323 @@
   body.hudedit #eyeBox {
     display: none !important;
   }
+  /* ===================== v123: MENUS NO ESTILO DO VÍDEO =====================
+     painel escuro na esquerda com abas em coluna (a ativa fica amarela),
+     cartas com cor de raridade, botão amarelo inclinado e o boneco à direita */
+  body.ffUI {
+    --ffY: #ffc928;
+    --ffY2: #ffb300;
+    --ffBg: #0c0a1a;
+    --ffBg2: #07060f;
+  }
+  @media (orientation: landscape) {
+    body.ffUI #shop,
+    body.ffUI #royale,
+    body.ffUI #missions {
+      background: linear-gradient(90deg, #0006 40%, #0000 70%);
+      align-items: stretch;
+      justify-content: flex-start;
+    }
+    body.ffUI #shop .sheet,
+    body.ffUI #royale .sheet,
+    body.ffUI #missions .sheet {
+      max-width: none;
+      width: 57%;
+      max-height: 100%;
+      height: 100%;
+      border-radius: 0;
+      background: linear-gradient(90deg, #0c0a1afa 80%, #0c0a1ae6);
+      --bg: #0c0a1a;
+      --text: #fff;
+      color: #fff;
+      display: grid;
+      grid-template-columns: 118px 1fr;
+      grid-template-rows: auto 1fr auto;
+      border-right: 2px solid #ffc92855;
+      box-shadow: 8px 0 30px #0008;
+    }
+    body.ffUI #missions .sheet {
+      grid-template-columns: 1fr;
+    }
+    body.ffUI #shop .ash,
+    body.ffUI #royale .ash,
+    body.ffUI #missions .ash {
+      grid-column: 1 / -1;
+      padding: calc(6px + env(safe-area-inset-top, 0px)) 10px 6px calc(10px + env(safe-area-inset-left, 0px));
+      border-bottom: 1px solid #ffffff18;
+    }
+    body.ffUI #shop .shTabs,
+    body.ffUI #royale #rlTabs {
+      grid-column: 1;
+      grid-row: 2 / 4;
+      flex-direction: column;
+      gap: 3px;
+      padding: 8px 0 8px env(safe-area-inset-left, 0px);
+      margin: 0;
+      background: var(--ffBg2);
+      overflow: auto;
+      border: none;
+    }
+    body.ffUI #shop .shTabs button,
+    body.ffUI #royale #rlTabs button {
+      flex: 0 0 auto;
+      padding: 11px 10px;
+      border: none;
+      border-radius: 0;
+      background: transparent;
+      color: #fffb;
+      font: 800 italic 13px 'Arial Narrow', system-ui, sans-serif;
+      text-transform: uppercase;
+      text-align: left;
+      margin: 0;
+    }
+    body.ffUI #shop .shBody,
+    body.ffUI #royale .shBody {
+      grid-column: 2;
+      grid-row: 2;
+    }
+    body.ffUI #shop .asf,
+    body.ffUI #royale .asf {
+      grid-column: 2;
+      grid-row: 3;
+      border-top: 1px solid #ffffff14;
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+    body.ffUI #missions .shBody,
+    body.ffUI #missions .shFoot {
+      grid-column: 1;
+    }
+  }
+  /* aba ativa amarela (igual o vídeo) — vale pras abas em coluna do cofre também */
+  body.ffUI #shop .shTabs button.on,
+  body.ffUI #royale #rlTabs button.on,
+  body.ffUI #vault #vTabs button.on {
+    background: linear-gradient(90deg, var(--ffY), var(--ffY2));
+    color: #1a1200;
+    border-left-color: #fff;
+    clip-path: polygon(0 0, 100% 0, 92% 100%, 0 100%);
+  }
+  body.ffUI #shop .ash b,
+  body.ffUI #royale .ash b,
+  body.ffUI #missions .ash b {
+    font: 900 italic 18px 'Arial Narrow', system-ui, sans-serif;
+    color: var(--ffY);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  body.ffUI .shClose,
+  body.ffUI #rankClose {
+    border: none;
+    background: #ffffff14;
+    color: #fff;
+    border-radius: 2px;
+  }
+  /* cartas com cor de raridade */
+  body.ffUI #shop .shCard,
+  body.ffUI #royale .shCard {
+    border-radius: 2px;
+    border: 2px solid #ffffff22;
+    background: linear-gradient(180deg, #2a2540, #14122a);
+    color: #fff;
+  }
+  body.ffUI #shop .shCard.r-r,
+  body.ffUI #royale .shCard.r-r {
+    background: linear-gradient(180deg, #1e4a8a, #0e1f3d);
+    border-color: #4aa3ff88;
+  }
+  body.ffUI #shop .shCard.r-e,
+  body.ffUI #royale .shCard.r-e {
+    background: linear-gradient(180deg, #5a2a8a, #261040);
+    border-color: #b388ff99;
+  }
+  body.ffUI #shop .shCard.r-l,
+  body.ffUI #royale .shCard.r-l {
+    background: linear-gradient(180deg, #8a5a10, #3d2406);
+    border-color: #ffc928aa;
+  }
+  body.ffUI #shop .shCard.r-m,
+  body.ffUI #royale .shCard.r-m {
+    background: linear-gradient(180deg, #8a1a2a, #3d0610);
+    border-color: #ff5252aa;
+  }
+  body.ffUI #shop .shCard.sel,
+  body.ffUI #royale .shCard.sel {
+    box-shadow:
+      inset 0 0 0 2px var(--ffY),
+      0 0 12px #ffc92866;
+  }
+  body.ffUI #shop .shSec,
+  body.ffUI #royale .shSec,
+  body.ffUI #missions .mis {
+    color: #fff;
+  }
+  body.ffUI #missions .mis {
+    background: linear-gradient(90deg, #ffffff10, #ffffff06);
+    border: 1px solid #ffffff1c;
+    border-radius: 2px;
+  }
+  /* botão amarelo inclinado (DECOLAR / OBTER / TROCAR do vídeo) */
+  body.ffUI #shopAct,
+  body.ffUI #rl1,
+  body.ffUI #rl10,
+  body.ffUI #rkPlay,
+  body.ffUI #vault .vAct,
+  body.ffUI .ffChR .ctOk {
+    width: auto;
+    min-width: 180px;
+    padding: 12px 26px;
+    border: none;
+    border-radius: 0;
+    background: linear-gradient(180deg, #ffe066, var(--ffY2));
+    color: #1a1200;
+    font: 900 italic 17px 'Arial Narrow', system-ui, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    clip-path: polygon(7% 0, 100% 0, 93% 100%, 0 100%);
+    box-shadow: none;
+  }
+  body.ffUI #shopAct:disabled {
+    background: #ffffff22;
+    color: #fff8;
+  }
+
+  /* ===================== RANQUEADO: tela cheia com a patente em destaque ===================== */
+  @media (orientation: landscape) {
+    body.ffUI #rankM {
+      align-items: stretch;
+      justify-content: stretch;
+      background: #05040c;
+    }
+    body.ffUI #rankSheet {
+      max-width: none;
+      width: 100%;
+      max-height: 100%;
+      height: 100%;
+      border-radius: 0;
+      color: #fff;
+      --text: #fff;
+      background:
+        radial-gradient(ellipse 38% 55% at 64% 44%, #ffb30055, #0000 70%),
+        radial-gradient(ellipse 60% 80% at 64% 40%, #7c4dff40, #0000 75%),
+        linear-gradient(160deg, #15102a, #07060f 70%);
+      display: grid;
+      grid-template-columns: minmax(250px, 36%) 1fr;
+      grid-template-rows: auto auto 1fr auto;
+      position: relative;
+      overflow: hidden;
+    }
+    /* "asas" de luz atrás da patente */
+    body.ffUI #rankSheet::before {
+      content: '';
+      position: absolute;
+      left: 36%;
+      right: 0;
+      top: 6%;
+      height: 70%;
+      background:
+        conic-gradient(from 200deg at 50% 60%, #0000 0deg, #ffc92822 30deg, #0000 60deg, #0000 300deg, #ffc92822 330deg, #0000 360deg),
+        radial-gradient(ellipse 50% 40% at 50% 60%, #ffffff10, #0000 70%);
+      pointer-events: none;
+    }
+    body.ffUI #rankSheet .ash {
+      grid-column: 1 / -1;
+      padding: calc(6px + env(safe-area-inset-top, 0px)) 12px 4px calc(12px + env(safe-area-inset-left, 0px));
+      border: none;
+      z-index: 1;
+    }
+    body.ffUI #rankSheet .ash b {
+      font: 900 italic 20px 'Arial Narrow', system-ui, sans-serif;
+      color: var(--ffY);
+      text-transform: uppercase;
+    }
+    body.ffUI #rkTabs {
+      grid-column: 1 / -1;
+      margin: 0 0 0 calc(12px + env(safe-area-inset-left, 0px));
+      gap: 18px;
+      background: none;
+      z-index: 1;
+    }
+    body.ffUI #rkTabs button {
+      background: none;
+      border: none;
+      border-bottom: 3px solid transparent;
+      border-radius: 0;
+      color: #fff9;
+      padding: 6px 2px;
+      font: 900 italic 14px 'Arial Narrow', system-ui, sans-serif;
+    }
+    body.ffUI #rkTabs button.on {
+      color: var(--ffY);
+      border-bottom-color: var(--ffY);
+      background: none;
+    }
+    body.ffUI #rankBody {
+      grid-column: 1 / -1;
+      grid-row: 3;
+      display: grid;
+      grid-template-columns: minmax(250px, 36%) 1fr;
+      grid-template-rows: auto auto 1fr;
+      column-gap: 14px;
+      padding: 6px 12px 6px calc(12px + env(safe-area-inset-left, 0px));
+      overflow: hidden;
+      z-index: 1;
+    }
+    body.ffUI #rankBody > * {
+      grid-column: 1;
+    }
+    body.ffUI #rankBody .rk-hero {
+      grid-column: 2;
+      grid-row: 1 / 4;
+      align-self: center;
+      justify-content: center;
+    }
+    body.ffUI #rkLadder,
+    body.ffUI #rkStats,
+    body.ffUI #rkNote {
+      background: #0c0a1ad0;
+      border: 1px solid #ffffff14;
+      border-radius: 2px;
+      padding: 6px 8px;
+      margin-bottom: 6px;
+      overflow: auto;
+      color: #fff;
+    }
+    body.ffUI #rkLadder {
+      max-height: 46vh;
+    }
+    body.ffUI #rkNote {
+      font-size: 11px;
+      opacity: 0.8;
+    }
+    body.ffUI #rankSheet .badge {
+      width: min(150px, 30vh);
+      height: min(150px, 30vh);
+      font-size: min(80px, 16vh);
+      box-shadow:
+        0 0 40px #ffc92866,
+        0 0 90px #7c4dff55;
+    }
+    body.ffUI #rkName {
+      font: 900 italic 34px 'Arial Narrow', system-ui, sans-serif;
+      color: #fff;
+      text-shadow: 0 2px 12px #ffc92888;
+      text-transform: uppercase;
+    }
+    body.ffUI #rankSheet .rk-bar {
+      width: min(320px, 80%);
+    }
+    body.ffUI #rankSheet .asf {
+      grid-column: 1 / -1;
+      grid-row: 4;
+      border: none;
+      display: flex;
+      justify-content: flex-end;
+      padding: 6px calc(16px + env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom, 0px));
+      z-index: 1;
+    }
+  }
 </style>
 </head>
 <body>
@@ -8597,7 +8936,7 @@
     <div class="spLoad"><div class="spTip" id="spTip">Preparando a ilha...</div><div class="spBar"><i id="spFill"></i></div><div class="spPct"><span id="spStep">Carregando</span><b id="spPct">0%</b></div></div>
     <div class="spTap" id="spTap"><b>TOQUE PARA JOGAR</b><div class="spWho" id="spWho"></div></div>
     <div class="spGate" id="spGate"></div>
-    <div class="spVer">v121 · Feito no Amapá 🇧🇷</div>
+    <div class="spVer">v123 · Feito no Amapá 🇧🇷</div>
   </div>
 </div>
 <!-- ===== GIRE O CELULAR: o jogo é só deitado ===== -->
@@ -29783,24 +30122,71 @@ function ffBuildDom() {
 function ffMakeStage() {
   try {
     const g = new THREE.Group();
-    const top = mesh(new THREE.CylinderGeometry(0.92, 1.0, 0.12, 48), mat(0x1d1a2e, 0.35, 0.6));
-    top.position.y = 0.0;
+    // palco hexagonal de vitrine (base escura de metal, borda de luz e brilho no chão)
+    const base = mesh(new THREE.CylinderGeometry(1.08, 1.16, 0.1, 6), mat(0x14111f, 0.4, 0.55));
+    base.position.y = -0.04;
+    base.rotation.y = Math.PI / 6;
+    g.add(base);
+    const top = mesh(new THREE.CylinderGeometry(0.94, 1.02, 0.1, 6), mat(0x231e36, 0.3, 0.6));
+    top.position.y = 0.03;
+    top.rotation.y = Math.PI / 6;
     g.add(top);
-    const ring = new THREE.Mesh(new THREE.TorusGeometry(0.95, 0.025, 8, 64), new THREE.MeshBasicMaterial({ color: 0xffc928 }));
-    ring.rotation.x = Math.PI / 2;
-    ring.position.y = 0.065;
-    g.add(ring);
-    const ring2 = new THREE.Mesh(new THREE.TorusGeometry(0.62, 0.012, 6, 48), new THREE.MeshBasicMaterial({ color: 0x7c4dff }));
-    ring2.rotation.x = Math.PI / 2;
-    ring2.position.y = 0.066;
+    const hexLinha = (r, y, cor, op) => {
+      const P = [];
+      for (let i = 0; i <= 6; i++) {
+        const a = (i / 6) * Math.PI * 2;
+        P.push(new THREE.Vector3(Math.cos(a) * r, y, Math.sin(a) * r));
+      }
+      const l = new THREE.Line(new THREE.BufferGeometry().setFromPoints(P), new THREE.LineBasicMaterial({ color: cor, transparent: true, opacity: op }));
+      g.add(l);
+      return l;
+    };
+    const ring = hexLinha(0.95, 0.083, 0xffc928, 1); // borda dourada
+    hexLinha(1.04, 0.0, 0x7c4dff, 0.8);
+    hexLinha(1.1, -0.085, 0x5ad8ff, 0.6);
+    // hexágono de dentro girando devagar
+    const ring2 = new THREE.Group();
+    ring2.add(hexLinha(0.6, 0, 0x7c4dff, 0.9));
+    ring2.position.y = 0.084;
     g.add(ring2);
+    // brilho no chão (textura macia)
+    const cv = document.createElement('canvas');
+    cv.width = cv.height = 128;
+    const cx = cv.getContext('2d');
+    if (cx) {
+      const gr = cx.createRadialGradient(64, 64, 30, 64, 64, 64);
+      gr.addColorStop(0, 'rgba(255,201,40,0.9)');
+      gr.addColorStop(0.45, 'rgba(160,90,255,0.45)');
+      gr.addColorStop(1, 'rgba(90,60,255,0)');
+      cx.fillStyle = gr;
+      cx.fillRect(0, 0, 128, 128);
+    }
     const glow = new THREE.Mesh(
-      new THREE.RingGeometry(0.95, 1.5, 64),
-      new THREE.MeshBasicMaterial({ color: 0xffc928, transparent: true, opacity: 0.22, depthWrite: false, side: THREE.DoubleSide }),
+      new THREE.PlaneGeometry(3.4, 3.4),
+      new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(cv), transparent: true, opacity: 0.22, depthWrite: false, blending: THREE.AdditiveBlending }),
     );
     glow.rotation.x = -Math.PI / 2;
-    glow.position.y = 0.05;
+    glow.position.y = -0.055;
     g.add(glow);
+    // facho de luz subindo do palco
+    const fc = document.createElement('canvas');
+    fc.width = 4;
+    fc.height = 64;
+    const fx = fc.getContext('2d');
+    if (fx) {
+      const lg = fx.createLinearGradient(0, 64, 0, 0);
+      lg.addColorStop(0, 'rgba(255,255,255,0.55)');
+      lg.addColorStop(1, 'rgba(255,255,255,0)');
+      fx.fillStyle = lg;
+      fx.fillRect(0, 0, 4, 64);
+    }
+    const facho = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.93, 0.93, 1.1, 6, 1, true),
+      new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(fc), color: 0x7c4dff, transparent: true, opacity: 0.16, depthWrite: false, side: THREE.DoubleSide, blending: THREE.AdditiveBlending }),
+    );
+    facho.position.y = 0.64;
+    facho.rotation.y = Math.PI / 6;
+    g.add(facho);
     g.userData = { ring, ring2, glow };
     g.traverse((o) => (o.raycast = () => {}));
     scene.add(g);
@@ -29887,7 +30273,7 @@ function ffCam(dt, t) {
     FF.stage.visible = true;
     const u = FF.stage.userData;
     u.glow.material.opacity = 0.16 + 0.08 * Math.sin(t * 2.2);
-    u.ring2.rotation.z = t * 0.4;
+    u.ring2.rotation.y = t * 0.4;
   }
   if (FF.pet) {
     FF.pet.visible = true;
@@ -32998,7 +33384,8 @@ function amgRender() {
   const T = [
     ['amigos', 'AMIGOS (' + d.amigos.length + ')'],
     ['pedidos', 'PEDIDOS' + (d.pedidos.length ? ' (' + d.pedidos.length + ')' : '')],
-    ['add', '➕ ADICIONAR'],
+    ['online', '🟢 ONLINE'],
+    ['add', '➕ POR ID'],
     ['salas', '🎮 SALAS'],
   ];
   T.forEach(([k, n]) => {
@@ -33033,9 +33420,11 @@ function amgRender() {
       const j = await contaApi('amigos', { acao, uid });
       if (j.msg) toast('👥 ' + j.msg);
       contaAplica(Object.assign({}, CONTA.d, j.conta));
+      return true;
     } catch (e) {
       toast('😕 ' + e.message);
       if (b) b.disabled = false;
+      return false;
     }
   };
   if (CONTA.tab === 'amigos') {
@@ -33073,6 +33462,8 @@ function amgRender() {
       const n = r.appendChild(ctEl('button', 'ctBtn sm', 'Cancelar'));
       n.onclick = () => acao('cancelar', a.uid, n);
     });
+  } else if (CONTA.tab === 'online') {
+    amgOnline(L, linha, acao, d);
   } else {
     const f = L.appendChild(ctEl('form', 'amgAdd'));
     const i = f.appendChild(ctEl('input'));
@@ -33118,6 +33509,72 @@ function amgRender() {
     };
     setTimeout(() => i.focus(), 50);
   }
+}
+// 🟢 quem está online agora (pra adicionar, convidar ou assistir)
+const AMG_ON = { t: 0, j: null };
+function amgOnline(L, linha, acao, d) {
+  const topo = L.appendChild(ctEl('div', 'amgOnTop'));
+  const info = topo.appendChild(ctEl('span', 'amgOnN'));
+  const rb = topo.appendChild(ctEl('button', 'ctBtn sm', '🔄'));
+  rb.title = 'Atualizar';
+  const lb = topo.appendChild(ctEl('label', 'amgOnVis'));
+  const ck = lb.appendChild(ctEl('input'));
+  ck.type = 'checkbox';
+  ck.checked = !PROF.oculto;
+  lb.appendChild(ctEl('span', '', 'Aparecer aqui'));
+  ck.onchange = () => {
+    PROF.oculto = !ck.checked;
+    saveProf();
+    contaSalvaJa();
+    toast(PROF.oculto ? '🙈 Você não aparece mais na lista de online.' : '🟢 Você aparece na lista de online.');
+  };
+  const box = L.appendChild(ctEl('div'));
+  const faz = async (ac, a, b, rel) => {
+    if (await acao(ac, a.uid, b)) {
+      a.rel = rel;
+      amgRender();
+    }
+  };
+  const mostra = (j) => {
+    box.innerHTML = '';
+    if (!j) return box.appendChild(ctEl('p', 'ctInfo', '⏳ Procurando quem está online...'));
+    if (j.erro) return (box.appendChild(ctEl('p', 'ctErr')).textContent = j.erro);
+    info.textContent = '🟢 ' + (j.total || 0) + ' online agora';
+    if (!j.jogadores.length) return box.appendChild(ctEl('p', 'ctInfo', 'Ninguém online agora além de você. Chame a galera pro jogo! 😄'));
+    j.jogadores.forEach((a) => {
+      const pat = rankInfo(a.rp || 0).name,
+        r = linha(Object.assign({ on: true }, a), (a.st === 'play' ? '🎮 jogando' : '🟢 no lobby') + ' · 🏅 ' + pat);
+      if (a.rel === 'amigo') {
+        if (a.st !== 'play') {
+          const b = r.appendChild(ctEl('button', 'ctBtn y sm', 'Convidar'));
+          b.onclick = () => amgConvida(a, b);
+        } else r.appendChild(ctEl('small', 'amgEu', '✔ amigo'));
+      } else if (a.rel === 'enviado') r.appendChild(ctEl('small', 'amgEu', '⏳ pedido enviado'));
+      else if (a.rel === 'pediu') {
+        const y = r.appendChild(ctEl('button', 'ctBtn y sm', 'Aceitar'));
+        y.onclick = () => faz('aceitar', a, y, 'amigo');
+      } else {
+        const b = r.appendChild(ctEl('button', 'ctBtn y sm', '➕ Adicionar'));
+        b.onclick = () => faz('pedir', a, b, 'enviado');
+      }
+      const dn = r.appendChild(ctEl('button', 'ctBtn sm ghost', '🚩'));
+      dn.title = 'Denunciar';
+      dn.onclick = () => denAbre(a.uid, a.nome);
+    });
+  };
+  const busca = async (forca) => {
+    if (!forca && AMG_ON.j && Date.now() - AMG_ON.t < 15000) return mostra(AMG_ON.j);
+    mostra(null);
+    try {
+      AMG_ON.j = await contaApi('online', {});
+    } catch (e) {
+      AMG_ON.j = { erro: e.message };
+    }
+    AMG_ON.t = Date.now();
+    if (CONTA.tab === 'online' && box.isConnected) mostra(AMG_ON.j);
+  };
+  rb.onclick = () => busca(true);
+  busca(false);
 }
 async function amgConvida(a, b) {
   if (!inLobby) return toast('Termine a partida antes de convidar.');
