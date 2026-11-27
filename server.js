@@ -46,6 +46,7 @@ const server = http.createServer((req, res) => {
     return res.end(gz ? gameGz : gameHtml);
   }
   if (url.startsWith('/api/')) return apiHttp(req, res, url);
+  if (url.startsWith('/mp/webhook')) return mpWebhook(req, res, url);
   if (url === '/ping') {
     // despertador (cron-job.org): mantém o servidor e o banco acordados
     res.writeHead(200, { 'Content-Type': 'text/plain', 'Cache-Control': 'no-store' });
@@ -59,7 +60,7 @@ const server = http.createServer((req, res) => {
   if (url === '/status') {
     return testaBanco().then((d) => {
       res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8', 'Access-Control-Allow-Origin': '*' });
-      res.end(JSON.stringify({ ok: true, jogadores: clients.size, salas: roomCount(), contas: DB.nome, banco: d.msg, enderecoBanco: SB_URL || null, admin: ADMIN || null, email: MAIL_OK ? 'ligado (' + EMAIL_DE + ')' : 'desligado (sem BREVO_KEY/EMAIL_DE)', enviadoMB: +(sentBytes / 1e6).toFixed(1) }, null, 1));
+      res.end(JSON.stringify({ ok: true, jogadores: clients.size, salas: roomCount(), contas: DB.nome, banco: d.msg, enderecoBanco: SB_URL || null, admin: ADMIN || null, email: MAIL_OK ? 'ligado (' + EMAIL_DE + ')' : 'desligado (sem BREVO_KEY/EMAIL_DE)', loja: MP_OK ? 'ligada (Mercado Pago)' : 'fechada (sem MP_TOKEN)', enviadoMB: +(sentBytes / 1e6).toFixed(1) }, null, 1));
     });
   }
   res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
@@ -291,6 +292,10 @@ function bancoSupabase() {
     async todas() {
       return sbReq('GET', '?select=uid,usuario,criado,amigos,pedidos,enviados,perfil&order=criado.asc&limit=10000');
     },
+    async onlineInfo(uids) {
+      if (!uids.length) return [];
+      return sbReq('GET', '?uid=in.(' + uids.map(enc).join(',') + ')&select=uid,nome,vf,banido,rp:stats->rp,st4:stats->st4,oculto:perfil->oculto');
+    },
     async ranking() {
       const q = 'uid,nome,vf,banido,rp:stats->rp,st4:stats->st4,wins:stats->wins,kills:stats->kills';
       try {
@@ -372,6 +377,12 @@ function bancoLocal() {
       for (const r of M.values()) if (r.perfil && r.perfil.uidAntigo === old) return cp(r);
       return null;
     },
+    async onlineInfo(uids) {
+      return uids
+        .map((u) => M.get(u))
+        .filter(Boolean)
+        .map((r) => ({ uid: r.uid, nome: r.nome, vf: r.vf, banido: r.banido, rp: (r.stats || {}).rp, st4: (r.stats || {}).st4, oculto: (r.perfil || {}).oculto }));
+    },
     async ranking() {
       return [...M.values()].map((r) => ({ uid: r.uid, nome: r.nome, vf: r.vf, banido: r.banido, guilda: r.guilda || null, rp: (r.stats || {}).rp, st4: (r.stats || {}).st4, wins: (r.stats || {}).wins, kills: (r.stats || {}).kills }));
     },
@@ -402,6 +413,17 @@ function extraSupabase() {
       list: (st) => sbT('denuncias', 'GET', '?status=eq.' + enc(st || 'aberta') + '&order=criado.desc&limit=100&select=*'),
       update: (id, p) => sbT('denuncias', 'PATCH', '?id=eq.' + enc(id), p),
     },
+    p: {
+      get: (id) => um('pedidos', '?id=eq.' + enc(id) + '&select=*'),
+      insert: async (row) => (await sbT('pedidos', 'POST', '', row, 'return=representation'))[0],
+      update: (id, p) => sbT('pedidos', 'PATCH', '?id=eq.' + enc(id), p),
+      async marcaPago(id, mpId) {
+        // só muda se ainda não estava pago (evita entregar duas vezes)
+        const r = await sbT('pedidos', 'PATCH', '?id=eq.' + enc(id) + '&status=neq.pago', { status: 'pago', mp_id: mpId, pago: agora() }, 'return=representation');
+        return !!(r && r.length);
+      },
+      lista: (uid) => sbT('pedidos', 'GET', (uid ? '?uid=eq.' + enc(uid) + '&' : '?status=eq.pago&') + 'order=criado.desc&limit=100&select=*'),
+    },
     c: {
       get: async (k) => {
         const r = await um('config', '?k=eq.' + enc(k) + '&select=v');
@@ -429,7 +451,34 @@ function extraLocal() {
     }, 800);
   };
   const cp = (r) => (r == null ? null : JSON.parse(JSON.stringify(r)));
+  X.pedidos = X.pedidos || {};
   return {
+    p: {
+      get: async (id) => cp(X.pedidos[id] || null),
+      async insert(row) {
+        X.pedidos[row.id] = Object.assign({ status: 'aberto', criado: agora() }, cp(row));
+        save();
+        return cp(X.pedidos[row.id]);
+      },
+      async update(id, p) {
+        if (X.pedidos[id]) Object.assign(X.pedidos[id], cp(p));
+        save();
+      },
+      async marcaPago(id, mpId) {
+        const q = X.pedidos[id];
+        if (!q || q.status === 'pago') return false;
+        Object.assign(q, { status: 'pago', mp_id: mpId, pago: agora() });
+        save();
+        return true;
+      },
+      lista: async (uid) =>
+        cp(
+          Object.values(X.pedidos)
+            .filter((q) => (uid ? q.uid === uid : q.status === 'pago'))
+            .sort((a, b) => (a.criado < b.criado ? 1 : -1))
+            .slice(0, 100),
+        ),
+    },
     g: {
       get: async (id) => cp(X.guildas[id]),
       byChave: async (k) => cp(Object.values(X.guildas).find((g) => g.chave === k) || null),
@@ -504,6 +553,16 @@ async function testaBanco() {
       await sbT('config', 'GET', '?select=k&limit=1');
     } catch (e) {
       DIAG = { ok: false, msg: 'Falta rodar o arquivo atualizacao_v113.sql no SQL Editor do Supabase (guildas, denúncias, eventos e e-mail não funcionam sem ele).' };
+      console.log('Contas (banco):', DIAG.msg);
+      return DIAG;
+    }
+    try {
+      await sbReq('GET', '?select=diamantes,itens_pagos,idade&limit=1');
+      await sbT('pedidos', 'GET', '?select=id&limit=1');
+    } catch (e) {
+      DIAG = { ok: false, msg: 'Falta rodar o arquivo atualizacao_v115.sql no SQL Editor do Supabase (a loja de diamantes não funciona sem ele).' };
+      console.log('Contas (banco):', DIAG.msg);
+      return DIAG;
     }
   } catch (e) {
     DIAG = { ok: false, msg: explicaErro(e) };
@@ -637,6 +696,9 @@ async function minha(r, full) {
     pedidos: pe.map(publico),
     enviados: en.map(publico),
   };
+  o.diamantes = n0(r.diamantes);
+  o.itensPagos = arr(r.itens_pagos);
+  o.idade = r.idade || null;
   o.email = mascara(r.email);
   o.recupera = MAIL_OK;
   if (r.guilda) {
@@ -738,6 +800,189 @@ function confereNovo(st) {
   st._sus = 0;
   return st;
 }
+
+// =====================================================================
+//  LOJA DE DIAMANTES 💎 — Pix e cartão pelo Mercado Pago
+//  Os diamantes ficam SÓ no servidor: só entram depois que o Mercado Pago
+//  confirma o pagamento, e só saem quando a pessoa compra um item escolhido.
+//  (Nada aleatório com diamante: o Royale continua só com moedas ganhas jogando.)
+// =====================================================================
+const MP_TOKEN = envLimpo('MP_TOKEN'),
+  MP_API = (envLimpo('MP_API') || 'https://api.mercadopago.com').replace(/\/+$/, ''),
+  MP_OK = !!MP_TOKEN,
+  SITE_URL = envLimpo('SITE_URL').replace(/\/+$/, '');
+// pacotes à venda (mude os preços aqui se quiser)
+const PACOTES = [
+  { id: 'd100', d: 100, bonus: 0, preco: 2.99 },
+  { id: 'd310', d: 300, bonus: 10, preco: 7.99 },
+  { id: 'd520', d: 500, bonus: 20, preco: 12.99 },
+  { id: 'd1060', d: 1000, bonus: 60, preco: 24.99 },
+  { id: 'd2180', d: 2000, bonus: 180, preco: 49.99 },
+];
+// itens que dá para comprar com diamantes (escolhe e sabe o que leva) — [preço em 💎, nome]
+const ITENS_D = {
+  'ch:q_casual': [80, 'Casual'],
+  'ch:q_estilo': [80, 'Estiloso'],
+  'ch:q_praia': [80, 'Praiano'],
+  'ch:q_fazendeiro': [120, 'Fazendeiro'],
+  'ch:q_peao': [120, 'Peão de Obra'],
+  'ch:q_punk': [150, 'Punk'],
+  'ch:q_aventureiro': [200, 'Aventureiro'],
+  'ch:q_agente': [250, 'Agente'],
+  'ch:q_rei': [400, 'Rei'],
+  'ch:q_astronauta': [400, 'Astronauta'],
+  'ch:f_casual': [80, 'Descolada'],
+  'ch:f_social': [80, 'Social'],
+  'ch:f_executiva': [120, 'Executiva'],
+  'ch:f_operaria': [120, 'Operária'],
+  'ch:f_punk': [150, 'Roqueira'],
+  'ch:f_aventureira': [200, 'Aventureira'],
+  'ch:f_scifi': [250, 'Sci-Fi'],
+  'ch:f_medieval': [300, 'Medieval'],
+  'ch:f_bruxa': [400, 'Bruxa'],
+  'o:elfo': [25, "Elfo"],
+  'o:noel': [30, "Papai Noel"],
+  'o:deserto': [35, "Deserto"],
+  'o:artico': [40, "Ártico"],
+  'o:ops': [50, "Operações Especiais"],
+  'o:neon': [80, "Neon"],
+  'o:lenda': [150, "Dourado Lendário"],
+  'o:cangaceiro': [350, "Cangaceiro"],
+  'o:samurai': [220, "Samurai"],
+  'o:galaxia': [220, "Galáxia"],
+  'o:lava': [220, "Lava"],
+  'o:carnaval': [120, "Carnaval"],
+  'o:fantasma': [120, "Fantasma"],
+  'o:pirata': [120, "Pirata"],
+  'o:amazonia': [120, "Tropa da Amazônia"],
+  'g:camo': [20, "Camuflada"],
+  'g:carbono': [35, "Carbono"],
+  'g:neve': [30, "Neve"],
+  'g:doce': [40, "Doce de Natal"],
+  'g:rosa': [70, "Neon Rosa"],
+  'g:ouro': [120, "Ouro"],
+  'g:dragao': [350, "Dragão"],
+  'g:arcoiris': [350, "Arco-íris"],
+  'g:nebulosa': [220, "Nebulosa"],
+  'g:magma': [220, "Magma"],
+  'g:cromo': [220, "Cromo"],
+  'g:gelo': [120, "Gelo"],
+  'g:tigre': [120, "Tigre"],
+  'g:esmeralda': [120, "Esmeralda"],
+  'p:pc_ceu': [20, "Céu"],
+  'p:pc_brasil': [30, "Brasil"],
+  'p:pc_noite': [35, "Noite"],
+  'p:pc_galaxia': [120, "Galáxia"],
+  'p:pc_fogo': [220, "Fogo"],
+  'p:pc_ouro': [220, "Ouro"],
+  'p:pc_arcoiris': [350, "Arco-íris"],
+  'e:dab': [20, 'Dab'],
+  'e:chorar': [20, 'Chorão'],
+  'e:biceps': [25, 'Marombeiro'],
+  'e:passinho': [30, 'Passinho'],
+  'e:robo': [30, 'Robô'],
+  'e:flexao': [35, 'Flexão'],
+  'e:ginga': [40, 'Ginga de Capoeira'],
+  'e:samba': [40, 'Samba no Pé'],
+  'e:guitarra': [50, 'Guitarra no Ar'],
+  'e:meditar': [60, 'Meditação'],
+  'e:frevo': [70, 'Frevo'],
+  'e:bandeira': [90, 'Bandeira do Brasil'],
+};
+const pacoteDe = (id) => PACOTES.find((p) => p.id === id);
+// uma mexida de diamantes por vez por conta (duas compras juntas não somem com nada)
+const FILA_DM = new Map();
+function filaDm(uid, fn) {
+  const ant = FILA_DM.get(uid) || Promise.resolve();
+  const p = ant.then(fn, fn);
+  const fim = p.catch(() => {});
+  FILA_DM.set(uid, fim);
+  fim.then(() => FILA_DM.get(uid) === fim && FILA_DM.delete(uid));
+  return p;
+}
+async function mp(method, caminho, body, idem) {
+  const h = { Authorization: 'Bearer ' + MP_TOKEN, 'Content-Type': 'application/json', Accept: 'application/json' };
+  if (idem) h['X-Idempotency-Key'] = idem;
+  const r = await fetch(MP_API + caminho, { method, headers: h, body: body ? JSON.stringify(body) : undefined });
+  const t = await r.text();
+  let j = null;
+  try {
+    j = t ? JSON.parse(t) : null;
+  } catch (e) {}
+  if (!r.ok) {
+    const e = new Error('mercadopago ' + r.status + ' ' + t.slice(0, 300));
+    e.status = r.status;
+    throw e;
+  }
+  return j;
+}
+function siteBase(req) {
+  if (SITE_URL) return SITE_URL;
+  const host = String((req && (req.headers['x-forwarded-host'] || req.headers.host)) || '').split(',')[0].trim();
+  const proto = String((req && req.headers['x-forwarded-proto']) || 'https').split(',')[0].trim();
+  return host ? proto + '://' + host : '';
+}
+// pagamento aprovado: entrega os diamantes (uma vez só por pedido)
+async function creditaPedido(ped, pg) {
+  if (!ped || ped.status === 'pago') return false;
+  if (!pg || pg.status !== 'approved') return false;
+  if (String(pg.external_reference) !== String(ped.id)) return false;
+  if (Math.abs(+pg.transaction_amount - +ped.valor) > 0.01) {
+    console.warn('pagamento com valor diferente', ped.id, pg.transaction_amount, ped.valor);
+    return false;
+  }
+  const marcou = await XB.p.marcaPago(ped.id, String(pg.id)); // só um "ganha" a corrida
+  if (!marcou) return false;
+  const ok = await filaDm(ped.uid, async () => {
+    const r = await DB.get(ped.uid);
+    if (!r) return false;
+    await DB.update(ped.uid, { diamantes: n0(r.diamantes) + n0(ped.diamantes) });
+    return true;
+  });
+  if (!ok) return false;
+  avisa(ped.uid, { t: 'ct', dm: { n: n0(ped.diamantes) } });
+  console.log('💎 venda', ped.id, ped.uid, ped.diamantes, 'R$', ped.valor);
+  return true;
+}
+async function confereNoMP(ped) {
+  if (!ped || ped.status === 'pago' || !MP_OK) return ped;
+  try {
+    const j = await mp('GET', '/v1/payments/search?external_reference=' + enc(ped.id) + '&sort=date_created&criteria=desc');
+    for (const pg of (j && j.results) || []) if (await creditaPedido(ped, pg)) return Object.assign({}, ped, { status: 'pago' });
+  } catch (e) {
+    console.warn('mercadopago busca', e.message);
+  }
+  return ped;
+}
+// aviso do Mercado Pago (webhook): sempre confere o pagamento direto na API (ninguém consegue fingir)
+async function mpWebhook(req, res, url) {
+  let body = '';
+  req.on('data', (d) => {
+    if (body.length < 20000) body += d;
+  });
+  req.on('end', async () => {
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.end('ok');
+    try {
+      const q = new URL(url, 'http://x').searchParams;
+      let id = q.get('data.id') || q.get('id'),
+        tipo = q.get('type') || q.get('topic');
+      try {
+        const j = JSON.parse(body || '{}');
+        if (j && j.data && j.data.id) id = j.data.id;
+        if (j && j.type) tipo = j.type;
+      } catch (e) {}
+      if (!id || (tipo && tipo !== 'payment')) return;
+      if (!/^\d{1,20}$/.test(String(id))) return;
+      const pg = await mp('GET', '/v1/payments/' + id);
+      const ped = pg && pg.external_reference ? await XB.p.get(String(pg.external_reference)) : null;
+      if (ped) await creditaPedido(ped, pg);
+    } catch (e) {
+      console.warn('webhook mercadopago', e.message);
+    }
+  });
+}
+
 const RANK = { t: 0, br: null, cs: null, p: null }; // ranking guardado por 45 s (não pesa no banco)
 // =====================================================================
 //  v113: DENÚNCIAS, RECUPERAR SENHA POR E-MAIL, EVENTOS E GUILDAS
@@ -924,6 +1169,26 @@ const API = {
     await DB.update(r.uid, { perfil: b.perfil, stats: b.stats, nome: limpaNome(b.perfil.name), visto: agora() });
     return { ok: true, ajuste: cortou.length ? { rp: b.stats.rp, st4: b.stats.st4, coins: b.stats.coins, matches: b.stats.matches, kills: b.stats.kills, wins: b.stats.wins } : null };
   },
+  async online(b) {
+    const r = await quem(b);
+    if (estourou('ol:' + r.uid, 20, 60e3)) throw new Erro(429, 'Calma, espere um pouquinho para atualizar.');
+    const ids = [...porConta.keys()].filter((u) => u !== r.uid && porConta.get(u) && porConta.get(u).size);
+    const total = ids.length;
+    // quem está no lobby primeiro (dá pra chamar), depois quem está jogando
+    ids.sort((a, b) => (onlineDe(a).st === 'play') - (onlineDe(b).st === 'play'));
+    const L = await DB.onlineInfo(ids.slice(0, 80));
+    const am = new Set(arr(r.amigos)),
+      en = new Set(arr(r.enviados)),
+      pe = new Set(arr(r.pedidos));
+    const jog = L.filter((x) => x && !x.banido && !(x.oculto === true || x.oculto === 'true'))
+      .map((x) => {
+        const o = onlineDe(x.uid) || { st: 'lobby' };
+        return { uid: x.uid, nome: x.nome, vf: x.vf | 0, st: o.st, rp: n0(x.rp), st4: n0(x.st4), rel: am.has(x.uid) ? 'amigo' : en.has(x.uid) ? 'enviado' : pe.has(x.uid) ? 'pediu' : '' };
+      })
+      .sort((a, b) => (a.st === 'play') - (b.st === 'play') || (b.vf | 0) - (a.vf | 0) || b.rp - a.rp)
+      .slice(0, 60);
+    return { jogadores: jog, total };
+  },
   async jogador(b) {
     const a = await alvo(String(b.uid || '').replace(/\D/g, ''));
     return { jogador: publico(a) };
@@ -989,6 +1254,100 @@ const API = {
     const mo = pega.reduce((t, x) => t + (x.tipo === 'moedas' ? n0(x.n) : 0), 0);
     if (mo) PRESENTE_MOEDAS.set(r.uid, (PRESENTE_MOEDAS.get(r.uid) || 0) + mo);
     return { itens: pega };
+  },
+  // ---------- loja de diamantes ----------
+  async loja(b) {
+    const uid = leToken(b.token);
+    const r = uid ? await contaDoToken(uid).catch(() => null) : null;
+    return { ligada: MP_OK, pacotes: PACOTES.map((p) => Object.assign({ total: p.d + p.bonus }, p)), itens: ITENS_D, diamantes: r ? n0(r.diamantes) : 0, itensPagos: r ? arr(r.itens_pagos) : [], idade: r ? r.idade || null : null };
+  },
+  async idade(b) {
+    const r = await quem(b),
+      t = b.tipo === '18' ? '18' : b.tipo === 'resp' ? 'resp' : null;
+    if (!t) throw new Erro(400, 'Escolha uma opção.');
+    await DB.update(r.uid, { idade: t });
+    return { ok: true, idade: t };
+  },
+  async comprar(b, ip, req) {
+    const r = await quem(b);
+    if (!MP_OK) throw new Erro(503, 'A loja ainda não foi aberta pelo Criador.');
+    if (!r.idade) throw new Erro(403, 'Confirme sua idade antes de comprar.');
+    const pk = pacoteDe(String(b.pacote || ''));
+    if (!pk) throw new Erro(400, 'Pacote inválido.');
+    if (estourou('cp:' + r.uid, 8, 600e3)) throw new Erro(429, 'Muitos pedidos seguidos. Espere uns minutos.');
+    const base = siteBase(req),
+      metodo = b.metodo === 'cartao' ? 'cartao' : 'pix',
+      id = 'p' + Date.now().toString(36) + crypto.randomBytes(3).toString('hex'),
+      titulo = 'WorldBullet · ' + (pk.d + pk.bonus) + ' diamantes';
+    await XB.p.insert({ id, uid: r.uid, pacote: pk.id, diamantes: pk.d + pk.bonus, valor: pk.preco, metodo, status: 'aberto', criado: agora() });
+    const notif = base ? base + '/mp/webhook' : undefined;
+    try {
+      if (metodo === 'pix') {
+        const pg = await mp(
+          'POST',
+          '/v1/payments',
+          {
+            transaction_amount: pk.preco,
+            description: titulo,
+            payment_method_id: 'pix',
+            external_reference: id,
+            notification_url: notif,
+            date_of_expiration: new Date(Date.now() + 30 * 60e3 - 3 * 3600e3).toISOString().replace('Z', '-03:00'), // horário de Brasília
+            payer: { email: r.email || 'jogador' + r.uid + '@worldbullet.app', first_name: limpaTxt(r.nome, 30) || 'Jogador' },
+          },
+          id,
+        );
+        const td = (pg && pg.point_of_interaction && pg.point_of_interaction.transaction_data) || {};
+        await XB.p.update(id, { mp_id: String(pg.id) });
+        return { pedido: id, metodo, qr: td.qr_code || '', qr64: td.qr_code_base64 || '', link: td.ticket_url || '', valor: pk.preco, diamantes: pk.d + pk.bonus, expira: Date.now() + 30 * 60e3 };
+      }
+      const pref = await mp(
+        'POST',
+        '/checkout/preferences',
+        {
+          items: [{ id: pk.id, title: titulo, quantity: 1, currency_id: 'BRL', unit_price: pk.preco }],
+          external_reference: id,
+          notification_url: notif,
+          back_urls: base ? { success: base + '/?compra=ok', pending: base + '/?compra=espera', failure: base + '/?compra=erro' } : undefined,
+          auto_return: base ? 'approved' : undefined,
+          payment_methods: { excluded_payment_types: [{ id: 'ticket' }] },
+        },
+        id,
+      );
+      return { pedido: id, metodo, link: pref.init_point, valor: pk.preco, diamantes: pk.d + pk.bonus };
+    } catch (e) {
+      console.warn('mercadopago criar', e.message);
+      await XB.p.update(id, { status: 'erro' });
+      throw new Erro(503, 'O Mercado Pago não respondeu. Tente de novo em instantes.');
+    }
+  },
+  async pedido(b) {
+    const r = await quem(b);
+    let ped = await XB.p.get(String(b.pedido || ''));
+    if (!ped || ped.uid !== r.uid) throw new Erro(404, 'Pedido não encontrado.');
+    if (ped.status !== 'pago' && estourou('pd:' + r.uid, 40, 60e3) === false) ped = await confereNoMP(ped);
+    const r2 = await DB.get(r.uid);
+    return { status: ped.status, diamantes: n0(r2 && r2.diamantes) };
+  },
+  async compras(b) {
+    const r = await quem(b);
+    const L = await XB.p.lista(r.uid);
+    return { compras: L.filter((q) => q.status === 'pago').map((q) => ({ id: q.id, diamantes: q.diamantes, valor: q.valor, pago: q.pago || q.criado })) };
+  },
+  async gastar(b) {
+    const r0 = await quem(b),
+      k = String(b.cat || '') + ':' + String(b.id || ''),
+      it = ITENS_D[k];
+    if (!it) throw new Erro(400, 'Esse item não está à venda com diamantes.');
+    if (estourou('gs:' + r0.uid, 30, 60e3)) throw new Erro(429, 'Calma, muitas compras seguidas.');
+    return filaDm(r0.uid, async () => {
+      const r = await DB.get(r0.uid); // lê de novo dentro da fila
+      if (arr(r.itens_pagos).includes(k)) return { ok: true, diamantes: n0(r.diamantes), ja: true };
+      if (n0(r.diamantes) < it[0]) throw new Erro(400, 'Diamantes insuficientes.');
+      const r2 = await DB.update(r.uid, { diamantes: n0(r.diamantes) - it[0], itens_pagos: arr(r.itens_pagos).concat(k) });
+      console.log('💎 gasto', r.uid, k, it[0]);
+      return { ok: true, diamantes: n0(r2 && r2.diamantes), item: k, nome: it[1] };
+    });
   },
   // ---------- denunciar ----------
   async denunciar(b) {
@@ -1276,6 +1635,14 @@ const API = {
       await XB.d.update(b.id, { status: b.st === 'ignorada' ? 'ignorada' : 'resolvida' });
       return { ok: true };
     }
+    if (b.acao === 'vendas') {
+      const L = await XB.p.lista(null),
+        P = await DB.many([...new Set(L.map((q) => q.uid))]),
+        by = {};
+      for (const p of P) by[p.uid] = p.nome;
+      const tot = L.reduce((t, q) => t + +q.valor, 0);
+      return { vendas: L.map((q) => ({ id: q.id, nome: by[q.uid] || '?', uid: q.uid, diamantes: q.diamantes, valor: q.valor, pago: q.pago || q.criado, metodo: q.metodo })), total: Math.round(tot * 100) / 100, loja: MP_OK };
+    }
     if (b.acao === 'eventos') return { eventos: (await eventosAtivos(true)).map(evPub), tipos: ['moedas2x', 'xp2x', 'presente'] };
     if (b.acao === 'evento_criar') {
       const tipo = String(b.tipo || '');
@@ -1308,7 +1675,7 @@ const API = {
       msg = limpaTxt(b.msg, 200);
     if (ac === 'ver')
       return {
-        jogador: Object.assign(publico(a), { usuario: a.usuario, admin: !!a.admin, banido: !!a.banido, acesso: arr(a.acesso), criado: a.criado, visto: a.visto, sus: n0(obj(a.stats)._sus) }),
+        jogador: Object.assign(publico(a), { usuario: a.usuario, admin: !!a.admin, banido: !!a.banido, acesso: arr(a.acesso), criado: a.criado, visto: a.visto, sus: n0(obj(a.stats)._sus), diamantes: n0(a.diamantes) }),
       };
     if (ac === 'verificar') {
       if (a.admin) throw new Erro(400, 'Essa conta é de Criador.');
@@ -1337,6 +1704,14 @@ const API = {
       await DB.update(a.uid, { acesso: b.on ? com(a.acesso, tag, 30) : sem(a.acesso, tag) });
       if (b.on) await daPresente(await DB.get(a.uid), { tipo: 'acesso', tag, msg: msg || 'Você ganhou acesso antecipado! 🔑' }, de);
       else avisa(a.uid, { t: 'ct' });
+    } else if (ac === 'diamantes') {
+      const n = Math.trunc(+b.n);
+      if (!n || Math.abs(n) > 1e6) throw new Erro(400, 'Quantidade inválida.');
+      await filaDm(a.uid, async () => {
+        const r = await DB.get(a.uid);
+        await DB.update(a.uid, { diamantes: Math.max(0, n0(r.diamantes) + n) });
+      });
+      avisa(a.uid, { t: 'ct', dm: n > 0 ? { n } : null });
     } else if (ac === 'msg') {
       if (!msg) throw new Erro(400, 'Escreva a mensagem.');
       await daPresente(a, { tipo: 'msg', msg }, de);
@@ -1371,6 +1746,7 @@ h1{color:#ffc928;font-style:italic}h2{color:#ffc928;margin-top:28px;font-size:19
 <li><b>Amigos, pedidos de amizade e presentes</b> recebidos.</li>
 <li>Datas de criação da conta e do último acesso.</li>
 <li><b>E-mail (opcional)</b> — só se você colocar, e só é usado para mandar o código de trocar a senha.</li>
+<li><b>Compras de diamantes</b>: número do pedido, pacote, valor e data. O pagamento é feito no <b>Mercado Pago</b>: dados de cartão e Pix ficam lá, nunca passam pelo jogo.</li>
 <li><b>Guilda</b> e mensagens do chat da guilda (os membros veem). <b>Denúncias</b> que você fizer (só o Criador vê).</li></ul>
 <p>Não pedimos telefone, nome verdadeiro, localização nem fotos (o e-mail é opcional). Não tem anúncios nem rastreamento de terceiros. Sem conta, o progresso fica só no seu aparelho.</p>
 <h2>Para que usamos</h2><ul><li>Salvar seu progresso e deixar você entrar em qualquer aparelho.</li><li>Mostrar o ranking, os amigos online e os convites para sala.</li><li>Evitar trapaça (o servidor confere se os números do jogo são possíveis).</li></ul>
@@ -1378,6 +1754,7 @@ h1{color:#ffc928;font-style:italic}h2{color:#ffc928;margin-top:28px;font-size:19
 <h2>Menores de idade</h2><p>Se você tem menos de 12 anos, crie a conta junto com seu pai, mãe ou responsável. Nunca use seu nome completo, endereço ou telefone como nome de usuário ou apelido.</p>
 <h2>Excluir sua conta</h2><p>No jogo: toque no seu nome lá em cima → <b>Perfil</b> → <b>Excluir conta</b> → digite sua senha. A conta, o progresso e as amizades são apagados <b>na hora e para sempre</b>. Se não conseguir entrar, fale com ${ct} informando seu nome de usuário.</p>
 <h2>Seus direitos (LGPD)</h2><p>Você pode pedir para ver, corrigir ou apagar seus dados a qualquer momento: fale com ${ct}.</p>
+<h2>Compras</h2><p>Diamantes compram só itens escolhidos (você vê o item antes). Não existe caixa ou roleta paga com dinheiro. Menores de 18 anos só compram com autorização do pai, mãe ou responsável. Problema com uma compra? Fale com ${ct} informando o número do pedido.</p>
 <h2>Regras do jogo</h2><ul><li>Proibido usar trapaça, programas ou alterar o jogo para ganhar moedas, pontos ou vantagem.</li><li>Respeite os outros jogadores: nada de apelidos ofensivos, preconceito ou ameaças.</li><li>Não compartilhe sua senha. Não tente entrar na conta dos outros.</li><li>Quem quebrar as regras pode ter os pontos cortados ou a conta <b>banida</b>.</li></ul>
 <h2>Contato</h2><p>${ct}</p></body></html>`;
 }
@@ -1415,7 +1792,7 @@ function apiHttp(req, res, url) {
       return responde(res, 400, { erro: 'Pedido inválido.' });
     }
     try {
-      responde(res, 200, await fn(b, ip));
+      responde(res, 200, await fn(b, ip, req));
     } catch (e) {
       if (e instanceof Erro) return responde(res, e.st, { erro: e.message });
       console.warn('api', nome, e.message);
