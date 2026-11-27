@@ -9950,7 +9950,7 @@
     <div class="spLoad"><div class="spTip" id="spTip">Preparando a ilha...</div><div class="spBar"><i id="spFill"></i></div><div class="spPct"><span id="spStep">Carregando</span><b id="spPct">0%</b></div></div>
     <div class="spTap" id="spTap"><b>TOQUE PARA JOGAR</b><div class="spWho" id="spWho"></div></div>
     <div class="spGate" id="spGate"></div>
-    <div class="spVer">v124 · Feito no Amapá 🇧🇷</div>
+    <div class="spVer">v125 · Feito no Amapá 🇧🇷</div>
   </div>
 </div>
 <!-- ===== GIRE O CELULAR: o jogo é só deitado ===== -->
@@ -12594,6 +12594,8 @@ let joyVec = { x: 0, y: 0 },
 const clock = new THREE.Clock();
 let assistB = null,
   assistT = 0,
+  assistBrk = 0, // até quando a ajuda fica solta (você arrastou forte pra trocar de alvo)
+  assistArr = 0, // quanto você arrastou pro lado nos últimos instantes
   lockHead = false, // true = a mira subiu para a cabeça ("subir capa")
   capaAcc = 0; // quanto o dedo foi arrastado para cima enquanto a mira estava grudada
 let inLobby = true,
@@ -13141,6 +13143,12 @@ function animate() {
     if (c.position.x > 350) c.position.x = -350;
   }
 
+  assistArr = Math.max(0, assistArr - dt * 160); // o arrasto "esquece" rápido
+  if (assistT > 0 && assistB && (assistB.knock || assistB.dead)) {
+    // derrubou: a mira solta na hora (pra você ir no próximo)
+    assistB = null;
+    assistT = 0;
+  }
   if (assistT > 0) {
     assistT -= dt;
     if (assistB && bots.includes(assistB) && ASSIST[aKey()]) {
@@ -13276,7 +13284,7 @@ function animate() {
     obsTick();
   }
   if (inLobby) {
-    ffCam(dt, t);
+    ffCam(ldt, t); // dt é 0 no lobby: usa o tempo do lobby pra câmera andar
     player.rotation.y = emoteSt ? player.rotation.y * 0.9 : Math.sin(t * 0.6) * 0.45 - camYaw * 1.5; // no emote: de frente
     updateXmas(t);
   }
@@ -20774,8 +20782,8 @@ function buildCharacter(o) {
   gun.rotation.x = Math.PI / 2;
   handR.add(gun);
   const muzzle = gun.userData.muzzle;
-  // roupa da loja: chapéu/capacete, capa, ombreiras, brilhos e estampa (só no Recruta)
-  if (!mx && o.fit) {
+  // roupa da loja: chapéu/capacete, capa, ombreiras e brilhos (em todos os personagens)
+  if (o.fit) {
     try {
       dressFit(o.fit, { g, head, armL, armR, legL, legR }, o);
       fitPattern(g, o.fit);
@@ -22919,6 +22927,18 @@ function aimDrag(dx, dy) {
     fy = 1;
   let capTop = 0.8;
   if (assistT > 0 && assistB && bots.includes(assistB) && ASSIST[aKey()]) {
+    // arrastou forte pro lado = quer trocar de alvo: solta o grude e deixa a mira livre um instante
+    assistArr += Math.abs(dx);
+    if (assistArr > 55) {
+      assistB = null;
+      assistT = 0;
+      assistArr = 0;
+      lockHead = false;
+      capaAcc = 0;
+      assistBrk = performance.now() + 350;
+    }
+  }
+  if (assistT > 0 && assistB && bots.includes(assistB) && ASSIST[aKey()]) {
     fx = ASSIST[aKey()].fx;
     fy = ASSIST[aKey()].fy;
     const up = S.invY ? dy : -dy;
@@ -22954,13 +22974,14 @@ function updateCrosshair() {
 
 function findAssistTarget(cp, cd) {
   const A = ASSIST[aKey()];
-  if (!A) return null;
+  if (!A || performance.now() < assistBrk) return null; // trocando de alvo: mira livre
   const eye = new THREE.Vector3(player.position.x, player.position.y + 1.5, player.position.z);
   let best = null,
     bc = Math.cos((A.cone * Math.PI) / 180);
   for (const b of bots) {
     if ((TM || SQ) && b.team === 0) continue; // aliado
-    const p = new THREE.Vector3(b.group.position.x, b.group.position.y + (b.knock ? 0.5 : A.y), b.group.position.z),
+    if (b.knock || b.dead) continue; // caído não gruda (igual o FF): vai pro próximo
+    const p = new THREE.Vector3(b.group.position.x, b.group.position.y + A.y, b.group.position.z),
       v = p.clone().sub(cp),
       d = v.length();
     if (d > 70 || d < 1) continue;
@@ -31917,7 +31938,7 @@ function ffCam(dt, t) {
     const e = document.getElementById(id);
     return e && e.classList.contains('open');
   };
-  FF.tx = open('vault') ? -1.05 : open('shop') || open('royale') ? 1.0 : 0;
+  FF.tx = open('vault') || open('shop') || open('royale') ? -1.75 : 0; // painel na esquerda: o boneco aparece na direita
   document.body.classList.toggle('ffPanel', open('vault') || open('charSel') || open('shop') || open('royale'));
   // presentes de Natal muito perto do boneco tapam a vista: some com eles
   if (typeof xmas !== 'undefined' && xmas && !xmas.userData.ffClean) {
