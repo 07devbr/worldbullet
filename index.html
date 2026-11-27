@@ -9868,10 +9868,12 @@
         radial-gradient(1px 1px at 40% 75%, #fff, #0000),
         radial-gradient(ellipse 50% 70% at 80% 50%, #3d5afe55, #0000 70%),
         linear-gradient(160deg, #101a4a, #070a1f 65%);
-      display: flex;
       flex-direction: column;
       justify-content: center;
       gap: 12px;
+    }
+    body.ffUI #passPanel.psPanel:not(.open) {
+      display: none !important; /* fechado = some (antes ficava preso na tela) */
     }
     body.ffUI #passPanel #passHead {
       font-family: var(--ffF);
@@ -9988,7 +9990,7 @@
     <div class="spLoad"><div class="spTip" id="spTip">Preparando a ilha...</div><div class="spBar"><i id="spFill"></i></div><div class="spPct"><span id="spStep">Carregando</span><b id="spPct">0%</b></div></div>
     <div class="spTap" id="spTap"><b>TOQUE PARA JOGAR</b><div class="spWho" id="spWho"></div></div>
     <div class="spGate" id="spGate"></div>
-    <div class="spVer">v126 · Feito no Amapá 🇧🇷</div>
+    <div class="spVer">v127 · Feito no Amapá 🇧🇷</div>
   </div>
 </div>
 <!-- ===== GIRE O CELULAR: o jogo é só deitado ===== -->
