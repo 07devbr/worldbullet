@@ -8923,6 +8923,1020 @@
       z-index: 1;
     }
   }
+  /* ===================== v124: LOBBY E TELAS NO ESTILO DO VÍDEO ===================== */
+  /* topo: avatar com nível no canto, nome com faixa dourada */
+  body.ffUI #lobby #lbAv {
+    position: relative;
+    overflow: visible;
+  }
+  .fvLv {
+    position: absolute;
+    left: -3px;
+    bottom: -4px;
+    min-width: 16px;
+    padding: 0 3px;
+    font: 900 10px/14px var(--ffF, sans-serif);
+    font-style: normal;
+    color: #1a1200;
+    background: var(--ffY, #ffc928);
+    border-radius: 2px;
+    text-align: center;
+  }
+  body.ffUI #lobby #lbProfile {
+    background:
+      linear-gradient(100deg, #6b4a0ef0, #2a1d06e8 45%, #120d22d0 75%, #120d2200),
+      repeating-linear-gradient(120deg, #ffffff08 0 6px, #0000 6px 14px);
+  }
+  body.ffUI #lobby #lbCur {
+    font: 800 14px var(--ffF);
+    background: #0c0a1ab0;
+    border-radius: 2px;
+  }
+  .fvRkB {
+    all: unset;
+    cursor: pointer;
+    pointer-events: auto;
+    width: 38px;
+    height: 38px;
+    display: grid;
+    place-items: center;
+    font-size: 22px;
+    background: radial-gradient(circle, #ffc92833, #0000 70%);
+    filter: drop-shadow(0 1px 3px #000);
+  }
+  /* ícones da direita (amigos, correio, engrenagem) */
+  body.ffUI #lobby #lbNet.fvIco {
+    width: 40px;
+    min-width: 0;
+    padding: 0;
+    justify-content: center;
+  }
+  body.ffUI #lobby #lbNet.fvIco b,
+  body.ffUI #lobby #lbNet.fvIco small {
+    display: none;
+  }
+  .fvIcoB {
+    all: unset;
+    cursor: pointer;
+    pointer-events: auto;
+    position: relative;
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    font-size: 19px;
+    background: #0c0a1ab0;
+    border-radius: 2px;
+  }
+  .fvDot {
+    display: none;
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    width: 8px;
+    height: 8px;
+    background: #ff6d00;
+    box-shadow: 0 0 6px #ff6d00;
+  }
+  #lobby .ffSide button.ffS {
+    overflow: visible;
+  }
+  #lobby .ffSide button.ffS .fvDot {
+    top: 2px;
+    right: 14px;
+  }
+  /* ícones de evento com tempo + faixa roxa (canto de cima, à direita) */
+  .fvEvIc {
+    position: absolute;
+    top: calc(56px + env(safe-area-inset-top, 0px));
+    right: calc(78px + env(safe-area-inset-right, 0px));
+    display: flex;
+    gap: 6px;
+    pointer-events: auto;
+  }
+  .fvEvB {
+    all: unset;
+    cursor: pointer;
+    width: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: linear-gradient(180deg, #3b1f6e, #160c30);
+    border: 1px solid #b388ff66;
+  }
+  .fvEvB span {
+    font-size: 24px;
+    line-height: 36px;
+  }
+  .fvEvB small {
+    width: 100%;
+    text-align: center;
+    font: 800 10px/14px var(--ffF);
+    color: #fff;
+    background: #000a;
+  }
+  .fvFaixa {
+    all: unset;
+    cursor: pointer;
+    position: absolute;
+    top: calc(114px + env(safe-area-inset-top, 0px));
+    right: calc(78px + env(safe-area-inset-right, 0px));
+    max-width: 260px;
+    padding: 3px 18px 3px 14px;
+    font: 800 italic 12px var(--ffF);
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    background: linear-gradient(90deg, #5b2bd6, #8e44ff);
+    clip-path: polygon(6% 0, 100% 0, 94% 100%, 0 100%);
+    box-shadow: 0 0 10px #8e44ff88;
+    pointer-events: auto;
+  }
+  /* amigos online (coluna fina na direita) */
+  .fvAmg {
+    position: absolute;
+    right: calc(6px + env(safe-area-inset-right, 0px));
+    top: calc(56px + env(safe-area-inset-top, 0px));
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: center;
+    pointer-events: auto;
+    width: 62px;
+    padding: 4px 0;
+    background: linear-gradient(270deg, #0c0a1ad0, #0c0a1a40);
+  }
+  .fvAmgT {
+    all: unset;
+    cursor: pointer;
+    font: 900 18px var(--ffF);
+    color: #fff;
+    width: 100%;
+    text-align: center;
+  }
+  .fvAmgA {
+    all: unset;
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 60px;
+  }
+  .fvAmgA .av {
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    font: 900 16px var(--ffF);
+    color: #fff;
+    background: linear-gradient(160deg, #4b3b7a, #1b1430);
+    border: 2px solid #ffffff44;
+    filter: grayscale(0.7) brightness(0.7);
+  }
+  .fvAmgA.on .av {
+    filter: none;
+    border-color: #4ade80;
+  }
+  .fvAmgA.add .av {
+    filter: none;
+    border: 2px dashed #ffffff88;
+    background: #0c0a1a99;
+    color: var(--ffY);
+  }
+  .fvAmgA small {
+    width: 60px;
+    text-align: center;
+    font: 700 9px var(--ffF);
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-shadow: 0 1px 2px #000;
+  }
+  .fvAmgA .st {
+    position: absolute;
+    top: 0;
+    right: 12px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #4ade80;
+    box-shadow: 0 0 4px #4ade80;
+  }
+  .fvAmgA .st.play {
+    background: #ffb300;
+    box-shadow: 0 0 4px #ffb300;
+  }
+  /* o time (vagas) desce pra não brigar com os amigos */
+  body.ffUI #lobby .ffRight {
+    right: calc(74px + env(safe-area-inset-right, 0px));
+    top: calc(146px + env(safe-area-inset-top, 0px));
+  }
+  /* chat embaixo, à esquerda */
+  .fvChat {
+    position: absolute;
+    left: calc(6px + env(safe-area-inset-left, 0px));
+    bottom: calc(46px + env(safe-area-inset-bottom, 0px));
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    max-width: 38vw;
+    pointer-events: auto;
+  }
+  .fvChB {
+    all: unset;
+    cursor: pointer;
+    width: 30px;
+    height: 26px;
+    display: grid;
+    place-items: center;
+    font-size: 14px;
+    background: #0c0a1ab0;
+    border-radius: 2px;
+  }
+  #fvChT {
+    font: 700 11px var(--ffF);
+    color: #fff;
+    background: #0c0a1a90;
+    padding: 4px 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  /* barra de baixo com logo e separadores */
+  .fvLogo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    align-self: stretch;
+    font: 900 italic 15px var(--ffF);
+    color: #fff;
+    background: linear-gradient(160deg, #2a2050, #0c0a1a);
+  }
+  .fvLogo b {
+    color: var(--ffY);
+  }
+  #lobby .ffBar button.ffB + button.ffB {
+    border-left: 1px solid #ffffff22;
+  }
+  /* cubo do time + DECOLAR com listras */
+  .fvCubo {
+    all: unset;
+    cursor: pointer;
+    width: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(160deg, #3a3020, #14110a);
+    border: 2px solid #ffc928aa;
+    box-shadow: inset 0 0 0 2px #0006;
+  }
+  .fvCubo b {
+    font: 900 italic 26px/1 var(--ffF);
+    color: #fff;
+  }
+  .fvCubo small {
+    font: 800 8px var(--ffF);
+    color: var(--ffY);
+    letter-spacing: 1px;
+  }
+  body.ffUI #lobby #playBtn {
+    background:
+      repeating-linear-gradient(120deg, #ffffff22 0 10px, #0000 10px 22px),
+      linear-gradient(180deg, #ffe35a, #ffb300 70%, #f39c00);
+    font-size: 30px;
+  }
+  .fvMbRk {
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 30px;
+    filter: drop-shadow(0 0 6px #ffc92888);
+  }
+  .fvMbRk i {
+    font-style: normal;
+  }
+  body.ffUI #lobby #lbModeBtn {
+    padding-left: 60px;
+    background: linear-gradient(90deg, #3a1a5ef0 0%, #0c0a1ae6 45%, #0c0a1a50), var(--art, none) center / cover;
+    border-color: #b388ffaa;
+  }
+  /* balão do pet */
+  .fvBalao {
+    position: fixed;
+    z-index: 5;
+    transform: translate(-50%, -100%) scale(0.6);
+    opacity: 0;
+    max-width: 170px;
+    padding: 6px 10px;
+    font: 800 12px/1.25 var(--ffF, sans-serif);
+    color: #fff;
+    text-align: center;
+    background: linear-gradient(180deg, #ff9a3c, #e2560e);
+    border: 2px solid #ffd2a0;
+    border-radius: 6px;
+    pointer-events: none;
+    transition:
+      opacity 0.25s,
+      transform 0.25s;
+  }
+  .fvBalao::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -8px;
+    transform: translateX(-50%);
+    border: 7px solid transparent;
+    border-top-color: #e2560e;
+    border-bottom: 0;
+  }
+  .fvBalao.on {
+    opacity: 1;
+    transform: translate(-50%, -100%) scale(1);
+  }
+  body:not(.inlobby) .fvBalao {
+    display: none;
+  }
+  @media (max-height: 380px) {
+    .fvEvIc {
+      top: calc(50px + env(safe-area-inset-top, 0px));
+    }
+    .fvEvB {
+      width: 44px;
+    }
+    .fvEvB span {
+      font-size: 20px;
+      line-height: 30px;
+    }
+    .fvFaixa {
+      top: calc(100px + env(safe-area-inset-top, 0px));
+    }
+    .fvAmgA .av {
+      width: 28px;
+      height: 28px;
+    }
+  }
+
+  /* ===================== telas cheias: Perfil, Correio, Eventos ===================== */
+  .fvScr {
+    position: fixed;
+    inset: 0;
+    z-index: 48;
+    display: none;
+    grid-template-columns: 190px 1fr;
+    grid-template-rows: auto 1fr auto;
+    background:
+      radial-gradient(ellipse 60% 70% at 70% 40%, #3a1f7a55, #0000 70%),
+      linear-gradient(160deg, #15102acc, #07060ff2 60%);
+    color: #fff;
+    font-family: var(--ffF, 'Arial Narrow', system-ui, sans-serif);
+  }
+  .fvScr.open {
+    display: grid;
+  }
+  .fvScrTop {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: calc(6px + env(safe-area-inset-top, 0px)) calc(8px + env(safe-area-inset-right, 0px)) 6px 12px;
+    background: linear-gradient(180deg, #000a, #0000);
+  }
+  .fvScrT {
+    font: 900 italic 18px var(--ffF);
+    letter-spacing: 1px;
+    color: #fff;
+  }
+  .fvScrX {
+    all: unset;
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    font-size: 18px;
+    background: #ffffff14;
+  }
+  .fvTabs {
+    grid-column: 1;
+    grid-row: 2 / 4;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 6px 0 10px env(safe-area-inset-left, 0px);
+    overflow: auto;
+    background: #07060fd8;
+  }
+  .fvTabs button {
+    all: unset;
+    cursor: pointer;
+    padding: 11px 14px;
+    font: 800 italic 13px var(--ffF);
+    text-transform: uppercase;
+    color: #fffc;
+    background: linear-gradient(90deg, #ffffff0c, #0000);
+    border-bottom: 1px solid #ffffff0d;
+  }
+  .fvTabs button.on {
+    color: #1a1200;
+    background: linear-gradient(90deg, #ffc928, #ffb300);
+    clip-path: polygon(0 0, 100% 0, 93% 100%, 0 100%);
+  }
+  .fvBtnY {
+    all: unset;
+    cursor: pointer;
+    padding: 11px 28px;
+    font: 900 italic 16px var(--ffF);
+    text-transform: uppercase;
+    color: #1a1200;
+    background: linear-gradient(180deg, #ffe066, #ffb300);
+    clip-path: polygon(7% 0, 100% 0, 93% 100%, 0 100%);
+  }
+  .fvBtnY:disabled {
+    background: #ffffff22;
+    color: #fff8;
+    cursor: default;
+  }
+  .fvVazio {
+    opacity: 0.7;
+    padding: 20px;
+  }
+  /* perfil: cartão na direita, boneco aparece no meio (fundo transparente) */
+  #fvPerfil {
+    background: linear-gradient(90deg, #07060ff0 0 190px, #07060f30 190px, #07060f20 55%, #07060fe0 70%);
+  }
+  .fvPfMain {
+    grid-column: 2;
+    grid-row: 2 / 4;
+    display: flex;
+    justify-content: flex-end;
+    padding: 0 calc(10px + env(safe-area-inset-right, 0px)) 10px 10px;
+    overflow: auto;
+  }
+  .fvCard {
+    width: min(360px, 46vw);
+    align-self: flex-start;
+    background: linear-gradient(180deg, #1d1736f2, #0f0b20f2);
+    border: 1px solid #ffc92855;
+    border-top: 3px solid #ffc928;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .fvCardH {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .fvCardAv {
+    position: relative;
+    width: 54px;
+    height: 54px;
+    display: grid;
+    place-items: center;
+    font-size: 30px;
+    background: linear-gradient(160deg, #3a2a0a, #0c0a1a);
+    border: 2px solid #ffc928;
+  }
+  .fvCardN b {
+    display: block;
+    font: 900 italic 18px var(--ffF);
+  }
+  .fvCardN small {
+    color: #fffa;
+    font-size: 12px;
+  }
+  .fvTag {
+    display: block;
+    font: 800 11px var(--ffF);
+    color: #ffc928;
+    font-style: normal;
+  }
+  .fvSig {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 6px 8px;
+    border: 1px solid #ffffff22;
+    background: #0006;
+    color: #fff;
+    font: italic 12px var(--ffF);
+  }
+  .fvBadges {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+  .fvBadge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 6px 2px;
+    background: radial-gradient(circle at 50% 30%, #ffc92833, #0000 70%), #ffffff08;
+    border: 1px solid #ffffff14;
+  }
+  .fvBadge span {
+    font-size: 28px;
+  }
+  .fvBadge b {
+    font: 900 italic 12px var(--ffF);
+    text-align: center;
+  }
+  .fvBadge small {
+    font: 700 9px var(--ffF);
+    color: #ffc928;
+    letter-spacing: 0.5px;
+  }
+  .fvStats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+  .fvStats div {
+    padding: 6px;
+    background: #ffffff08;
+    border-left: 2px solid #ffc928;
+  }
+  .fvStats b {
+    display: block;
+    font: 900 italic 18px var(--ffF);
+  }
+  .fvStats small {
+    font-size: 10px;
+    color: #fffa;
+  }
+  .fvHist {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0 8px;
+    padding: 6px 8px;
+    background: #ffffff08;
+    border-left: 3px solid #ffffff33;
+  }
+  .fvHist.win {
+    border-left-color: #ffc928;
+  }
+  .fvHist b {
+    font: 900 italic 13px var(--ffF);
+  }
+  .fvHist span {
+    grid-column: 1;
+    font-size: 11px;
+    color: #fffb;
+  }
+  .fvHist small {
+    grid-column: 2;
+    grid-row: 1 / 3;
+    align-self: center;
+    font-size: 10px;
+    color: #fff8;
+  }
+  /* correio: lista + carta de papel */
+  .fvMailW {
+    grid-column: 2;
+    grid-row: 2;
+    display: grid;
+    grid-template-columns: minmax(170px, 34%) 1fr;
+    gap: 8px;
+    padding: 0 calc(10px + env(safe-area-inset-right, 0px)) 6px 8px;
+    min-height: 0;
+  }
+  .fvMailL {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    overflow: auto;
+  }
+  .fvMailI {
+    all: unset;
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding: 9px 10px;
+    background: #ffffff0c;
+    border-left: 3px solid transparent;
+    font: 700 12px var(--ffF);
+  }
+  .fvMailI.on {
+    background: linear-gradient(90deg, #ffc928, #ffb300);
+    color: #1a1200;
+  }
+  .fvMailI.novo::after {
+    content: '';
+    position: absolute;
+    right: 6px;
+    top: 6px;
+    width: 7px;
+    height: 7px;
+    background: #ff6d00;
+  }
+  .fvMailI span {
+    font-size: 18px;
+  }
+  .fvPaper {
+    overflow: auto;
+    padding: 14px 18px;
+    color: #2b2620;
+    background:
+      repeating-linear-gradient(0deg, #0000 0 23px, #0000000d 23px 24px),
+      linear-gradient(180deg, #f4efe4, #e6dfcf);
+    border: 1px solid #fff;
+    box-shadow: 0 4px 14px #0008;
+  }
+  .fvPaper h3 {
+    margin: 0 0 8px;
+    font: 900 italic 18px var(--ffF);
+    border-bottom: 2px solid #c9b98f;
+    padding-bottom: 4px;
+  }
+  .fvPaperT {
+    white-space: pre-wrap;
+    font: 14px/24px var(--ffF);
+    margin: 0 0 10px;
+  }
+  .fvPaper small {
+    font: italic 700 12px var(--ffF);
+    color: #6b5d40;
+  }
+  .fvMailPe {
+    grid-column: 2;
+    grid-row: 3;
+    display: flex;
+    justify-content: flex-end;
+    padding: 6px calc(12px + env(safe-area-inset-right, 0px)) calc(8px + env(safe-area-inset-bottom, 0px));
+  }
+  /* eventos: banner grande */
+  .fvBanner {
+    grid-column: 2;
+    grid-row: 2 / 4;
+    margin: 0 calc(10px + env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) 8px;
+    position: relative;
+    overflow: hidden;
+    padding: 22px 26px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-start;
+    gap: 8px;
+    background:
+      radial-gradient(ellipse 50% 70% at 78% 40%, #ffffff30, #0000 60%),
+      repeating-linear-gradient(115deg, #ffffff0a 0 18px, #0000 18px 40px),
+      linear-gradient(135deg, var(--c1), var(--c2));
+    border: 1px solid #ffffff30;
+  }
+  .fvBanIc {
+    position: absolute;
+    right: 6%;
+    top: 50%;
+    transform: translateY(-55%) rotate(-8deg);
+    font-size: min(170px, 38vh);
+    filter: drop-shadow(0 10px 24px #0009);
+  }
+  .fvBanner h2 {
+    margin: 0;
+    max-width: 60%;
+    font: 900 italic min(42px, 9vh) / 1 var(--ffF);
+    text-transform: uppercase;
+    color: #fff;
+    text-shadow:
+      0 3px 0 #0006,
+      0 0 20px #fff6;
+  }
+  .fvBanner p {
+    margin: 0;
+    max-width: 55%;
+    font: 700 14px/1.3 var(--ffF);
+    color: #fffe;
+    text-shadow: 0 1px 3px #000;
+  }
+  .fvBanner em {
+    font: 800 12px var(--ffF);
+    font-style: normal;
+    background: #0008;
+    padding: 3px 10px;
+  }
+  @media (orientation: portrait) {
+    .fvScr {
+      grid-template-columns: 1fr;
+    }
+    .fvTabs {
+      grid-row: 2;
+      flex-direction: row;
+      overflow-x: auto;
+    }
+    .fvPfMain,
+    .fvMailW,
+    .fvBanner,
+    .fvMailPe {
+      grid-column: 1;
+      grid-row: 3;
+    }
+    .fvMailW {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* menu da esquerda como no vídeo: 5 itens menores (Ranqueado vai pela patente lá em cima) */
+  #lobby .ffSide #lbRank,
+  #lobby .ffSide #lbTop {
+    display: none;
+  }
+  #lobby .ffSide {
+    gap: 4px;
+  }
+  #lobby .ffSide button.ffS {
+    width: 138px;
+    height: 32px;
+  }
+  /* cartão do modo em cima, cubo + DECOLAR embaixo */
+  body.ffUI #lobby .lb-play {
+    display: grid;
+    grid-template-columns: 52px 1fr;
+    grid-template-areas:
+      'modo modo'
+      'cubo play';
+    gap: 5px;
+    width: 300px;
+  }
+  body.ffUI #lobby #lbModeBtn {
+    grid-area: modo;
+    width: auto;
+    height: 52px;
+  }
+  .fvCubo {
+    grid-area: cubo;
+  }
+  body.ffUI #lobby #playBtn {
+    grid-area: play;
+    min-width: 0;
+    height: 60px;
+  }
+  /* barra de baixo vai até o meio */
+  body.ffUI #lobby .ffBar {
+    right: auto;
+    max-width: calc(100vw - 330px - env(safe-area-inset-right, 0px));
+  }
+  .fvLogo {
+    width: 38px;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+  body.ffUI:not(.fvParty) #lobby #ffRight {
+    display: none;
+  }
+  /* quando abre uma tela cheia, o lobby some (fica só o boneco no palco) */
+  body.fvScrOpen #lobby > *,
+  body.fvScrOpen #evBar,
+  body.fvScrOpen .fvBalao {
+    visibility: hidden;
+  }
+  /* ranqueado: temporada e placar */
+  .fvTemp {
+    margin-left: 12px;
+    font: 800 12px var(--ffF);
+    color: #fffb;
+  }
+  .fvPlacar {
+    all: unset;
+    cursor: pointer;
+    margin-left: auto;
+    margin-right: 8px;
+    padding: 6px 14px;
+    font: 900 italic 13px var(--ffF);
+    color: #fff;
+    background: linear-gradient(90deg, #5b2bd6, #8e44ff);
+    clip-path: polygon(8% 0, 100% 0, 92% 100%, 0 100%);
+  }
+
+  /* cofre: filtro + plaquinha */
+  .fvFil {
+    display: flex;
+    gap: 6px;
+    margin: 4px 0 8px;
+  }
+  .fvFil select,
+  .fvFil input {
+    padding: 6px 8px;
+    border: 1px solid #ffffff22;
+    border-radius: 0;
+    background: #0008;
+    color: #fff;
+    font: 800 11px var(--ffF);
+  }
+  .fvFil input {
+    flex: 1;
+    min-width: 0;
+  }
+  .fvVTag {
+    position: fixed;
+    right: calc(12px + env(safe-area-inset-right, 0px));
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 43;
+    pointer-events: none;
+  }
+  .fvVTagN {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0 8px;
+    align-items: center;
+    padding: 6px 14px 6px 10px;
+    background: linear-gradient(90deg, #0c0a1af0, #0c0a1aa0);
+    border-left: 4px solid var(--rc);
+  }
+  .fvVTagN i {
+    grid-row: 1 / 3;
+    font-style: normal;
+    font-size: 22px;
+  }
+  .fvVTagN b {
+    font: 900 italic 15px var(--ffF);
+    color: #fff;
+  }
+  .fvVTagN small {
+    font: 800 10px var(--ffF);
+    color: var(--rc);
+    text-transform: uppercase;
+  }
+  .fvEq {
+    cursor: default;
+  }
+  @media (orientation: portrait) {
+    .fvVTag {
+      display: none !important;
+    }
+  }
+
+  /* amigos em tela cheia, abas em coluna (igual o vídeo) */
+  @media (orientation: landscape) {
+    body.ffUI #amgP {
+      padding: 0;
+    }
+    body.ffUI #amgP .ctBox.amg {
+      width: 100vw;
+      max-width: none;
+      height: 100vh;
+      max-height: none;
+      box-sizing: border-box;
+      clip-path: none;
+      border: none;
+      padding: 0;
+      display: grid;
+      grid-template-columns: 190px 1fr;
+      grid-template-rows: auto 1fr;
+      background:
+        radial-gradient(ellipse 60% 70% at 70% 40%, #3a1f7a55, #0000 70%),
+        linear-gradient(160deg, #15102a, #07060f 60%);
+      overflow: hidden;
+    }
+    body.ffUI #amgP .amgTop {
+      grid-column: 1 / -1;
+      margin: 0;
+      padding: calc(8px + env(safe-area-inset-top, 0px)) 56px 8px calc(14px + env(safe-area-inset-left, 0px));
+      background: linear-gradient(180deg, #000a, #0000);
+    }
+    body.ffUI #amgP .ctX {
+      top: calc(8px + env(safe-area-inset-top, 0px));
+      right: calc(10px + env(safe-area-inset-right, 0px));
+    }
+    body.ffUI #amgP .amgTabs {
+      grid-column: 1;
+      grid-row: 2;
+      flex-direction: column;
+      gap: 4px;
+      margin: 0;
+      padding: 6px 0 10px env(safe-area-inset-left, 0px);
+      background: #07060fd8;
+      overflow: auto;
+    }
+    body.ffUI #amgP .amgTabs button {
+      flex: 0 0 auto;
+      text-align: left;
+      padding: 12px 14px;
+      border-radius: 0;
+      border: none;
+      background: linear-gradient(90deg, #ffffff0c, #0000);
+      color: #fffc;
+      font: 800 italic 13px var(--ffF);
+    }
+    body.ffUI #amgP .amgTabs button.on {
+      color: #1a1200;
+      background: linear-gradient(90deg, #ffc928, #ffb300);
+      clip-path: polygon(0 0, 100% 0, 93% 100%, 0 100%);
+    }
+    body.ffUI #amgP .amgList {
+      grid-column: 2;
+      grid-row: 2;
+      overflow: auto;
+      padding: 6px calc(14px + env(safe-area-inset-right, 0px)) 14px 12px;
+    }
+    body.ffUI #amgP .ctCall,
+    body.ffUI #amgP .ctRow {
+      grid-column: 1 / -1;
+      padding: 0 20px;
+    }
+  }
+
+  /* passe em tela cheia: título grande, barra de EXP e trilha de cartas */
+  @media (orientation: landscape) {
+    body.ffUI #passPanel.psPanel {
+      width: 100vw !important;
+      max-width: none;
+      height: 100vh;
+      max-height: none;
+      left: 0;
+      top: 0;
+      transform: none;
+      border-radius: 0;
+      border: none;
+      box-sizing: border-box;
+      padding: calc(8px + env(safe-area-inset-top, 0px)) calc(12px + env(safe-area-inset-right, 0px)) 10px calc(14px + env(safe-area-inset-left, 0px));
+      background:
+        radial-gradient(1px 1px at 20% 30%, #fff, #0000),
+        radial-gradient(1px 1px at 70% 20%, #fff, #0000),
+        radial-gradient(1.5px 1.5px at 85% 60%, #fff, #0000),
+        radial-gradient(1px 1px at 40% 75%, #fff, #0000),
+        radial-gradient(ellipse 50% 70% at 80% 50%, #3d5afe55, #0000 70%),
+        linear-gradient(160deg, #101a4a, #070a1f 65%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 12px;
+    }
+    body.ffUI #passPanel #passHead {
+      font-family: var(--ffF);
+    }
+    body.ffUI #passPanel #passHead::before {
+      content: 'PASSE DA TEMPORADA';
+      display: block;
+      width: 100%;
+      font: 900 italic min(38px, 9vh) / 1 var(--ffF);
+      color: #fff;
+      text-shadow:
+        0 0 18px #7c9cff,
+        0 3px 0 #0008;
+      letter-spacing: 1px;
+    }
+    body.ffUI #passPanel .psBar {
+      height: 10px;
+      border-radius: 0;
+      background: #ffffff1a;
+    }
+    body.ffUI #passPanel .psBar i {
+      border-radius: 0;
+      background: linear-gradient(90deg, #ffe066, #ffb300);
+    }
+    body.ffUI #passPanel #passList {
+      padding: 4px 2px 10px;
+      gap: 6px;
+    }
+    body.ffUI #passPanel .psIt {
+      flex: 0 0 104px;
+      border-radius: 0;
+      border: 2px solid #ffffff22;
+      background: linear-gradient(180deg, #24306a, #121a40);
+      padding: 0 4px 8px;
+      position: relative;
+    }
+    body.ffUI #passPanel .psIt small {
+      align-self: stretch;
+      margin: 0 -4px 4px;
+      padding: 3px 6px;
+      font: 900 italic 12px var(--ffF);
+      color: #fff;
+      background: linear-gradient(90deg, #3d5afe, #1a237e);
+      opacity: 1;
+    }
+    body.ffUI #passPanel .psIt.ex {
+      background: linear-gradient(180deg, #5a2a8a, #261040);
+      border-color: #b388ff99;
+    }
+    body.ffUI #passPanel .psIt.ok {
+      border-color: #ffc928;
+      box-shadow:
+        0 0 14px #ffc92899,
+        inset 0 0 12px #ffc92844;
+    }
+    body.ffUI #passPanel .psIt.got {
+      filter: saturate(0.4) brightness(0.75);
+    }
+    body.ffUI #passPanel #passClose {
+      border-radius: 0;
+      background: #ffffff14;
+      border: none;
+      color: #fff;
+    }
+  }
 </style>
 </head>
 <body>
@@ -8936,7 +9950,7 @@
     <div class="spLoad"><div class="spTip" id="spTip">Preparando a ilha...</div><div class="spBar"><i id="spFill"></i></div><div class="spPct"><span id="spStep">Carregando</span><b id="spPct">0%</b></div></div>
     <div class="spTap" id="spTap"><b>TOQUE PARA JOGAR</b><div class="spWho" id="spWho"></div></div>
     <div class="spGate" id="spGate"></div>
-    <div class="spVer">v123 · Feito no Amapá 🇧🇷</div>
+    <div class="spVer">v124 · Feito no Amapá 🇧🇷</div>
   </div>
 </div>
 <!-- ===== GIRE O CELULAR: o jogo é só deitado ===== -->
@@ -28115,6 +29129,7 @@ function finishSpectated() {
 
 function showEnd(title, sub, rankTxt, win) {
   if (NET.obs && NET.obs.on) return obsFim(title); // só estava assistindo
+  fvHistAdd(title, win); // histórico do perfil
   setTimeout(socFimPartida, 50); // botão de denunciar quem estava na partida
   document.getElementById('endTitle').textContent = title;
   document.getElementById('endSub').textContent = sub;
@@ -30011,6 +31026,653 @@ function openModes() {
   renderModes();
   document.getElementById('modeSel').classList.add('open');
 }
+/* ======================================================================
+   LOBBY E TELAS v124 — no estilo do vídeo (arena):
+   topo com avatar/nível/patente e ícones, menu com Eventos e bolinhas de
+   aviso, amigos online na direita, ícones de evento com tempo, faixa roxa,
+   chat embaixo, cubo do time + DECOLAR, balão do pet, portal neon atrás,
+   e as telas de Perfil, Correio e Eventos.
+   ====================================================================== */
+const FV = { pet: 0, petI: 0, amgOpen: true, lido: null };
+const fvEl = (tag, cls, html) => {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (html != null) e.innerHTML = html;
+  return e;
+};
+// fim da temporada: começo do próximo mês (horário de Brasília)
+function fvFimTemp() {
+  const d = new Date(Date.now() - 3 * 3600e3);
+  return Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 1) + 3 * 3600e3;
+}
+function fvTempo(ms) {
+  ms = Math.max(0, ms);
+  const d = Math.floor(ms / 864e5),
+    h = Math.floor((ms % 864e5) / 36e5),
+    m = Math.floor((ms % 36e5) / 6e4);
+  return d ? d + 'd ' + h + 'h' : h ? h + 'h ' + m + 'm' : m + 'm';
+}
+function fvLevel() {
+  return 1 + Math.floor((STATS.kills || 0) / 10);
+}
+function fvTemporadaN() {
+  const d = new Date(Date.now() - 3 * 3600e3);
+  return (d.getUTCFullYear() - 2026) * 12 + d.getUTCMonth() + 1; // temporada 1 = jan/2026
+}
+function ffV2Build() {
+  const L = document.getElementById('lobby');
+  if (!L || L.dataset.fv) return;
+  L.dataset.fv = 1;
+  // --- topo: nível no avatar, patente e ícones ---
+  const av = document.getElementById('lbAv');
+  if (av && !document.getElementById('fvLv')) av.appendChild(fvEl('i', 'fvLv', '1')).id = 'fvLv';
+  const top = L.querySelector('.ffTop');
+  const rkB = fvEl('button', 'fvRkB', '<span id="fvRkI">🥉</span>');
+  rkB.id = 'fvRkB';
+  rkB.title = 'Ranqueado';
+  rkB.onclick = () => document.getElementById('lbRank').click();
+  const dm = document.getElementById('ffDm');
+  if (top && dm) dm.after(rkB);
+  // ícones da direita (amigos, correio, perfil) no lugar do botão grande
+  const net = document.getElementById('lbNet');
+  if (net) net.classList.add('fvIco');
+  const mail = fvEl('button', 'fvIcoB', '✉️<i class="fvDot" id="fvMailDot"></i>');
+  mail.id = 'fvMail';
+  mail.title = 'Correio';
+  mail.onclick = () => fvCorreio();
+  if (net) net.after(mail);
+  // --- menu da esquerda: Eventos + bolinhas de aviso ---
+  const side = L.querySelector('.ffSide');
+  if (side && !document.getElementById('lbEvt')) {
+    const ev = fvEl('button', 'ffS', '<span class="ic">🎉</span><b>Eventos</b><i class="fvDot" id="fvEvtDot"></i>');
+    ev.id = 'lbEvt';
+    ev.onclick = () => fvEventos();
+    const mis = document.getElementById('lbMis');
+    if (mis && mis.parentNode === side) mis.after(ev);
+    else side.appendChild(ev);
+  }
+  // --- ícones de evento com tempo + faixa roxa ---
+  const evIc = fvEl('div', 'fvEvIc');
+  evIc.id = 'fvEvIc';
+  L.appendChild(evIc);
+  const fx = fvEl('button', 'fvFaixa');
+  fx.id = 'fvFaixa';
+  fx.onclick = () => fvEventos();
+  L.appendChild(fx);
+  // --- amigos online (coluna da direita) ---
+  const right = document.getElementById('ffRight');
+  const col = fvEl('div', 'fvAmg');
+  col.id = 'fvAmg';
+  if (right) right.after(col);
+  else L.appendChild(col);
+  // --- chat embaixo ---
+  const ch = fvEl('div', 'fvChat', '<button class="fvChB" title="Amigos">👥</button><button class="fvChB" title="Guilda">💬</button><span id="fvChT"></span>');
+  ch.id = 'fvChat';
+  ch.children[0].onclick = () => amgOuSala();
+  ch.children[1].onclick = () => gdAbre();
+  L.appendChild(ch);
+  // --- logo na barra de baixo ---
+  const bar = L.querySelector('.ffBar');
+  if (bar && !bar.querySelector('.fvLogo')) bar.prepend(fvEl('span', 'fvLogo', 'W<b>B</b>'));
+  // --- cubo do time ao lado do DECOLAR ---
+  const pb = document.getElementById('playBtn');
+  if (pb && !document.getElementById('fvCubo')) {
+    const cu = fvEl('button', 'fvCubo', '<b id="fvCuboN">1</b><small>TIME</small>');
+    cu.id = 'fvCubo';
+    cu.title = 'Tamanho do time';
+    cu.onclick = () => {
+      if (MM || (typeof isTeam === 'function' && (PROF.mode === 'tdm' || PROF.mode === 'tdmrank'))) return toast('No 4v4 o time é sempre de 4.');
+      const o = [1, 2, 4],
+        i = o.indexOf(PROF.team || 1);
+      PROF.team = o[(i + 1) % o.length];
+      saveProf();
+      try {
+        renderLobby();
+      } catch (e) {}
+      toast('👥 ' + teamName());
+      fvTick();
+    };
+    pb.before(cu);
+  }
+  // emblema da patente no cartão do modo
+  const mb = document.getElementById('lbModeBtn');
+  if (mb && !document.getElementById('fvMbRk')) {
+    const r = fvEl('span', 'fvMbRk', '<i id="fvMbRkI">🥉</i>');
+    r.id = 'fvMbRk';
+    mb.prepend(r);
+  }
+  // balão do pet
+  const bal = fvEl('div', 'fvBalao');
+  bal.id = 'fvBalao';
+  L.appendChild(bal);
+  // ranqueado: botão do placar (ranking dos melhores) e temporada
+  const rkA = document.querySelector('#rankSheet .ash');
+  if (rkA && !document.getElementById('fvPlacar')) {
+    const tp = fvEl('span', 'fvTemp');
+    tp.id = 'fvTemp';
+    rkA.querySelector('b').after(tp);
+    const pl = fvEl('button', 'fvPlacar', '📊 PLACAR');
+    pl.id = 'fvPlacar';
+    pl.onclick = () => rkTopAbre();
+    const cl = document.getElementById('rankClose');
+    if (cl) cl.before(pl);
+    else rkA.appendChild(pl);
+  }
+  // cofre: filtro de raridade, busca e plaquinha do item em uso (igual o vídeo)
+  if (typeof renderVault === 'function' && !renderVault.fv) {
+    const rv0 = renderVault;
+    renderVault = function () {
+      rv0.apply(this, arguments);
+      fvCofreExtra();
+    };
+    renderVault.fv = 1;
+  }
+  fvPortal();
+  fvTick();
+  setInterval(fvTick, 2000);
+  setInterval(() => {
+    if (inLobby && CONTA.tk && document.visibilityState === 'visible') contaAtualiza();
+  }, 30000);
+}
+// atualiza tudo que muda (nível, patente, avisos, tempos, amigos, chat)
+function fvTick() {
+  document.body.classList.toggle('fvScrOpen', !!document.querySelector('.fvScr.open'));
+  document.body.classList.toggle('fvParty', !!NET.code); // vagas do time só aparecem quando tem sala/grupo
+  if (!inLobby) return;
+  try {
+    const lv = document.getElementById('fvLv');
+    if (lv) lv.textContent = fvLevel();
+    const ri = rankInfo(STATS.rp || 0),
+      r4 = typeof starInfo === 'function' ? starInfo(STATS.st4 || 0) : null,
+      md = PROF.mode;
+    const rk = document.getElementById('fvRkI');
+    if (rk) rk.textContent = ri.tier.e;
+    const mi = document.getElementById('fvMbRkI');
+    if (mi) mi.textContent = md === 'tdmrank' || md === 'tdm' ? (r4 && r4.tier && r4.tier.e) || '⭐' : md === 'treino' ? '🎯' : ri.tier.e;
+    const cn = document.getElementById('fvCuboN');
+    if (cn) cn.textContent = md === 'tdm' || md === 'tdmrank' ? 4 : PROF.team || 1;
+    const pb = document.getElementById('playBtn');
+    if (pb && !NET.code && !MM && /JOGAR|RANQUEADA|4v4/.test(pb.textContent) && !/GRUPO|SALA/.test(pb.textContent)) pb.textContent = 'DECOLAR';
+    // avisos
+    const ativos = EVT.list.filter((e) => e.fim > Date.now() + EVT.delta);
+    const ed = document.getElementById('fvEvtDot');
+    if (ed) ed.style.display = ativos.length ? 'block' : 'none';
+    const md2 = document.getElementById('fvMailDot');
+    if (md2) md2.style.display = fvMails().some((m) => !fvLido(m.id)) ? 'block' : 'none';
+    // ícones de evento + faixa
+    const ic = document.getElementById('fvEvIc');
+    if (ic) {
+      const fim = fvFimTemp() - Date.now();
+      const itens = [
+        ['🎰', 'Royale', fvTempo(fim), () => document.getElementById('lbRoyale').click()],
+        ['🎖️', 'Passe', fvTempo(fim), () => document.getElementById('lbPass').click()],
+      ];
+      if (ativos[0]) itens.unshift(['🎉', ativos[0].nome, fvTempo(ativos[0].fim - Date.now() - EVT.delta), () => fvEventos()]);
+      ic.innerHTML = '';
+      itens.slice(0, 3).forEach(([e, n, t, go]) => {
+        const b = ic.appendChild(fvEl('button', 'fvEvB', '<span>' + e + '</span><small>⏱ ' + t + '</small>'));
+        b.title = n;
+        b.onclick = go;
+      });
+    }
+    const tp = document.getElementById('fvTemp');
+    if (tp) tp.textContent = 'TEMPORADA ' + fvTemporadaN() + ' · termina em ' + fvTempo(fvFimTemp() - Date.now());
+    const fx = document.getElementById('fvFaixa');
+    if (fx) fx.textContent = ativos[0] ? '🎉 ' + ativos[0].nome + ' · acaba em ' + fvTempo(ativos[0].fim - Date.now() - EVT.delta) : '🏆 Temporada ' + fvTemporadaN() + ' acaba em ' + fvTempo(fvFimTemp() - Date.now());
+    fvAmigos();
+    fvChat();
+  } catch (e) {}
+}
+function fvAmigos() {
+  const C = document.getElementById('fvAmg');
+  if (!C) return;
+  const am = CONTA.d && CONTA.d.amigos ? CONTA.d.amigos.slice().sort((a, b) => (b.on | 0) - (a.on | 0)) : [];
+  const chave = am.map((a) => a.uid + (a.on ? 1 : 0) + (a.st || '')).join(',') + '|' + FV.amgOpen;
+  if (C.dataset.k === chave) return;
+  C.dataset.k = chave;
+  C.innerHTML = '';
+  const tg = C.appendChild(fvEl('button', 'fvAmgT', FV.amgOpen ? '›' : '‹'));
+  tg.title = FV.amgOpen ? 'Esconder amigos' : 'Mostrar amigos';
+  tg.onclick = () => {
+    FV.amgOpen = !FV.amgOpen;
+    fvAmigos();
+  };
+  if (!FV.amgOpen) return;
+  const lst = am.slice(0, 5);
+  lst.forEach((a) => {
+    const b = C.appendChild(fvEl('button', 'fvAmgA' + (a.on ? ' on' : '')));
+    b.appendChild(fvEl('span', 'av')).textContent = String(a.nome || '?').slice(0, 1).toUpperCase();
+    b.appendChild(fvEl('small')).textContent = a.nome;
+    if (a.on) b.appendChild(fvEl('i', a.st === 'play' ? 'st play' : 'st'));
+    b.title = a.nome + (a.on ? (a.st === 'play' ? ' · jogando' : ' · no lobby (toque pra convidar)') : ' · offline');
+    b.onclick = () => (a.on && a.st !== 'play' ? amgConvida(a) : amgAbre('amigos'));
+  });
+  const add = C.appendChild(fvEl('button', 'fvAmgA add', '<span class="av">＋</span><small>Amigos</small>'));
+  add.onclick = () => amgAbre(CONTA.tk ? 'online' : 'amigos');
+}
+function fvChat() {
+  const T = document.getElementById('fvChT');
+  if (!T) return;
+  const c = GD.d && Array.isArray(GD.d.chat) ? GD.d.chat.filter((m) => !m.s) : [];
+  const m = c[c.length - 1];
+  T.textContent = m ? '[Guilda] ' + m.n + ': ' + m.m : '';
+  T.style.display = m ? '' : 'none';
+}
+// --- balão do pet (aparece de vez em quando em cima da capivara) ---
+const FV_FRASES = ['Treinar é o segredo. Você consegue!', 'Pelas minhas contas, você ganha a próxima!', 'Bora pro Booyah? 🏆', 'Hoje tem 1 giro grátis no Royale!', 'Chama os amigos pro squad!', 'Cuidado com a zona, hein!', 'Capivara confia em você 🐾'];
+function fvPetTick(t) {
+  const B = document.getElementById('fvBalao');
+  if (!B || !FF.pet || !camera) return;
+  const fase = (t % 16) / 16;
+  if (fase < 0.02 && !FV.petMostrou) {
+    FV.petMostrou = 1;
+    FV.petI = (FV.petI + 1) % FV_FRASES.length;
+    B.textContent = FV_FRASES[FV.petI];
+  }
+  if (fase > 0.5) FV.petMostrou = 0;
+  const on = fase < 0.34 && inLobby && !document.querySelector('.sheetBg.open,#rankM[style*="flex"],.ctBg.open,#modeSel.open,#charSel.open,.fvScr.open');
+  B.classList.toggle('on', on);
+  if (!on) return;
+  const p = FF.pet.position.clone();
+  p.y += 0.75;
+  p.project(camera);
+  B.style.left = ((p.x + 1) / 2) * innerWidth + 'px';
+  B.style.top = ((1 - p.y) / 2) * innerHeight + 'px';
+}
+// --- portal neon atrás do personagem (triângulo de luz + redemoinho) ---
+function fvPortal() {
+  if (!FF.stage || FF.portal) return;
+  try {
+    const g = new THREE.Group();
+    const add = (o) => (g.add(o), o);
+    // redemoinho no fundo
+    const cv = document.createElement('canvas');
+    cv.width = cv.height = 256;
+    const x = cv.getContext('2d');
+    if (x) {
+      const gr = x.createRadialGradient(128, 128, 4, 128, 128, 128);
+      gr.addColorStop(0, 'rgba(255,255,255,0.95)');
+      gr.addColorStop(0.18, 'rgba(190,150,255,0.8)');
+      gr.addColorStop(0.55, 'rgba(110,60,230,0.35)');
+      gr.addColorStop(1, 'rgba(40,10,120,0)');
+      x.fillStyle = gr;
+      x.fillRect(0, 0, 256, 256);
+      x.strokeStyle = 'rgba(255,255,255,0.18)';
+      for (let i = 0; i < 9; i++) {
+        x.lineWidth = 3;
+        x.beginPath();
+        for (let a = 0; a < 7; a += 0.05) {
+          const r = 6 + a * 17,
+            an = a + (i / 9) * Math.PI * 2;
+          const px = 128 + Math.cos(an) * r,
+            py = 128 + Math.sin(an) * r;
+          a === 0 ? x.moveTo(px, py) : x.lineTo(px, py);
+        }
+        x.stroke();
+      }
+    }
+    const sw = add(
+      new THREE.Mesh(
+        new THREE.PlaneGeometry(7, 7),
+        new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(cv), transparent: true, opacity: 0.55, depthWrite: false, blending: THREE.AdditiveBlending, fog: false }),
+      ),
+    );
+    sw.position.set(0, 2.6, -0.2);
+    // triângulo de luz (3 barras) + brilho
+    const P = [
+      [0, 4.6],
+      [-2.7, 0],
+      [2.7, 0],
+    ];
+    const barM = new THREE.MeshBasicMaterial({ color: 0xe9d8ff, fog: false });
+    const glowM = new THREE.MeshBasicMaterial({ color: 0x8a4dff, transparent: true, opacity: 0.45, depthWrite: false, blending: THREE.AdditiveBlending, fog: false });
+    for (let i = 0; i < 3; i++) {
+      const a = P[i],
+        b = P[(i + 1) % 3],
+        dx = b[0] - a[0],
+        dy = b[1] - a[1],
+        L = Math.hypot(dx, dy),
+        ang = Math.atan2(dy, dx);
+      const bar = add(new THREE.Mesh(new THREE.PlaneGeometry(L, 0.09), barM));
+      bar.position.set((a[0] + b[0]) / 2, (a[1] + b[1]) / 2, 0);
+      bar.rotation.z = ang;
+      const gl = add(new THREE.Mesh(new THREE.PlaneGeometry(L + 0.4, 0.7), glowM));
+      gl.position.copy(bar.position);
+      gl.position.z = -0.01;
+      gl.rotation.z = ang;
+    }
+    // chão de luz roxa saindo do portal
+    const ch = add(
+      new THREE.Mesh(new THREE.PlaneGeometry(6, 3), new THREE.MeshBasicMaterial({ color: 0x7c4dff, transparent: true, opacity: 0.16, depthWrite: false, blending: THREE.AdditiveBlending, fog: false })),
+    );
+    ch.rotation.x = -Math.PI / 2;
+    ch.position.set(0, 0.02, 1.2);
+    g.traverse((o) => (o.raycast = () => {}));
+    g.userData = { sw, glowM };
+    FF.portal = g;
+    scene.add(g);
+  } catch (e) {}
+}
+function fvPortalTick(t) {
+  const g = FF.portal;
+  if (!g) return;
+  g.visible = !!(FF.stage && FF.stage.visible);
+  if (!g.visible) return;
+  g.position.set(FF.stage.position.x, FF.stage.position.y - 0.05, FF.stage.position.z - 3.4);
+  g.userData.sw.rotation.z = t * 0.12;
+  g.userData.glowM.opacity = 0.3 + 0.1 * Math.sin(t * 1.7);
+}
+
+/* ---------- telas cheias (Perfil, Correio, Eventos) ---------- */
+function fvTela(id, titulo) {
+  let P = document.getElementById(id);
+  if (!P) {
+    P = fvEl('div', 'fvScr');
+    P.id = id;
+    document.body.appendChild(P);
+    P.addEventListener('keydown', (e) => e.stopPropagation());
+  }
+  P.innerHTML = '';
+  const top = P.appendChild(fvEl('div', 'fvScrTop'));
+  top.appendChild(fvEl('b', 'fvScrT')).textContent = titulo;
+  const x = top.appendChild(fvEl('button', 'fvScrX', '✕'));
+  x.onclick = () => fvFecha(P);
+  P.classList.add('open');
+  document.body.classList.add('fvScrOpen');
+  return P;
+}
+function fvFecha(P) {
+  if (P) P.classList.remove('open');
+  document.body.classList.toggle('fvScrOpen', !!document.querySelector('.fvScr.open'));
+}
+function fvAbas(P, abas, atual, onSel) {
+  const L = P.appendChild(fvEl('div', 'fvTabs'));
+  abas.forEach(([k, n]) => {
+    const b = L.appendChild(fvEl('button', k === atual ? 'on' : ''));
+    b.textContent = n;
+    b.onclick = () => onSel(k);
+  });
+  return L;
+}
+// ===== PERFIL =====
+function fvPerfil(aba) {
+  aba = aba || 'geral';
+  const P = fvTela('fvPerfil', 'PERFIL');
+  fvAbas(
+    P,
+    [
+      ['geral', 'Visão geral'],
+      ['rank', 'Ranqueado'],
+      ['hist', 'Histórico'],
+      ['conta', 'Nome e conta'],
+    ],
+    aba,
+    (k) => {
+      if (k !== 'conta') return fvPerfil(k);
+      fvFecha(P);
+      renderLobby();
+      document.getElementById('profile').style.display = 'flex';
+    },
+  );
+  const M = P.appendChild(fvEl('div', 'fvPfMain'));
+  const card = M.appendChild(fvEl('div', 'fvCard'));
+  const ri = rankInfo(STATS.rp || 0),
+    r4 = starInfo(STATS.st4 || 0);
+  const h = card.appendChild(fvEl('div', 'fvCardH'));
+  const av = h.appendChild(fvEl('span', 'fvCardAv'));
+  av.textContent = document.getElementById('lbAv') ? document.getElementById('lbAv').firstChild.textContent || '🙂' : '🙂';
+  av.appendChild(fvEl('i', 'fvLv')).textContent = fvLevel();
+  const nm = h.appendChild(fvEl('div', 'fvCardN'));
+  const b = nm.appendChild(fvEl('b'));
+  b.textContent = PROF.name;
+  verMark(b, VER.me);
+  nm.appendChild(fvEl('small')).textContent = CONTA.tk ? 'ID ' + fmtId(PROF.uid) : 'Convidado (sem conta)';
+  if (GD.d && GD.d.tag) nm.appendChild(fvEl('em', 'fvTag')).textContent = '[' + GD.d.tag + '] ' + (GD.d.nome || '');
+  const sig = card.appendChild(fvEl('input', 'fvSig'));
+  sig.placeholder = '✏️ Escreva sua frase de perfil...';
+  sig.maxLength = 60;
+  sig.value = PROF.sig || '';
+  sig.onchange = () => {
+    PROF.sig = sig.value.slice(0, 60);
+    saveProf();
+    toast('✏️ Frase salva!');
+  };
+  if (aba === 'geral' || aba === 'rank') {
+    const bd = card.appendChild(fvEl('div', 'fvBadges'));
+    const bg = (ic, t, s) => {
+      const d = bd.appendChild(fvEl('div', 'fvBadge'));
+      d.appendChild(fvEl('span')).textContent = ic;
+      d.appendChild(fvEl('b')).textContent = t;
+      d.appendChild(fvEl('small')).textContent = s;
+    };
+    bg(ri.tier.e, ri.name, 'BATTLE ROYALE');
+    bg((r4.tier && r4.tier.e) || '⭐', r4.name || 'Bronze', '4v4');
+    const pk = rankInfo((STATS.rk && STATS.rk.peak) || STATS.rp || 0);
+    bg(pk.tier.e, pk.name, 'MELHOR PATENTE');
+  }
+  const S = card.appendChild(fvEl('div', 'fvStats'));
+  const st = (n, v) => {
+    const d = S.appendChild(fvEl('div'));
+    d.appendChild(fvEl('b')).textContent = v;
+    d.appendChild(fvEl('small')).textContent = n;
+  };
+  if (aba === 'rank') {
+    const k = STATS.rk || {},
+      k4 = STATS.rk4 || {};
+    st('Ranqueadas BR', k.m || 0);
+    st('Vitórias BR', k.w || 0);
+    st('Abates BR', k.k || 0);
+    st('Partidas 4v4', k4.m || 0);
+    st('Vitórias 4v4', k4.w || 0);
+    st('Pontos BR', STATS.rp || 0);
+  } else if (aba === 'hist') {
+    const H = fvHist().slice(-10).reverse();
+    S.remove();
+    if (!H.length) card.appendChild(fvEl('p', 'fvVazio', 'Jogue umas partidas que o histórico aparece aqui.'));
+    H.forEach((x) => {
+      const r = card.appendChild(fvEl('div', 'fvHist' + (x.w ? ' win' : '')));
+      r.appendChild(fvEl('b')).textContent = x.ti;
+      r.appendChild(fvEl('span')).textContent = x.mo + ' · ' + x.k + ' abates';
+      r.appendChild(fvEl('small')).textContent = new Date(x.t).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+    });
+  } else {
+    const m = STATS.matches || 0,
+      k = STATS.kills || 0;
+    st('Partidas', m);
+    st('Booyahs', STATS.wins || 0);
+    st('Abates', k);
+    st('Abates/partida', m ? (k / m).toFixed(1) : '0');
+    st('Mais abates', STATS.best || 0);
+    st('Nível', fvLevel());
+  }
+}
+// histórico das últimas partidas (fica no aparelho)
+function fvHist() {
+  try {
+    return JSON.parse(localStorage.getItem('wb_hist') || '[]');
+  } catch (e) {
+    return [];
+  }
+}
+function fvHistAdd(title, win) {
+  try {
+    const H = fvHist();
+    const MO = { casual: 'Battle Royale', rank: 'BR Ranqueado', tdm: '4v4', tdmrank: '4v4 Ranqueado', treino: 'Treino' };
+    H.push({ t: Date.now(), ti: String(title || '').slice(0, 40), mo: (NET.mid ? '👥 ' : '') + (MO[PROF.mode] || PROF.mode || ''), k: typeof kills === 'number' ? kills : 0, w: !!win });
+    localStorage.setItem('wb_hist', JSON.stringify(H.slice(-30)));
+  } catch (e) {}
+}
+// ===== CORREIO =====
+function fvLido(id) {
+  if (!FV.lido)
+    try {
+      FV.lido = JSON.parse(localStorage.getItem('wb_mail') || '[]');
+    } catch (e) {
+      FV.lido = [];
+    }
+  return FV.lido.includes(id);
+}
+function fvMarca(id) {
+  if (fvLido(id)) return;
+  FV.lido.push(id);
+  try {
+    localStorage.setItem('wb_mail', JSON.stringify(FV.lido.slice(-200)));
+  } catch (e) {}
+}
+function fvMails() {
+  const L = [];
+  const cx = (CONTA.d && CONTA.d.caixa) || [];
+  cx.forEach((g, i) => L.push({ id: 'g' + (g.id || i), t: 'aviso', ic: '🎁', tit: 'Presente: ' + giftTxt(g), de: g.de || 'WorldBullet', txt: (g.msg ? '“' + g.msg + '”\n\n' : '') + 'Você recebeu um presente! Toque em COLETAR para guardar.', gift: g }));
+  EVT.list
+    .filter((e) => e.fim > Date.now() + EVT.delta)
+    .forEach((e) => L.push({ id: 'e' + e.id, t: 'aviso', ic: '🎉', tit: e.nome, de: 'Eventos', txt: 'Evento ativo! Acaba em ' + fvTempo(e.fim - Date.now() - EVT.delta) + '.' }));
+  L.push({ id: 's-t' + fvTemporadaN(), t: 'sistema', ic: '🏆', tit: 'Temporada ' + fvTemporadaN() + ' começou!', de: 'Equipe WorldBullet', txt: 'Nova temporada do ranqueado. Ela acaba em ' + fvTempo(fvFimTemp() - Date.now()) + '. Suba de patente no BR e no 4v4!' });
+  L.push({ id: 's-pers', t: 'sistema', ic: '🧍', tit: '11 personagens novos', de: 'Equipe WorldBullet', txt: 'O Tático já é seu de graça. Os outros estão em Personagens, com moedas ou diamantes.' });
+  L.push({ id: 's-grupo', t: 'sistema', ic: '👥', tit: 'Ranqueada em grupo', de: 'Equipe WorldBullet', txt: 'Chame os amigos pro lobby e joguem a ranqueada juntos. Vale pontos pra todo mundo!' });
+  L.push({ id: 's-bv', t: 'sistema', ic: '👋', tit: 'Bem-vindo ao WorldBullet!', de: 'Equipe WorldBullet', txt: 'Valeu por jogar! Complete as missões diárias, gire o Royale e chame a galera. Boa sorte e muito Booyah!' });
+  return L;
+}
+function fvCorreio(aba, sel) {
+  aba = aba || 'aviso';
+  const P = fvTela('fvMailP', 'CORREIO');
+  fvAbas(
+    P,
+    [
+      ['aviso', '📢 Aviso'],
+      ['sistema', '✉️ Sistema'],
+    ],
+    aba,
+    (k) => fvCorreio(k),
+  );
+  const M = fvMails().filter((m) => m.t === aba);
+  const W = P.appendChild(fvEl('div', 'fvMailW'));
+  const lista = W.appendChild(fvEl('div', 'fvMailL'));
+  const ver = W.appendChild(fvEl('div', 'fvPaper'));
+  const atual = M.find((m) => m.id === sel) || M[0];
+  if (!M.length) ver.appendChild(fvEl('p', 'fvVazio', 'Nenhuma mensagem aqui.'));
+  M.forEach((m) => {
+    const r = lista.appendChild(fvEl('button', 'fvMailI' + (m === atual ? ' on' : '') + (fvLido(m.id) ? '' : ' novo')));
+    r.appendChild(fvEl('span')).textContent = m.ic;
+    r.appendChild(fvEl('b')).textContent = m.tit;
+    r.onclick = () => fvCorreio(aba, m.id);
+  });
+  if (atual) {
+    fvMarca(atual.id);
+    ver.appendChild(fvEl('h3')).textContent = atual.tit;
+    ver.appendChild(fvEl('p', 'fvPaperT')).textContent = atual.txt;
+    ver.appendChild(fvEl('small')).textContent = '— ' + atual.de;
+  }
+  const pe = P.appendChild(fvEl('div', 'fvMailPe'));
+  const gifts = (CONTA.d && CONTA.d.caixa) || [];
+  const col = pe.appendChild(fvEl('button', 'fvBtnY', gifts.length ? 'COLETAR TUDO (' + gifts.length + ')' : 'NADA PRA COLETAR'));
+  col.disabled = !gifts.length;
+  col.onclick = () => {
+    fvFecha(P);
+    giftShow();
+  };
+  fvTick();
+}
+// ===== EVENTOS =====
+function fvEvLista() {
+  const L = [];
+  EVT.list
+    .filter((e) => e.fim > Date.now() + EVT.delta)
+    .forEach((e) =>
+      L.push({
+        k: 'e' + e.id,
+        n: e.nome,
+        ic: { moedas2x: '🪙', xp2x: '⭐', presente: '🎁' }[e.tipo] || '🎉',
+        cor: ['#ff9800', '#7c4dff'],
+        d: { moedas2x: 'Toda partida dá o DOBRO de moedas!', xp2x: 'Toda partida dá o DOBRO de XP no Passe!', presente: 'Entre com a sua conta e ganhe um presente.' }[e.tipo] || 'Evento especial!',
+        t: e.fim - Date.now() - EVT.delta,
+        go: null,
+      }),
+    );
+  const fim = fvFimTemp() - Date.now();
+  L.push({ k: 'passe', n: 'Passe da Temporada', ic: '🎖️', cor: ['#2a6cff', '#0b1a4a'], d: 'Suba de nível jogando e ganhe roupas, skins e moedas.', t: fim, go: () => document.getElementById('lbPass').click() });
+  L.push({ k: 'royale', n: 'Royale de Ouro', ic: '🎰', cor: ['#ffb300', '#4a2a00'], d: 'Gire e ganhe roupas que não existem na loja. 1 giro grátis por dia!', t: fim, go: () => document.getElementById('lbRoyale').click() });
+  L.push({ k: 'rank', n: 'Temporada ' + fvTemporadaN() + ' do Ranqueado', ic: '🏆', cor: ['#e53935', '#3a0a0a'], d: 'BR e 4v4 ranqueado: suba de patente sozinho ou com os amigos.', t: fim, go: () => document.getElementById('lbRank').click() });
+  L.push({ k: 'pers', n: 'Personagens novos', ic: '🧍', cor: ['#00bfa5', '#003a33'], d: '11 personagens: o Tático vem de graça, os outros com moedas ou diamantes.', t: 0, go: () => document.getElementById('lbChar').click() });
+  L.push({ k: 'mapa', n: 'Ilha de Maracá', ic: '🏝️', cor: ['#43a047', '#0a2a0c'], d: 'Mapa novo no sorteio dos modos. Dá pra nadar no mar, no rio e no canal!', t: 0, go: () => openModes() });
+  L.push({ k: 'dm', n: 'Loja de diamantes', ic: '💎', cor: ['#00b0ff', '#002a4a'], d: 'Diamantes por Pix ou cartão. Compre só o item que você escolher.', t: 0, go: () => lojaAbre('comprar') });
+  return L;
+}
+function fvEventos(sel) {
+  const P = fvTela('fvEvtP', 'EVENTOS');
+  const L = fvEvLista();
+  const atual = L.find((e) => e.k === sel) || L[0];
+  fvAbas(
+    P,
+    L.map((e) => [e.k, e.ic + ' ' + e.n]),
+    atual.k,
+    (k) => fvEventos(k),
+  );
+  const B = P.appendChild(fvEl('div', 'fvBanner'));
+  B.style.setProperty('--c1', atual.cor[0]);
+  B.style.setProperty('--c2', atual.cor[1]);
+  B.appendChild(fvEl('span', 'fvBanIc')).textContent = atual.ic;
+  B.appendChild(fvEl('h2')).textContent = atual.n;
+  B.appendChild(fvEl('p')).textContent = atual.d;
+  if (atual.t > 0) B.appendChild(fvEl('em')).textContent = '⏱ acaba em ' + fvTempo(atual.t);
+  if (atual.go) {
+    const g = B.appendChild(fvEl('button', 'fvBtnY', 'IR AGORA'));
+    g.onclick = () => {
+      fvFecha(P);
+      atual.go();
+    };
+  }
+}
+
+// ===== COFRE: filtro, busca e plaquinha =====
+const FV_RAR = { c: ['Comum', '#9e9e9e'], r: ['Rara', '#4aa3ff'], e: ['Épica', '#b388ff'], l: ['Lendária', '#ffc928'], m: ['Mítica', '#ff5252'] };
+function fvCofreExtra() {
+  const B = document.getElementById('vBody');
+  if (!B) return;
+  FV.vRar = FV.vRar || '';
+  FV.vQ = FV.vQ || '';
+  if (['o', 'p', 'g'].includes(vTab)) {
+    const f = fvEl('div', 'fvFil');
+    const sel = f.appendChild(fvEl('select'));
+    sel.innerHTML = '<option value="">TODAS AS RARIDADES</option>' + Object.keys(FV_RAR).map((k) => '<option value="' + k + '"' + (FV.vRar === k ? ' selected' : '') + '>' + FV_RAR[k][0].toUpperCase() + '</option>').join('');
+    const q = f.appendChild(fvEl('input'));
+    q.placeholder = '🔎 Procurar...';
+    q.value = FV.vQ;
+    const filtra = () => {
+      FV.vRar = sel.value;
+      FV.vQ = q.value.trim().toLowerCase();
+      B.querySelectorAll('.shCard').forEach((c) => {
+        const okR = !FV.vRar || c.classList.contains('r-' + FV.vRar),
+          okQ = !FV.vQ || c.textContent.toLowerCase().includes(FV.vQ);
+        c.style.display = okR && okQ ? '' : 'none';
+      });
+    };
+    sel.onchange = filtra;
+    q.oninput = filtra;
+    q.addEventListener('keydown', (e) => e.stopPropagation());
+    B.prepend(f);
+    filtra();
+  }
+  // plaquinha do item em uso, embaixo à direita (área do boneco)
+  let T = document.getElementById('fvVTag');
+  if (!T) {
+    T = fvEl('div', 'fvVTag');
+    T.id = 'fvVTag';
+    document.getElementById('vault').appendChild(T);
+  }
+  const cat = vTab === 'g' ? 'g' : vTab === 'p' ? 'p' : vTab === 'o' ? 'o' : null;
+  const cur = cat === 'o' ? PROF.outfit : cat === 'p' ? PROF.chute : cat === 'g' ? PROF.gskin : null;
+  const it = cat && (COSM_CAT[cat] || []).find((x) => x.id === cur);
+  if (!it) return (T.style.display = 'none');
+  const R = FV_RAR[it.rar || 'c'] || FV_RAR.c;
+  T.style.display = '';
+  T.style.setProperty('--rc', R[1]);
+  T.innerHTML = '';
+  const n = T.appendChild(fvEl('div', 'fvVTagN'));
+  n.appendChild(fvEl('i')).textContent = { o: '👕', p: '🪂', g: '🔫' }[cat];
+  n.appendChild(fvEl('b')).textContent = it.name;
+  n.appendChild(fvEl('small')).textContent = R[0];
+  T.appendChild(fvEl('span', 'fvBtnY fvEq', 'EQUIPADO'));
+}
 // monta o lobby novo (roda uma vez, antes dos botões ganharem as funções)
 function ffBuildDom() {
   const L = document.getElementById('lobby');
@@ -30117,6 +31779,7 @@ function ffBuildDom() {
     '<div class="lb-sw"><span>Roupa</span><div id="swShirt"></div></div><div class="lb-sw"><span>Boné</span><div id="swCap"></div></div></div>' +
     '<button id="chDone">USAR</button></div></div>';
   ffMakeStage();
+  ffV2Build();
 }
 // palco redondo que brilha + pet (capivara) do lado do boneco
 function ffMakeStage() {
@@ -30282,6 +31945,8 @@ function ffCam(dt, t) {
     u.head.rotation.y = Math.sin(t * 0.7) * 0.35;
     u.head.rotation.x = Math.max(0, Math.sin(t * 0.33)) * 0.25;
   }
+  fvPortalTick(t);
+  fvPetTick(t);
   mmTick();
   lobMatesTick(dt); // amigos da sala em pé do seu lado
   FF.banT += dt;
@@ -30995,10 +32660,7 @@ function setupLobby() {
   document.getElementById('modeSel').addEventListener('click', (ev) => {
     if (ev.target.id === 'modeSel') ev.target.classList.remove('open'); // tocou fora: fecha
   });
-  document.getElementById('lbProfile').addEventListener('click', () => {
-    renderLobby();
-    document.getElementById('profile').style.display = 'flex';
-  });
+  document.getElementById('lbProfile').addEventListener('click', () => fvPerfil()); // perfil novo (cartão do jogador)
   ['profClose', 'profDone'].forEach((id) =>
     document.getElementById(id).addEventListener('click', () => {
       document.getElementById('profile').style.display = 'none';
