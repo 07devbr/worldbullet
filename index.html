@@ -9937,6 +9937,44 @@
       color: #fff;
     }
   }
+
+  /* vaga do time no palco (dupla/squad) */
+  .fvSlotB {
+    all: unset;
+    position: fixed;
+    z-index: 4;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    cursor: pointer;
+  }
+  .fvSlotB b {
+    width: 46px;
+    height: 46px;
+    display: grid;
+    place-items: center;
+    font: 900 32px/1 var(--ffF, sans-serif);
+    color: #fff;
+    background: radial-gradient(circle, #8e44ffaa, #3a1a6e88 70%);
+    border: 2px solid #b388ff;
+    border-radius: 50%;
+    box-shadow: 0 0 16px #8e44ff;
+    animation: fvSlotP 1.8s ease-in-out infinite;
+  }
+  .fvSlotB small {
+    font: 900 italic 11px var(--ffF, sans-serif);
+    color: #fff;
+    text-shadow: 0 1px 3px #000;
+    letter-spacing: 0.5px;
+  }
+  @keyframes fvSlotP {
+    50% {
+      transform: scale(1.1);
+      box-shadow: 0 0 26px #b388ff;
+    }
+  }
 </style>
 </head>
 <body>
@@ -9950,7 +9988,7 @@
     <div class="spLoad"><div class="spTip" id="spTip">Preparando a ilha...</div><div class="spBar"><i id="spFill"></i></div><div class="spPct"><span id="spStep">Carregando</span><b id="spPct">0%</b></div></div>
     <div class="spTap" id="spTap"><b>TOQUE PARA JOGAR</b><div class="spWho" id="spWho"></div></div>
     <div class="spGate" id="spGate"></div>
-    <div class="spVer">v125 · Feito no Amapá 🇧🇷</div>
+    <div class="spVer">v126 · Feito no Amapá 🇧🇷</div>
   </div>
 </div>
 <!-- ===== GIRE O CELULAR: o jogo é só deitado ===== -->
@@ -31379,7 +31417,7 @@ function fvPortalTick(t) {
   if (!g) return;
   g.visible = !!(FF.stage && FF.stage.visible);
   if (!g.visible) return;
-  g.position.set(FF.stage.position.x, FF.stage.position.y - 0.05, FF.stage.position.z - 3.4);
+  g.position.set(FF.cx || 0, FF.stage.position.y - 0.05, -3.4); // portal no meio do grupo
   g.userData.sw.rotation.z = t * 0.12;
   g.userData.glowM.opacity = 0.3 + 0.1 * Math.sin(t * 1.7);
 }
@@ -31694,6 +31732,93 @@ function fvCofreExtra() {
   n.appendChild(fvEl('small')).textContent = R[0];
   T.appendChild(fvEl('span', 'fvBtnY fvEq', 'EQUIPADO'));
 }
+
+// ===== VAGAS DO TIME NO LOBBY (solo: só você; dupla: você de lado + 1 vaga; squad: 3 vagas) =====
+const FV_LAY = {
+  1: { me: [0, 0], sl: [] },
+  2: { me: [-0.55, 0.05], sl: [[0.95, -0.25]], es: 0.8, pet: [-0.8, 0.45] },
+  4: { me: [-0.1, 0.1], sl: [[1.1, -0.35], [-1.3, -0.35], [2.05, -0.95]], es: 0.68, pet: [0.5, 0.85] },
+};
+function fvTimeN() {
+  const m = PROF.mode;
+  let n = m === 'tdm' || m === 'tdmrank' ? 4 : (PROF.team || 1) >= 3 ? 4 : PROF.team || 1;
+  const k = (typeof LOBM === 'object' ? Object.keys(LOBM).length : 0) + 1; // amigos que já estão no grupo
+  if (k > n) n = k > 2 ? 4 : 2;
+  return n;
+}
+function fvLay() {
+  return FV_LAY[fvTimeN()] || FV_LAY[1];
+}
+function fvSlotPos(i) {
+  const L = fvLay();
+  return L.sl[i] || [1.1 + i * 0.6, -0.6];
+}
+function fvSlotsTick(dt, painel) {
+  if (!inLobby || !player) return;
+  const L = fvLay(),
+    k = Math.min(1, (dt || 0.016) * 6);
+  // você anda pro seu lugar (e o palco e o pet vão junto)
+  player.position.x += (L.me[0] - player.position.x) * k;
+  player.position.z += (L.me[1] - player.position.z) * k;
+  if (FF.stage) {
+    FF.stage.position.set(player.position.x, FF.stage.position.y, player.position.z);
+    const es = FF.stage.scale.x + ((L.es || 1) - FF.stage.scale.x) * k; // palco menor quando tem vaga do lado
+    FF.stage.scale.set(es, 1, es);
+  }
+  if (FF.pet) {
+    const [px, pz] = L.pet || [0.7, 0.32];
+    FF.pet.position.x += (player.position.x + px - FF.pet.position.x) * k;
+    FF.pet.position.z += (player.position.z + pz - FF.pet.position.z) * k;
+    FF.pet.rotation.y = px < 0 ? 0.55 : -0.55;
+  }
+  // a câmera mira no meio do grupo e se afasta um pouco no squad
+  const xs = [L.me[0]].concat(L.sl.map((s) => s[0]));
+  const cx = (Math.min(...xs) + Math.max(...xs)) / 2;
+  FF.cx = (FF.cx || 0) + (cx - (FF.cx || 0)) * k;
+  FF.zx = (FF.zx || 0) + ((L.sl.length >= 3 ? 0.75 : L.sl.length ? 0.25 : 0) - (FF.zx || 0)) * k;
+  // vagas vazias: plataforma + botão "+" (os amigos que entram ocupam as primeiras)
+  const ocup = typeof LOBM === 'object' ? Object.keys(LOBM).length : 0;
+  FV.discos = FV.discos || [];
+  FV.slotB = FV.slotB || [];
+  for (let i = 0; i < 3; i++) {
+    const vazia = i < L.sl.length && i >= ocup;
+    let d = FV.discos[i];
+    if (!d && vazia) {
+      d = FV.discos[i] = lobMateDisco();
+      d.scale.set(0.85, 1, 0.85);
+      const holo = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.42, 0.42, 1.55, 24, 1, true),
+        new THREE.MeshBasicMaterial({ color: 0x7c4dff, transparent: true, opacity: 0.1, depthWrite: false, side: THREE.DoubleSide, blending: THREE.AdditiveBlending }),
+      );
+      holo.position.y = 0.8;
+      holo.raycast = () => {};
+      d.add(holo);
+      scene.add(d);
+    }
+    if (d) {
+      d.visible = vazia && !painel;
+      if (vazia) {
+        const [x, z] = L.sl[i];
+        d.position.set(x, 0, z);
+      }
+    }
+    let b = FV.slotB[i];
+    if (!b && vazia) {
+      b = FV.slotB[i] = fvEl('button', 'fvSlotB', '<b>+</b><small>CONVIDAR</small>');
+      b.onclick = () => (CONTA.tk && CONTA.d && (CONTA.d.amigos || []).some((a) => a.on) ? amgAbre('amigos') : amgAbre(CONTA.tk ? 'online' : 'amigos'));
+      document.body.appendChild(b);
+    }
+    if (b) {
+      const mostra = vazia && !painel && !document.querySelector('.fvScr.open,.sheetBg.open,.ctBg.open,#modeSel.open,#charSel.open') && document.body.classList.contains('inlobby');
+      b.style.display = mostra ? '' : 'none';
+      if (mostra && camera) {
+        const p = new THREE.Vector3(L.sl[i][0], 0.95, L.sl[i][1]).project(camera);
+        b.style.left = ((p.x + 1) / 2) * innerWidth + 'px';
+        b.style.top = ((1 - p.y) / 2) * innerHeight + 'px';
+      }
+    }
+  }
+}
 // monta o lobby novo (roda uma vez, antes dos botões ganharem as funções)
 function ffBuildDom() {
   const L = document.getElementById('lobby');
@@ -31938,7 +32063,10 @@ function ffCam(dt, t) {
     const e = document.getElementById(id);
     return e && e.classList.contains('open');
   };
-  FF.tx = open('vault') || open('shop') || open('royale') ? -1.75 : 0; // painel na esquerda: o boneco aparece na direita
+  const painel = open('vault') || open('shop') || open('royale');
+  if (typeof fvSlotsTick === 'function') fvSlotsTick(dt, painel || open('charSel'));
+  // painel na esquerda: o boneco aparece na direita; sem painel: o grupo (você + vagas do time) fica no meio
+  FF.tx = painel ? -1.75 + player.position.x : open('charSel') ? player.position.x : FF.cx || 0;
   document.body.classList.toggle('ffPanel', open('vault') || open('charSel') || open('shop') || open('royale'));
   // presentes de Natal muito perto do boneco tapam a vista: some com eles
   if (typeof xmas !== 'undefined' && xmas && !xmas.userData.ffClean) {
@@ -31950,7 +32078,7 @@ function ffCam(dt, t) {
     });
   }
   FF.x += (FF.tx - FF.x) * Math.min(1, dt * 6);
-  const zoom = open('charSel') ? 2.15 : 2.45;
+  const zoom = open('charSel') ? 2.15 : painel ? 2.45 : 2.45 + (FF.zx || 0);
   camera.position.set(FF.x, 1.02, zoom);
   camera.lookAt(FF.x, 0.9, 0);
   if (FF.stage) {
@@ -36185,7 +36313,7 @@ function lobMatesTick(dt) {
       m = LOBM[id] = { group: g, rig: g.userData, lk, net: id, disco, nome: '', em: null, leVisto: pr.le || null };
       sfx('swap', 0.25);
     }
-    const [x, z] = LOBM_POS[quer[id]];
+    const [x, z] = typeof fvSlotPos === 'function' ? fvSlotPos(quer[id]) : LOBM_POS[quer[id]];
     m.group.position.set(x, 0.04, z);
     m.disco.position.set(x, 0.0, z);
     m.group.rotation.y = Math.atan2(camera.position.x - x, camera.position.z - z) * 0.8;
