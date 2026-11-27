@@ -8597,7 +8597,7 @@
     <div class="spLoad"><div class="spTip" id="spTip">Preparando a ilha...</div><div class="spBar"><i id="spFill"></i></div><div class="spPct"><span id="spStep">Carregando</span><b id="spPct">0%</b></div></div>
     <div class="spTap" id="spTap"><b>TOQUE PARA JOGAR</b><div class="spWho" id="spWho"></div></div>
     <div class="spGate" id="spGate"></div>
-    <div class="spVer">v120 · Feito no Amapá 🇧🇷</div>
+    <div class="spVer">v121 · Feito no Amapá 🇧🇷</div>
   </div>
 </div>
 <!-- ===== GIRE O CELULAR: o jogo é só deitado ===== -->
@@ -35281,7 +35281,12 @@ function netLobbyPeers(ch) {
   for (const p of ch.peers) {
     const pr = p.presence || {};
     if (p.sameTab || p.kind !== 'viewer' || typeof pr.q !== 'string' || typeof pr.qt !== 'number') continue;
-    if (Date.now() - pr.qt > 60000) continue; // procura velha (aba largada)
+    // procura velha (aba largada): conta pelo MEU relógio desde que vi essa procura,
+    // porque o relógio de cada celular pode estar adiantado/atrasado
+    const kq = String(pr.u || p.peer) + '|' + pr.qt;
+    NET.mmVisto = NET.mmVisto || {};
+    if (!NET.mmVisto[kq]) NET.mmVisto[kq] = Date.now();
+    if (Date.now() - NET.mmVisto[kq] > 60000) continue;
     NET.mmPeers.push({ id: String(pr.u || p.peer), q: pr.q, qt: pr.qt, qk: typeof pr.qk === 'string' ? pr.qk : null, busy: pr.st === 'play' || pr.st === 'dead' });
   }
   for (const p of ch.peers) {
@@ -35457,6 +35462,7 @@ function netStart() {
   NET.seed = Math.floor(Math.random() * 1e9);
   NET.rk = 0;
   if (NET.mmRoom) {
+    NET.rk = PROF.mode === 'rank' ? 1 : 0; // fila da ranqueada: a partida vale ranqueada pra todo mundo
     NET.sq = (PROF.team || 1) > 1 ? PROF.team : 0; // matchmaking: modo do dono
     NET.cs = null;
     NET.bots = 1;
