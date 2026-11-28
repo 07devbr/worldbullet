@@ -10586,7 +10586,7 @@
     <div class="spLoad"><div class="spTip" id="spTip">Preparando a ilha...</div><div class="spBar"><i id="spFill"></i></div><div class="spPct"><span id="spStep">Carregando</span><b id="spPct">0%</b></div></div>
     <div class="spTap" id="spTap"><b>TOQUE PARA JOGAR</b><div class="spWho" id="spWho"></div></div>
     <div class="spGate" id="spGate"></div>
-    <div class="spVer">v137 · Feito no Amapá 🇧🇷</div>
+    <div class="spVer">v138 · Feito no Amapá 🇧🇷</div>
   </div>
 </div>
 <!-- ===== GIRE O CELULAR: o jogo é só deitado ===== -->
@@ -13252,6 +13252,10 @@ const coins = [],
 let joyVec = { x: 0, y: 0 },
   joyActive = false;
 const clock = new THREE.Clock();
+// hora do jogo SEM mexer no relógio (getElapsedTime() roubava o tempo do quadro)
+function tNow() {
+  return clock.running ? clock.elapsedTime + (performance.now() - clock.oldTime) / 1000 : clock.elapsedTime;
+}
 let assistB = null,
   assistT = 0,
   assistBrk = 0, // até quando a ajuda fica solta (você arrastou forte pra trocar de alvo)
@@ -14027,7 +14031,7 @@ async function admCorreioTodos() {
    - O servidor diz qual é a versão nova; se a sua for velha, aparece "Atualização disponível" no lobby
      (nunca no meio da partida).
    - O Criador pode avisar todo mundo antes de atualizar: "o servidor vai reiniciar em 3 minutos". */
-const WB_VER = 137;
+const WB_VER = 138;
 const VERS = { nova: 0, rein: 0, modalVisto: 0, salvou: 0 };
 function verCheck(v, rein) {
   if (typeof rein === 'number') reinSet(rein);
@@ -24660,7 +24664,7 @@ function equipWeapon(id) {
 
 // Soco (mãos livres): acerta o inimigo mais perto na sua frente, até ~2 m
 function punch() {
-  const now = clock.getElapsedTime();
+  const now = tNow();
   if (now - lastPunch < 0.42 || swapT > 0) return;
   lastPunch = now;
   punchT = 0.3;
@@ -24777,9 +24781,9 @@ function quickBtnsUpd() {
     st = document.getElementById('swapTxt'),
     sb = document.getElementById('swapBtn'),
     hb = document.getElementById('holsTxt');
-  if (st) st.textContent = nx && WEAPONS[nx] ? WEAPONS[nx].name.split(' ')[0] : 'Trocar';
+  setTxt(st, nx && WEAPONS[nx] ? WEAPONS[nx].name.split(' ')[0] : 'Trocar');
   if (sb) sb.classList.toggle('empty', !nx);
-  if (hb) hb.textContent = holstered ? 'Sacar' : 'Guardar';
+  setTxt(hb, holstered ? 'Sacar' : 'Guardar');
   const rb = document.getElementById('relBtn');
   if (rb) rb.classList.toggle('empty', holstered || !curId || !WEAPONS[curId] || ammo[curId] >= WEAPONS[curId].mag);
 }
@@ -24834,6 +24838,7 @@ function startReload() {
   if (holstered) return;
   if (reloadT > 0 || ammo[curId] >= W.mag || dead || phase !== 'ground' || inLobby) return;
   reloadT = W.reload;
+  zoomOn = false; // v138: recarregar sai da mira e ela não volta sozinha (igual FF)
   sfx('reload', 0.8);
   updateAmmo();
 }
@@ -24842,7 +24847,7 @@ function updateAmmo() {
   quickBtnsUpd();
   const W = WEAPONS[curId],
     t = document.getElementById('ammoTxt');
-  t.textContent = holstered ? (loadout.w1 || loadout.w2 ? '👊 Mãos' : '👊 Sem arma') : reloadT > 0 ? 'Recarregando...' : ammo[curId] + ' / ' + W.mag;
+  setTxt(t, holstered ? (loadout.w1 || loadout.w2 ? '👊 Mãos' : '👊 Sem arma') : reloadT > 0 ? 'Recarregando...' : ammo[curId] + ' / ' + W.mag);
   ['wp1', 'wp2'].forEach((id, i) => {
     const wid = loadout['w' + (i + 1)],
       X = WEAPONS[wid],
@@ -24874,17 +24879,18 @@ function updateAmmo() {
       sp.textContent = a;
       sp.className = 'wa' + (low ? ' low' : '');
     }
-    b.className = 'wp' + (on && !holstered ? ' on' : '') + (on && reloadT > 0 ? ' reload' : '');
+    setCls(b, 'wp' + (on && !holstered ? ' on' : '') + (on && reloadT > 0 ? ' reload' : ''));
   });
   const h = document.getElementById('wp0');
   if (!h.dataset.k) {
     h.dataset.k = '1';
     h.innerHTML = handSVG() + '<span class="wn">Mãos</span>';
   }
-  h.className = 'wp hands' + (holstered ? ' on' : '');
-  const sc = document.getElementById('scopeBtn');
-  sc.style.display = W.zoom > 1 && !holstered ? '' : 'none';
-  sc.className = zoomOn ? 'on' : '';
+  setCls(h, 'wp hands' + (holstered ? ' on' : ''));
+  const sc = document.getElementById('scopeBtn'),
+    scd = W.zoom > 1 && !holstered ? '' : 'none';
+  if (sc.style.display !== scd) sc.style.display = scd;
+  setCls(sc, zoomOn ? 'on' : '');
   document.getElementById('adsBtn').classList.toggle('on', zoomOn);
 }
 
@@ -25068,7 +25074,7 @@ function shoot() {
     return;
   }
   const W = WEAPONS[curId],
-    now = clock.getElapsedTime();
+    now = tNow();
   if (reloadT > 0 || swapT > 0 || now - lastShot < W.rate) return;
   if (ammo[curId] <= 0) {
     lastShot = now;
@@ -25088,7 +25094,27 @@ function shoot() {
   player.rotation.y = camYaw + Math.PI;
   player.updateMatrixWorld(true);
   camera.updateMatrixWorld();
-  const botG = (TM || SQ ? bots.filter((b) => b.team !== 0) : bots).filter((b) => b.group.visible).map((b) => b.group); // 4v4/esquadrão: a bala passa pelos aliados
+  const _rp = camera.getWorldPosition(new THREE.Vector3()),
+    _rd = camera.getWorldDirection(new THREE.Vector3()),
+    _wr = (WEAPONS[curId] && WEAPONS[curId].range) || 300,
+    _pl = WEAPONS[curId] && WEAPONS[curId].pellets > 1;
+  // v138: a bala só é testada nos bots perto da linha da mira (antes testava todos, peça por peça, a cada tiro)
+  const botG = (TM || SQ ? bots.filter((b) => b.team !== 0) : bots)
+    .filter((b) => {
+      if (!b.group.visible) return false;
+      const p = b.group.position,
+        vx = p.x - _rp.x,
+        vy = p.y + 1 - _rp.y,
+        vz = p.z - _rp.z,
+        al = vx * _rd.x + vy * _rd.y + vz * _rd.z;
+      if (al < -3 || al > _wr + 4) return false;
+      const qx = vx - _rd.x * al,
+        qy = vy - _rd.y * al,
+        qz = vz - _rd.z * al,
+        m = 3.5 + Math.max(0, al) * (_pl ? 0.2 : 0.08);
+      return qx * qx + qy * qy + qz * qz < m * m;
+    })
+    .map((b) => b.group); // 4v4/esquadrão: a bala passa pelos aliados
   const cp = camera.getWorldPosition(new THREE.Vector3()),
     cd = camera.getWorldDirection(new THREE.Vector3());
   _shotRC.set(cp, cd);
@@ -27889,7 +27915,7 @@ function throwNade() {
   if (knock || swimming) return; // caído ou nadando não dá
   if (dead || inLobby || matchOver || phase !== 'ground' || paused || driving) return;
   if (nades <= 0) return toast('Sem granada — procure no chão');
-  const now = clock.getElapsedTime();
+  const now = tNow();
   if (now - lastNade < 0.8) return;
   lastNade = now;
   nades--;
@@ -28561,7 +28587,7 @@ function botPunch(b, dist, T) {
 }
 function botShoot(b, dist, T) {
   if (!b.w) return botPunch(b, dist, T);
-  b.shotAt = clock.getElapsedTime(); // aparece no minimapa por um tempinho
+  b.shotAt = tNow(); // aparece no minimapa por um tempinho
   b.fc = (b.fc || 0) + 1; // contador de tiros (quem está na sala vê o clarão)
   b.group.userData.kick = 1;
   const isP = T === player,
@@ -35765,7 +35791,7 @@ function drawMinimap() {
     W = 104,
     R = 52,
     k = R / (driving ? 85 : phase === 'ground' ? 55 : 95),
-    now = clock.getElapsedTime(),
+    now = tNow(),
     PP = phase === 'plane' && plane ? plane.position : spec.on && spec.target ? spec.target.group.position : player.position, // assistindo: o mapa segue ele
     P = { x: PP.x, z: PP.z },
     cy = Math.cos(camYaw),
@@ -40780,7 +40806,7 @@ function netRecvRevive(peer, pr) {
 // clarão, rastro e barulho do tiro de outro jogador (ou bot do dono)
 function netShotFx(b, pitch) {
   const u = b.group.userData;
-  b.shotAt = clock.getElapsedTime();
+  b.shotAt = tNow();
   u.kick = 1;
   if (!b.w || !u.muzzle || !b.group.visible) return;
   b.group.updateMatrixWorld(true);
@@ -41508,12 +41534,98 @@ function noiseSrc(a) {
   return s;
 }
 
+/* ============ v138: tiro mais leve ============
+   Antes cada tiro (seu e dos bots) MONTAVA o som na hora: 6 a 12 pecinhas de áudio por tiro.
+   No celular isso pesava muito com várias armas disparando. Agora cada som é montado UMA vez
+   (fica gravado) e depois só toca a gravação: 2 ou 3 pecinhas por tiro, mesmo som. */
+const SFXB = {},
+  SFXR = {};
+let sfxVozes = 0;
+function sfxGrava(type, sr) {
+  SFXR[type] = 1;
+  const OAC = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+  if (!OAC) return;
+  try {
+    const off = new OAC(1, Math.ceil(sr * 1.6), sr);
+    sfxSynth(type, 1, null, off);
+    const pronto = (buf) => {
+      if (!buf) return;
+      // corta o silêncio do fim (economiza memória)
+      const d = buf.getChannelData(0);
+      let n = d.length - 1;
+      while (n > 0 && Math.abs(d[n]) < 2e-4) n--;
+      n = Math.min(d.length, n + Math.ceil(sr * 0.02));
+      const a = audio();
+      if (!a || n < 16) return;
+      const B = a.createBuffer(1, n, sr);
+      B.getChannelData(0).set(d.subarray(0, n));
+      SFXB[type] = B;
+    };
+    const p = off.startRendering();
+    if (p && p.then) p.then(pronto).catch(() => {});
+    else off.oncomplete = (e) => pronto(e.renderedBuffer);
+  } catch (e) {}
+}
 function sfx(type, vol, opt) {
   if (!S.sfx || S.vol <= 0) return;
   const a = audio();
   if (!a) return;
-  const t = a.currentTime,
-    v = S.vol * (vol === undefined ? 1 : vol);
+  const B = SFXB[type];
+  if (!B) {
+    if (!SFXR[type]) sfxGrava(type, a.sampleRate);
+    return sfxSynth(type, vol, opt);
+  }
+  // muita coisa tocando junto: passo e tiro de bot longe ficam de fora (ninguém percebe)
+  if (sfxVozes > 14 && (type === 'bshot' || type.startsWith('step') || (opt && opt.lp))) return;
+  const v = S.vol * (vol === undefined ? 1 : vol);
+  let out = a.destination;
+  if (opt) {
+    if (opt.lp) {
+      const lf = a.createBiquadFilter();
+      lf.type = 'lowpass';
+      lf.frequency.value = opt.lp;
+      lf.connect(out);
+      out = lf;
+    }
+    if (opt.pan && a.createStereoPanner) {
+      const pn = a.createStereoPanner();
+      pn.pan.value = Math.max(-1, Math.min(1, opt.pan));
+      pn.connect(out);
+      out = pn;
+    }
+  }
+  const s = a.createBufferSource(),
+    g = a.createGain();
+  s.buffer = B;
+  s.playbackRate.value = 0.97 + Math.random() * 0.06; // um tiro nunca soa idêntico ao outro
+  g.gain.value = v;
+  s.connect(g);
+  g.connect(out);
+  sfxVozes++;
+  s.onended = () => {
+    sfxVozes--;
+    try {
+      g.disconnect();
+    } catch (e) {}
+  };
+  s.start();
+}
+// só mexe na tela se o texto/classe mudou (cada mudança faz o celular redesenhar o HUD)
+function setTxt(el, v) {
+  if (el && el._tx !== v) {
+    el._tx = v;
+    el.textContent = v;
+  }
+}
+function setCls(el, v) {
+  if (el && el.className !== v) el.className = v;
+}
+
+function sfxSynth(type, vol, opt, off) {
+  const a = off || audio();
+  if (!a) return;
+  const t = off ? 0 : a.currentTime,
+    v = off ? 1 : S.vol * (vol === undefined ? 1 : vol);
   // opt.pan = lado (-1 esquerda, 1 direita); opt.lp = abafado (som de longe)
   let out = a.destination;
   if (opt) {
