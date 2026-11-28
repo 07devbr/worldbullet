@@ -10639,6 +10639,43 @@
     clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
     cursor: pointer;
   }
+  /* v140: mira mais limpa (igual FF) */
+  #ads.holo .lens,
+  #ads.reddot .lens {
+    width: 100vw;
+    height: 100vh;
+    transform: translate(-50%, -50%);
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    -webkit-mask-image: none;
+    mask-image: none;
+    background: radial-gradient(ellipse at 50% 50%, transparent 52%, rgba(0, 0, 0, 0.32) 100%);
+  }
+  #ads.holo .ret {
+    width: 30px;
+    height: 30px;
+    border: 1.5px solid #ff3b3b;
+    box-shadow: 0 0 4px #ff2a2a;
+  }
+  #ads.holo .ret::before {
+    content: '';
+    position: absolute;
+    inset: -9px;
+    background: linear-gradient(#ff3b3b, #ff3b3b) top center / 1.5px 7px no-repeat, linear-gradient(#ff3b3b, #ff3b3b) bottom center / 1.5px 7px no-repeat, linear-gradient(#ff3b3b, #ff3b3b) center left / 7px 1.5px no-repeat, linear-gradient(#ff3b3b, #ff3b3b) center right / 7px 1.5px no-repeat;
+  }
+  #ads.reddot .ret {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 70, 70, 0.45);
+  }
+  #ads.holo .ret::after,
+  #ads.reddot .ret::after {
+    width: 4px;
+    height: 4px;
+    margin: -2px 0 0 -2px;
+  }
 </style>
 </head>
 <body>
@@ -10652,7 +10689,7 @@
     <div class="spLoad"><div class="spTip" id="spTip">Preparando a ilha...</div><div class="spBar"><i id="spFill"></i></div><div class="spPct"><span id="spStep">Carregando</span><b id="spPct">0%</b></div></div>
     <div class="spTap" id="spTap"><b>TOQUE PARA JOGAR</b><div class="spWho" id="spWho"></div></div>
     <div class="spGate" id="spGate"></div>
-    <div class="spVer">v139 · Feito no Amapá 🇧🇷</div>
+    <div class="spVer">v140 · Feito no Amapá 🇧🇷</div>
   </div>
 </div>
 <!-- ===== GIRE O CELULAR: o jogo é só deitado ===== -->
@@ -14097,7 +14134,7 @@ async function admCorreioTodos() {
    - O servidor diz qual é a versão nova; se a sua for velha, aparece "Atualização disponível" no lobby
      (nunca no meio da partida).
    - O Criador pode avisar todo mundo antes de atualizar: "o servidor vai reiniciar em 3 minutos". */
-const WB_VER = 139;
+const WB_VER = 140;
 const VERS = { nova: 0, rein: 0, modalVisto: 0, salvou: 0 };
 function verCheck(v, rein) {
   if (typeof rein === 'number') reinSet(rein);
@@ -23352,6 +23389,7 @@ function mxfLOD(u, full) {
   }
 }
 // copia a pose do boneco lógico (10 ossos) para o esqueleto inteiro
+const MXF_ABD = { un: 0.26, arm: 0.12, sg: 1 }; // v140: quanto o braço abre pra fora (sem arma / com arma)
 function mxfPose(u, withPos) {
   const F = u.mxf,
     g = F.g,
@@ -23364,6 +23402,21 @@ function mxfPose(u, withPos) {
     tq = [0, 0, 0, 1],
     tv = [0, 0, 0];
   for (let i = 0; i < 10; i++) groupTR(L[i], g, lq[i]);
+  // v140: os modelos novos têm o tronco mais largo que o boneco antigo: o braço entrava no corpo.
+  // Gira o braço inteiro (ombro + antebraço) um pouco pra fora, em volta do eixo da frente do corpo.
+  const abd = u.unarmed ? MXF_ABD.un : MXF_ABD.arm;
+  if (abd) {
+    const sa = Math.sin(abd / 2),
+      ca = Math.cos(abd / 2),
+      tmp = [0, 0, 0, 1];
+    for (const [i, sg] of [[6, MXF_ABD.sg], [7, MXF_ABD.sg], [8, -MXF_ABD.sg], [9, -MXF_ABD.sg]]) {
+      qMul([0, 0, sa * sg, ca], lq[i], tmp);
+      lq[i][0] = tmp[0];
+      lq[i][1] = tmp[1];
+      lq[i][2] = tmp[2];
+      lq[i][3] = tmp[3];
+    }
+  }
   qSlerpA(lq[0], lq[1], 0.45, lq[10]); // pescoço: entre o tronco e a cabeça
   const H = u.unarmed ? F.relax : F.grip;
   for (let j = 0; j < B.length; j++) {
