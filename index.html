@@ -10766,6 +10766,39 @@
   .amgRow .amgTx {
     cursor: pointer;
   }
+  /* v142: lunetas */
+  #ads.s2,
+  #ads.s4,
+  #ads.s8 {
+    display: block;
+  }
+  #ads.s2 .lens,
+  #ads.s2 .ret,
+  #ads.s4 .lens,
+  #ads.s4 .ret,
+  #ads.s8 .lens,
+  #ads.s8 .ret {
+    display: none;
+  }
+  #adsScope {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 100vh;
+    height: 100vh;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+  #adsScope svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    overflow: visible;
+  }
+  #ads.s8 #adsScope {
+    width: 104vh;
+    height: 104vh;
+  }
 </style>
 </head>
 <body>
@@ -10779,7 +10812,7 @@
     <div class="spLoad"><div class="spTip" id="spTip">Preparando a ilha...</div><div class="spBar"><i id="spFill"></i></div><div class="spPct"><span id="spStep">Carregando</span><b id="spPct">0%</b></div></div>
     <div class="spTap" id="spTap"><b>TOQUE PARA JOGAR</b><div class="spWho" id="spWho"></div></div>
     <div class="spGate" id="spGate"></div>
-    <div class="spVer">v141 · Feito no Amapá 🇧🇷</div>
+    <div class="spVer">v142 · Feito no Amapá 🇧🇷</div>
   </div>
 </div>
 <!-- ===== GIRE O CELULAR: o jogo é só deitado ===== -->
@@ -14224,7 +14257,7 @@ async function admCorreioTodos() {
    - O servidor diz qual é a versão nova; se a sua for velha, aparece "Atualização disponível" no lobby
      (nunca no meio da partida).
    - O Criador pode avisar todo mundo antes de atualizar: "o servidor vai reiniciar em 3 minutos". */
-const WB_VER = 141;
+const WB_VER = 142;
 const VERS = { nova: 0, rein: 0, modalVisto: 0, salvou: 0 };
 function verCheck(v, rein) {
   if (typeof rein === 'number') reinSet(rein);
@@ -14626,6 +14659,87 @@ async function jgPerfil(a) {
     r.appendChild(ctEl('b')).textContent = v;
   });
   box.appendChild(ctEl('button', 'jgB jgVolta', '◀ Voltar')).onclick = () => jgCard(Object.assign({}, a, j));
+}
+
+/* ============ v142: LUNETAS DE VERDADE (2x, 4x, 8x igual FF) ============
+   Fuzis mostram a luneta 2x, o Gavião a 4x e a Harpia a 8x: a peça da luneta em volta, a arma
+   aparecendo embaixo e o mundo continua aparecendo fora da luneta (não fica tudo preto). */
+function adsTipo(W) {
+  if (!W) return 'reddot';
+  if (W.cls === 'ar' || W.sight === 'holo') return 's2';
+  if (W.zoom >= 3.3) return 's8';
+  if (W.zoom >= 2.6) return 's4';
+  return 'reddot';
+}
+const LUNETA = {};
+function lunetaSvg(t) {
+  if (LUNETA[t]) return LUNETA[t];
+  const metal = (id, a, b) => '<radialGradient id="' + id + '" cx="50%" cy="40%" r="60%"><stop offset="0" stop-color="' + a + '"/><stop offset="1" stop-color="' + b + '"/></radialGradient>';
+  const vin = (id) => '<radialGradient id="' + id + '"><stop offset=".78" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".6"/></radialGradient>';
+  // parte de trás da arma, embaixo da luneta (trilho com ranhuras)
+  const arma = (y0, w) => {
+    let s = '<path d="M' + (500 - w) + ' 1000 L' + (500 - w + 30) + ' ' + y0 + ' L' + (500 + w - 30) + ' ' + y0 + ' L' + (500 + w) + ' 1000 Z" fill="#15171b"/>';
+    for (let i = 0; i < 5; i++) s += '<rect x="' + (500 - w + 50 + i * ((2 * w - 100) / 5)) + '" y="' + (y0 + 25) + '" width="' + ((2 * w - 100) / 5 - 14) + '" height="80" rx="10" fill="#22252b" stroke="#0c0d10" stroke-width="4"/>';
+    return s + '<rect x="' + (500 - w + 20) + '" y="' + (y0 - 12) + '" width="' + (2 * w - 40) + '" height="18" rx="6" fill="#2a2e35"/>';
+  };
+  let s = '<svg viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"><defs>' + metal('m1', '#3a3f47', '#0e0f12') + metal('m2', '#565c66', '#16181c') + vin('vg') + '<radialGradient id="gl"><stop offset="0" stop-color="#7ff" stop-opacity=".9"/><stop offset="1" stop-color="#2ff" stop-opacity="0"/></radialGradient></defs>';
+  if (t === 's2') {
+    // 2x: luneta redonda, botão em cima e do lado, círculo vermelho no meio
+    s += arma(770, 170);
+    s += '<rect x="455" y="745" width="90" height="60" fill="#1b1d22"/>';
+    s += '<rect x="440" y="190" width="120" height="48" rx="8" fill="url(#m2)" stroke="#0b0c0e" stroke-width="5"/>';
+    for (let i = 0; i < 7; i++) s += '<rect x="' + (450 + i * 15) + '" y="196" width="6" height="36" fill="#111"/>';
+    s += '<rect x="768" y="430" width="52" height="140" rx="10" fill="url(#m2)" stroke="#0b0c0e" stroke-width="5"/>';
+    s += '<circle cx="500" cy="500" r="290" fill="none" stroke="url(#m1)" stroke-width="80"/>';
+    s += '<circle cx="500" cy="500" r="252" fill="none" stroke="#0a0b0d" stroke-width="6"/><circle cx="500" cy="500" r="330" fill="none" stroke="#5a606a" stroke-width="3" opacity=".5"/>';
+    s += '<circle cx="500" cy="500" r="250" fill="url(#vg)"/>';
+    s += '<circle cx="500" cy="500" r="20" fill="none" stroke="#ff3030" stroke-width="3.5"/><circle cx="500" cy="500" r="3.5" fill="#ff3030"/>';
+  } else if (t === 's4') {
+    // 4x: corpo de 8 lados, anel laranja, marcas de distância e a setinha vermelha
+    s += arma(800, 200);
+    let p = '';
+    for (let i = 0; i < 8; i++) {
+      const a = Math.PI / 8 + (i * Math.PI) / 4;
+      p += (i ? ' L' : 'M') + (500 + 360 * Math.cos(a)).toFixed(0) + ' ' + (500 + 360 * Math.sin(a)).toFixed(0);
+    }
+    s += '<path d="' + p + ' Z M500 230 A270 270 0 1 0 500.1 230 Z" fill="url(#m1)" fill-rule="evenodd" stroke="#08090b" stroke-width="6"/>';
+    s += '<circle cx="500" cy="500" r="272" fill="none" stroke="#c0643c" stroke-width="7"/>';
+    s += '<circle cx="500" cy="500" r="268" fill="url(#vg)"/>';
+    let r = '<line x1="300" y1="500" x2="700" y2="500" stroke="#111" stroke-width="2" opacity=".6"/>';
+    for (let x = 320; x <= 680; x += 30) if (Math.abs(x - 500) > 20) r += '<line x1="' + x + '" y1="' + (x % 60 === 20 ? 486 : 492) + '" x2="' + x + '" y2="508" stroke="#111" stroke-width="3"/>';
+    r += '<line x1="500" y1="518" x2="500" y2="760" stroke="#111" stroke-width="2"/>';
+    r += '<path d="M488 512 L500 496 L512 512" fill="none" stroke="#ff2a2a" stroke-width="4"/>';
+    s += r;
+  } else if (t === 's8') {
+    // 8x (AWM): luneta grande, cruz com marquinhas e o pontinho que brilha
+    s += arma(860, 230);
+    s += '<rect x="20" y="400" width="80" height="200" rx="14" fill="url(#m2)" stroke="#08090b" stroke-width="6"/>';
+    for (let i = 0; i < 8; i++) s += '<rect x="30" y="' + (412 + i * 23) + '" width="60" height="9" fill="#101114"/>';
+    s += '<rect x="900" y="430" width="60" height="140" rx="12" fill="url(#m2)" stroke="#08090b" stroke-width="6"/>';
+    s += '<circle cx="500" cy="500" r="415" fill="none" stroke="url(#m1)" stroke-width="90"/>';
+    s += '<circle cx="500" cy="500" r="372" fill="none" stroke="#6a717c" stroke-width="5" opacity=".55"/><circle cx="500" cy="500" r="362" fill="none" stroke="#050506" stroke-width="10"/>';
+    s += '<circle cx="500" cy="500" r="360" fill="#7fb0d0" opacity=".06"/><circle cx="500" cy="500" r="360" fill="url(#vg)"/>';
+    let r = '<line x1="140" y1="500" x2="380" y2="500" stroke="#0a0a0a" stroke-width="7"/><line x1="620" y1="500" x2="860" y2="500" stroke="#0a0a0a" stroke-width="7"/>';
+    r += '<line x1="500" y1="620" x2="500" y2="860" stroke="#0a0a0a" stroke-width="7"/><line x1="500" y1="140" x2="500" y2="380" stroke="#0a0a0a" stroke-width="3"/>';
+    r += '<line x1="380" y1="500" x2="620" y2="500" stroke="#0a0a0a" stroke-width="1.6"/><line x1="500" y1="380" x2="500" y2="620" stroke="#0a0a0a" stroke-width="1.6"/>';
+    for (let k = -5; k <= 5; k++)
+      if (k) {
+        r += '<line x1="' + (500 + k * 24) + '" y1="494" x2="' + (500 + k * 24) + '" y2="506" stroke="#0a0a0a" stroke-width="2"/>';
+        if (k > 0) r += '<line x1="' + (500 - (k === 3 ? 30 : 10)) + '" y1="' + (500 + k * 24) + '" x2="' + (500 + (k === 3 ? 30 : 10)) + '" y2="' + (500 + k * 24) + '" stroke="#0a0a0a" stroke-width="2"/>';
+      }
+    r += '<circle cx="500" cy="500" r="16" fill="url(#gl)"/><circle cx="500" cy="500" r="3" fill="#2ff"/>';
+    s += r;
+  }
+  return (LUNETA[t] = s + '</svg>');
+}
+function lunetaMostra(mode) {
+  let E = document.getElementById('adsScope');
+  if (!E) {
+    E = document.createElement('div');
+    E.id = 'adsScope';
+    document.getElementById('ads').appendChild(E);
+  }
+  E.innerHTML = mode === 's2' || mode === 's4' || mode === 's8' ? lunetaSvg(mode) : '';
 }
 
 function init() {
@@ -25378,10 +25492,11 @@ function updateADS(dt) {
   const on = adsActive(),
     W = WEAPONS[curId];
   adsK += ((on ? 1 : 0) - adsK) * Math.min(1, dt * 12 || 1);
-  const mode = on && adsK > 0.5 ? W.sight || 'reddot' : '';
+  const mode = on && adsK > 0.5 ? adsTipo(W) : ''; // v142: 2x / 4x / 8x
   if (mode !== adsShown) {
     adsShown = mode;
     document.getElementById('ads').className = mode;
+    lunetaMostra(mode);
     document.body.classList.toggle('ads', !!mode);
   }
   if (phase === 'ground' && !dead) player.visible = adsK < 0.5; // o boneco some para não tapar a mira
@@ -25390,6 +25505,8 @@ function updateADS(dt) {
   if (mode && ry !== adsRetY) {
     adsRetY = ry;
     document.getElementById('adsRet').style.marginTop = -ry + 'px';
+    const sc = document.getElementById('adsScope');
+    if (sc) sc.style.marginTop = -ry + 'px'; // a luneta também pula com o coice
   }
 }
 
