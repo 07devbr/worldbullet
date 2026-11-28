@@ -10025,6 +10025,20 @@
   body.hudedit #hudTopGhost {
     display: flex;
   }
+  /* v131: correio pisca quando chega presente */
+  #fvMail.fvPing {
+    animation: fvPing 0.6s ease-in-out 4;
+  }
+  @keyframes fvPing {
+    0%,
+    100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.25) rotate(-8deg);
+      box-shadow: 0 0 14px #ffd54a;
+    }
+  }
 </style>
 </head>
 <body>
@@ -10038,7 +10052,7 @@
     <div class="spLoad"><div class="spTip" id="spTip">Preparando a ilha...</div><div class="spBar"><i id="spFill"></i></div><div class="spPct"><span id="spStep">Carregando</span><b id="spPct">0%</b></div></div>
     <div class="spTap" id="spTap"><b>TOQUE PARA JOGAR</b><div class="spWho" id="spWho"></div></div>
     <div class="spGate" id="spGate"></div>
-    <div class="spVer">v130 · Feito no Amapá 🇧🇷</div>
+    <div class="spVer">v131 · Feito no Amapá 🇧🇷</div>
   </div>
 </div>
 <!-- ===== GIRE O CELULAR: o jogo é só deitado ===== -->
@@ -13030,6 +13044,245 @@ function hudKeepTop() {
   });
 }
 
+var LV_F = 0; // contador de quadros (v131)
+/* ============ v131: jogo mais leve ============
+   1) Matriz só é recalculada quando a peça MEXEU. Antes, todo quadro o jogo refazia a conta de
+      posição de ~10 mil peças do mapa (casas, árvores, carros parados...), mesmo paradas.
+   2) Peça escondida (bot longe, loot longe, enfeite do lobby) não gasta conta nenhuma.
+   3) Loot e carro longe demais (dentro da neblina) não são desenhados. */
+(function () {
+  const O = THREE.Object3D.prototype;
+  try {
+    const t = new THREE.Object3D(); // só com o three.js de verdade
+    if (!t.matrixWorld.copy || !t.matrixWorld.multiplyMatrices || !t.matrix.compose || !t.quaternion || t.quaternion._w === undefined) return;
+  } catch (e) {
+    return;
+  }
+  // só refaz a matriz se posição/rotação/tamanho mudaram (muita coisa chama isso todo quadro à toa)
+  O.updateMatrix = function () {
+    const p = this.position,
+      q = this.quaternion,
+      s = this.scale;
+    let c = this._mc;
+    if (c === undefined) c = this._mc = [NaN, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    if (c[0] !== p.x || c[1] !== p.y || c[2] !== p.z || c[3] !== q._x || c[4] !== q._y || c[5] !== q._z || c[6] !== q._w || c[7] !== s.x || c[8] !== s.y || c[9] !== s.z) {
+      c[0] = p.x;
+      c[1] = p.y;
+      c[2] = p.z;
+      c[3] = q._x;
+      c[4] = q._y;
+      c[5] = q._z;
+      c[6] = q._w;
+      c[7] = s.x;
+      c[8] = s.y;
+      c[9] = s.z;
+      this.matrix.compose(p, q, s);
+      this.matrixWorldNeedsUpdate = true;
+      this._mf = LV_F;
+    }
+  };
+  O.updateMatrixWorld = function (force) {
+    if (this._hid === 1 && this.visible === false) {
+      this.matrixWorldNeedsUpdate = true; // quando aparecer de novo, recalcula tudo
+      return;
+    }
+    if (this.matrixAutoUpdate) {
+      const p = this.position,
+        q = this.quaternion,
+        s = this.scale;
+      let c = this._mc;
+      if (c === undefined) c = this._mc = [NaN, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+      if (c[0] !== p.x || c[1] !== p.y || c[2] !== p.z || c[3] !== q._x || c[4] !== q._y || c[5] !== q._z || c[6] !== q._w || c[7] !== s.x || c[8] !== s.y || c[9] !== s.z) {
+        c[0] = p.x;
+        c[1] = p.y;
+        c[2] = p.z;
+        c[3] = q._x;
+        c[4] = q._y;
+        c[5] = q._z;
+        c[6] = q._w;
+        c[7] = s.x;
+        c[8] = s.y;
+        c[9] = s.z;
+        this.matrix.compose(p, q, s);
+        this.matrixWorldNeedsUpdate = true;
+        this._mf = LV_F;
+      }
+    }
+    if (this.matrixWorldNeedsUpdate || force) {
+      if (this.parent === null) this.matrixWorld.copy(this.matrix);
+      else this.matrixWorld.multiplyMatrices(this.parent.matrixWorld, this.matrix);
+      this.matrixWorldNeedsUpdate = false;
+      force = true;
+    }
+    const ch = this.children;
+    for (let i = 0, l = ch.length; i < l; i++) ch[i].updateMatrixWorld(force);
+  };
+})();
+let leveT = 0;
+// roda 4x por segundo na partida: marca o que pode ser pulado e esconde o que está longe
+function leveTick() {
+  LV_F++;
+  leveCongela();
+  const agora = performance.now();
+  if (agora - leveT < 250) return;
+  leveT = agora;
+  const c = camera.position,
+    F = scene.fog ? scene.fog.far + 15 : 400,
+    FL = Math.min(F, 140);
+  for (const b of bots) if (b.group) b.group._hid = 1;
+  if (inMatch && !inLobby) {
+    for (const L of loot) {
+      if (L.box || !L.g) continue;
+      L.g._hid = 1;
+      L.g.visible = Math.hypot(L.g.position.x - c.x, L.g.position.z - c.z) < FL;
+    }
+    for (const k of cars) {
+      if (k.dead || !k.g) continue;
+      k.g._hid = 1;
+      k.g.visible = Math.hypot(k.g.position.x - c.x, k.g.position.z - c.z) < F;
+    }
+  }
+  if (typeof FF === 'object') [FF.stage, FF.pet, FF.portal].forEach((o) => o && (o._hid = 1));
+  if (typeof FV === 'object') (FV.discos || []).forEach((o) => o && (o._hid = 1));
+  if (typeof xmas !== 'undefined' && xmas) xmas._hid = 1;
+}
+// ---------- presentes: chegam no correio ----------
+function giftAvisa(n) {
+  const m = document.getElementById('fvMail');
+  if (m) {
+    m.classList.remove('fvPing');
+    void m.offsetWidth;
+    m.classList.add('fvPing');
+  }
+  try {
+    fvTick();
+  } catch (e) {}
+  if (!inLobby) return; // na partida não atrapalha: o aviso fica no correio
+  toast('📬 Chegou ' + (n > 1 ? n + ' presentes' : 'presente') + ' no correio! Toque no ✉️ lá em cima pra coletar.');
+  sfx('announce', 0.4);
+}
+function giftAbreCorreio() {
+  const c = document.getElementById('contaP');
+  if (c) c.classList.remove('open');
+  fvCorreio('aviso');
+}
+async function giftColeta(btn) {
+  const cx = (CONTA.d && CONTA.d.caixa) || [];
+  if (!cx.length) return;
+  if (btn) btn.disabled = true;
+  try {
+    const j = await contaApi('resgatar', { id: '*' });
+    let n = 0;
+    j.itens.forEach((g) => (n += giftAplica(g)));
+    saveProf();
+    saveStats();
+    contaSalvaJa();
+    CONTA.d.caixa = [];
+    toast('🎉 Presentes coletados!' + (n ? ' (+' + n + ' moedas)' : ''));
+    sfx('coin', 0.8);
+    try {
+      refreshLobbyHUD();
+      renderLobby();
+    } catch (e) {}
+    try {
+      contaRender();
+    } catch (e) {}
+    const P = document.getElementById('fvMailP');
+    if (P && P.classList.contains('open')) fvCorreio('aviso');
+    try {
+      fvTick();
+    } catch (e) {}
+  } catch (e) {
+    toast('😕 ' + e.message);
+    if (btn) btn.disabled = false;
+  }
+}
+// ---------- colisão do carro: grade do mapa (antes testava as ~2 mil paredes/árvores a cada chamada) ----------
+const CBG = { S: 24, m: new Map(), c: null, b: null, p: null, nc: -1, nb: -1, np: -1, lc: null, lb: null, lp: null, vazio: { c: [], b: [], p: [] } };
+function cbGrid() {
+  const G = CBG,
+    nc = circles.length,
+    nb = boxes.length,
+    np = polys.length;
+  if (G.c === circles && G.b === boxes && G.p === polys && G.nc === nc && G.nb === nb && G.np === np && G.lc === circles[nc - 1] && G.lb === boxes[nb - 1] && G.lp === polys[np - 1]) return G;
+  G.c = circles;
+  G.b = boxes;
+  G.p = polys;
+  G.nc = nc;
+  G.nb = nb;
+  G.np = np;
+  G.lc = circles[nc - 1];
+  G.lb = boxes[nb - 1];
+  G.lp = polys[np - 1];
+  G.m = new Map();
+  const S = G.S,
+    M = 3.2; // folga: cobre o raio do carro/pessoa (até 3 m)
+  G.big = { c: [], b: [], p: [] };
+  const put = (x0, x1, z0, z1, k, o) => {
+    const a = Math.floor((x0 - M) / S),
+      b = Math.floor((x1 + M) / S),
+      c = Math.floor((z0 - M) / S),
+      d = Math.floor((z1 + M) / S);
+    if ((b - a + 1) * (d - c + 1) > 400) return G.big[k].push(o); // gigante (quase nunca): testado sempre
+    for (let i = a; i <= b; i++)
+      for (let j = c; j <= d; j++) {
+        const key = i * 100003 + j;
+        let cel = G.m.get(key);
+        if (!cel) G.m.set(key, (cel = { c: [], b: [], p: [] }));
+        cel[k].push(o);
+      }
+  };
+  for (const q of polys) put(q.minX, q.maxX, q.minZ, q.maxZ, 'p', q);
+  for (const o of boxes) put(o.minX, o.maxX, o.minZ, o.maxZ, 'b', o);
+  for (const o of circles) put(o.x - o.r, o.x + o.r, o.z - o.r, o.z + o.r, 'c', o);
+  return G;
+}
+function cbCell(x, z) {
+  const G = cbGrid();
+  return G.m.get(Math.floor(x / G.S) * 100003 + Math.floor(z / G.S)) || G.vazio;
+}
+
+// 3 s depois de começar a partida: tudo do mapa que está escondido e parado (paredes de colisão,
+// peças juntadas no 'baked'...) para de entrar na conta. Se aparecer de novo, volta sozinho.
+let lvMarcou = 0,
+  lvIni = 0,
+  lvF0 = 0;
+function leveCongela() {
+  if (!inMatch || inLobby) {
+    lvMarcou = 0;
+    lvIni = 0;
+    return;
+  }
+  if (lvMarcou) return;
+  if (!lvIni) {
+    lvIni = performance.now();
+    lvF0 = LV_F;
+  }
+  if (performance.now() - lvIni < 3000 || LV_F - lvF0 < 90) return;
+  lvMarcou = 1;
+  const din = new Set([player, camera]);
+  bots.forEach((b) => b.group && din.add(b.group));
+  cars.forEach((k) => k.g && din.add(k.g));
+  loot.forEach((L) => L.g && din.add(L.g));
+  let n = 0;
+  for (const c of scene.children) {
+    if (din.has(c) || c.isLight || c.isCamera) continue;
+    let mexeu = false;
+    c.traverse((o) => {
+      if (o._mf !== undefined && o._mf > LV_F - 60) mexeu = true;
+    });
+    if (mexeu) continue; // tem coisa se mexendo aqui dentro: deixa como está
+    c.traverse((o) => {
+      if (!o.visible && o._hid !== 1) {
+        o._hid = 1;
+        n++;
+      }
+    });
+  }
+  LV.congelados = n;
+}
+const LV = { congelados: 0 };
+
 function init() {
   scene = new THREE.Scene();
   scene.fog = new THREE.Fog(0xbfd9ee, 45, 170);
@@ -13574,6 +13827,7 @@ function animate() {
   }
   sun.position.set(P.x + 30, 50, P.z + 20);
   sun.target.position.set(P.x, 0, P.z);
+  leveTick(); // v131: esconde loot/carro longe e marca o que pode pular a conta
   mxfTick(); // personagens completos: copia a pose para o esqueleto inteiro
   if (FT.q.length) fitThumbTick(); // foto da roupa (antes de desenhar a tela)
   renderer.render(scene, camera);
@@ -22024,6 +22278,8 @@ function mxfLOD(u, full) {
   F.full = full;
   F.skm.visible = full;
   if (F.lo) F.lo.visible = !full;
+  F.B[0].visible = full; // v131: boneco simples (longe): o esqueleto completo nem entra na conta
+  F.B[0]._hid = 1;
   const gb = F.gripBase;
   if (full) {
     F.B[F.hand].add(gb);
@@ -23924,13 +24180,13 @@ function shoot() {
   player.rotation.y = camYaw + Math.PI;
   player.updateMatrixWorld(true);
   camera.updateMatrixWorld();
-  const botG = (TM || SQ ? bots.filter((b) => b.team !== 0) : bots).map((b) => b.group); // 4v4/esquadrão: a bala passa pelos aliados
+  const botG = (TM || SQ ? bots.filter((b) => b.team !== 0) : bots).filter((b) => b.group.visible).map((b) => b.group); // 4v4/esquadrão: a bala passa pelos aliados
   const cp = camera.getWorldPosition(new THREE.Vector3()),
     cd = camera.getWorldDirection(new THREE.Vector3());
   _shotRC.set(cp, cd);
   _shotRC.near = 0;
   _shotRC.far = W.range;
-  const carG = cars.filter((c) => !c.dead).map((c) => c.g);
+  const carG = cars.filter((c) => !c.dead && c.g.visible).map((c) => c.g);
   let h = _shotRC.intersectObjects(botG.concat(carG, nearSolids(cp, cd, W.range)), true);
   const at = findAssistTarget(cp, cd);
   if (at) {
@@ -26073,11 +26329,15 @@ function clearCars() {
 // Algum obstáculo (parede, caixa, árvore) no lugar do carro?
 function carBlocked(x, z, r, cy) {
   const y = cy ?? heightAt(x, z);
-  for (const q of polys) {
-    if (q.h < y + 0.6 || x < q.minX - r || x > q.maxX + r || z < q.minZ - r || z > q.maxZ + r) continue;
-    if (q.y0 !== undefined && q.y0 > y + 2) continue;
-    if (polyDist(q, x, z) < r) return true;
-  }
+  // v131: só olha as paredes/árvores do quadrado do mapa onde está (antes olhava o mapa inteiro)
+  const C = r <= 3 ? cbCell(x, z) : null,
+    BG = C ? CBG.big : null;
+  for (const lista of C ? [C.p, BG.p] : [polys])
+    for (const q of lista) {
+      if (q.h < y + 0.6 || x < q.minX - r || x > q.maxX + r || z < q.minZ - r || z > q.maxZ + r) continue;
+      if (q.y0 !== undefined && q.y0 > y + 2) continue;
+      if (polyDist(q, x, z) < r) return true;
+    }
   // rampas: de lado/por trás é parede; rampas a pé não servem para carro
   for (const R of ramps) {
     const u = (x - R.x) * R.dx + (z - R.z) * R.dz,
@@ -26088,12 +26348,19 @@ function carBlocked(x, z, r, cy) {
   }
   // embaixo de ponte: os pilares seguram
   for (const br of bridges) if (x > br.minX - r && x < br.maxX + r && z > br.minZ && z < br.maxZ && y < br.h - 0.7) return true;
-  for (const b of boxes) {
-    if (b.h < y + 0.6) continue;
-    if (b.y0 !== undefined && b.y0 > y + 2) continue;
-    if (x > b.minX - r && x < b.maxX + r && z > b.minZ - r && z < b.maxZ + r) return true;
-  }
-  for (const c of circles) if (Math.hypot(x - c.x, z - c.z) < c.r + r) return true;
+  for (const lista of C ? [C.b, BG.b] : [boxes])
+    for (const b of lista) {
+      if (b.h < y + 0.6) continue;
+      if (b.y0 !== undefined && b.y0 > y + 2) continue;
+      if (x > b.minX - r && x < b.maxX + r && z > b.minZ - r && z < b.maxZ + r) return true;
+    }
+  for (const lista of C ? [C.c, BG.c] : [circles])
+    for (const c of lista) {
+      const dx = x - c.x,
+        dz = z - c.z,
+        m = c.r + r;
+      if (dx * dx + dz * dz < m * m) return true;
+    }
   return false;
 }
 // Põe o carro no chão, inclinado conforme o morro
@@ -32739,10 +33006,7 @@ function fvCorreio(aba, sel) {
   const gifts = (CONTA.d && CONTA.d.caixa) || [];
   const col = pe.appendChild(fvEl('button', 'fvBtnY', gifts.length ? 'COLETAR TUDO (' + gifts.length + ')' : 'NADA PRA COLETAR'));
   col.disabled = !gifts.length;
-  col.onclick = () => {
-    fvFecha(P);
-    giftShow();
-  };
+  col.onclick = () => giftColeta(col); // v131: coleta ali mesmo, no correio
   fvTick();
 }
 // ===== EVENTOS =====
@@ -33178,7 +33442,6 @@ function ffCam(dt, t) {
     return e && e.classList.contains('open');
   };
   const painel = open('vault') || open('shop') || open('royale');
-  if (typeof fvSlotsTick === 'function') fvSlotsTick(dt, painel || open('charSel'));
   // painel na esquerda: o boneco aparece na direita; sem painel: o grupo (você + vagas do time) fica no meio
   FF.tx = painel ? -1.75 + player.position.x : open('charSel') ? player.position.x : FF.cx || 0;
   document.body.classList.toggle('ffPanel', open('vault') || open('charSel') || open('shop') || open('royale'));
@@ -33195,6 +33458,8 @@ function ffCam(dt, t) {
   const zoom = open('charSel') ? 2.15 : painel ? 2.45 : 2.45 + (FF.zx || 0);
   camera.position.set(FF.x, 1.02, zoom);
   camera.lookAt(FF.x, 0.9, 0);
+  camera.updateMatrixWorld(); // v131: os botões CONVIDAR e o balão da capivara usam a câmera DO LOBBY (antes pegavam a da partida e ficavam voando pela tela)
+  if (typeof fvSlotsTick === 'function') fvSlotsTick(dt, painel || open('charSel'));
   if (FF.stage) {
     FF.stage.visible = true;
     const u = FF.stage.userData;
@@ -35857,8 +36122,8 @@ function contaAplica(d) {
   } catch (e) {}
   if (document.getElementById('amgP') && document.getElementById('amgP').classList.contains('open')) amgRender();
   // presentes novos
-  if (d && d.caixa && d.caixa.length && (!antes || !antes.caixa || d.caixa.length > antes.caixa.length || !document.getElementById('giftP')))
-    setTimeout(() => inLobby && giftShow(), 700);
+  // v131: presente novo vai pro CORREIO (ícone ✉️ no canto do lobby), não abre mais no meio da tela
+  if (d && d.caixa && d.caixa.length > ((antes && antes.caixa && antes.caixa.length) || 0)) setTimeout(() => giftAvisa(d.caixa.length), 700);
   amgBadge();
 }
 // ---------- começo: confere a sessão e, se não tem conta, oferece criar ----------
@@ -36159,7 +36424,7 @@ function contaRender() {
     };
   }
   const r = B.appendChild(ctEl('div', 'ctRow'));
-  if (d.caixa && d.caixa.length) r.appendChild(ctEl('button', 'ctBtn y', '🎁 Presentes (' + d.caixa.length + ')')).onclick = giftShow;
+  if (d.caixa && d.caixa.length) r.appendChild(ctEl('button', 'ctBtn y', '🎁 Presentes (' + d.caixa.length + ')')).onclick = giftAbreCorreio;
   r.appendChild(ctEl('button', 'ctBtn', '👥 Amigos')).onclick = () => {
     document.getElementById('profile').style.display = 'none';
     amgAbre();
