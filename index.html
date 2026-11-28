@@ -9990,6 +9990,41 @@
     max-height: 62vh;
     overflow-y: auto;
   }
+  /* v130: no editor de botões, mostra onde ficam o placar e o relógio da zona */
+  #hudTopGhost {
+    display: none;
+    position: fixed;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 360px;
+    max-width: 46vw;
+    height: 76px;
+    border: 2px dashed #ffd54f;
+    border-radius: 12px;
+    background: #0006;
+    color: #ffd54f;
+    font: 700 14px system-ui;
+    text-align: center;
+    box-sizing: border-box;
+    z-index: 40;
+    pointer-events: none;
+    display: none;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding-bottom: 5px;
+    height: 92px;
+  }
+  #hudTopGhost small {
+    display: block;
+    font-weight: 500;
+    font-size: 11px;
+    opacity: 0.85;
+    margin-top: 4px;
+  }
+  body.hudedit #hudTopGhost {
+    display: flex;
+  }
 </style>
 </head>
 <body>
@@ -10003,7 +10038,7 @@
     <div class="spLoad"><div class="spTip" id="spTip">Preparando a ilha...</div><div class="spBar"><i id="spFill"></i></div><div class="spPct"><span id="spStep">Carregando</span><b id="spPct">0%</b></div></div>
     <div class="spTap" id="spTap"><b>TOQUE PARA JOGAR</b><div class="spWho" id="spWho"></div></div>
     <div class="spGate" id="spGate"></div>
-    <div class="spVer">v129 · Feito no Amapá 🇧🇷</div>
+    <div class="spVer">v130 · Feito no Amapá 🇧🇷</div>
   </div>
 </div>
 <!-- ===== GIRE O CELULAR: o jogo é só deitado ===== -->
@@ -10066,7 +10101,7 @@
 
 <!-- ===== EDITOR DE HUD — mover e redimensionar botões ===== -->
 <div id="hudEditDim"></div>
-<div id="hudEditor"><div class="he-t">🎛️ Personalizar HUD</div><div id="heSel">Toque e arraste um botão para mover</div><div class="he-r"><span>Tamanho</span><input id="heSize" type="range" min="0.6" max="1.6" step="0.05" value="1"><span id="heVal">100%</span></div><div class="he-b"><button id="heFlip" title="Mover esta barra para cima/baixo">⇅</button><button id="heReset">Restaurar</button><button id="heCancel">Cancelar</button><button id="heSave">Salvar</button></div></div>
+<div id="hudTopGhost"><small>📊 placar e zona · botões aqui descem sozinhos</small></div><div id="hudEditor"><div class="he-t">🎛️ Personalizar HUD</div><div id="heSel">Toque e arraste um botão para mover</div><div class="he-r"><span>Tamanho</span><input id="heSize" type="range" min="0.6" max="1.6" step="0.05" value="1"><span id="heVal">100%</span></div><div class="he-b"><button id="heFlip" title="Mover esta barra para cima/baixo">⇅</button><button id="heReset">Restaurar</button><button id="heCancel">Cancelar</button><button id="heSave">Salvar</button></div></div>
 
 <!-- ===== ESPECTADOR E FIM DE PARTIDA ===== -->
 <div id="spec" class="box"><button id="specPrev">◀</button><span id="specName">👁</span><button id="specNext">▶</button><button id="specExit">Sair</button></div>
@@ -12860,6 +12895,141 @@ function visDia(sun, hemi) {
   } catch (e) {}
 }
 let hemiL = null; // luz do céu/chão
+/* ======================================================================
+   v130: câmera que não entra no boneco, árvore que segura a câmera e
+   botões que não ficam em cima do placar/zona
+   ====================================================================== */
+// tronco das árvores segura a câmera (antes ela atravessava e o tronco tapava a tela)
+{
+  const marca = (f) =>
+    function (...a) {
+      const n = circles.length,
+        r = f.apply(this, a);
+      for (let i = n; i < circles.length; i++) circles[i].tr = 1;
+      return r;
+    };
+  ipe = marca(ipe);
+  buriti = marca(buriti);
+  mangueira = marca(mangueira);
+  arvoreAlta = marca(arvoreAlta);
+  palmeira = marca(palmeira);
+}
+function camTrunk(px, pz, dx, dz, dist) {
+  const h = Math.hypot(dx, dz);
+  if (h < 0.25) return dist; // olhando muito para baixo/cima: deixa
+  const ux = -dx / h,
+    uz = -dz / h,
+    maxS = dist * h,
+    lim = maxS + 2;
+  for (const c of circles) {
+    if (!c.tr) continue;
+    const ox = c.x - px,
+      oz = c.z - pz;
+    if (ox > lim || ox < -lim || oz > lim || oz < -lim) continue;
+    const pr = ox * ux + oz * uz; // quanto o tronco está "atrás" de você na linha da câmera
+    if (pr < 0.25 || pr > maxS + c.r + 0.25) continue;
+    const r = c.r + 0.22,
+      q2 = ox * ox + oz * oz - pr * pr;
+    if (q2 > r * r) continue;
+    const s = pr - Math.sqrt(r * r - q2);
+    if (s < maxS) dist = Math.min(dist, Math.max(0.55, s / h));
+  }
+  return dist;
+}
+// câmera muito perto (parede ou árvore atrás): o boneco fica transparente em vez de tapar a tela
+let camFadeA = 1;
+function camFade(d) {
+  if (!player) return;
+  const alvo = d >= 1.35 ? 1 : d <= 0.75 ? 0.28 : 0.28 + ((d - 0.75) / 0.6) * 0.72;
+  let a = camFadeA + (alvo - camFadeA) * 0.3;
+  if (alvo === 1 && a > 0.97) a = 1;
+  const u = player.userData;
+  if (a === camFadeA && u._fadeOk) return;
+  camFadeA = a;
+  u._fadeOk = true;
+  // o corpo (materiais só deste boneco): transparente
+  const mats = [];
+  if (u.mxf && u.mxf.skm) [].concat(u.mxf.skm.material).forEach((m) => mats.push(m));
+  if (u.mxSk && u.mxSk.material) mats.push(u.mxSk.material);
+  player.traverse((o) => {
+    if (o.isSkinnedMesh && o.material && !mats.includes(o.material)) [].concat(o.material).forEach((m) => mats.push(m));
+  });
+  mats.forEach((m) => {
+    if (m.userData.fo === undefined) m.userData.fo = m.opacity;
+    const tr = a < 1;
+    if (m.transparent !== tr) {
+      m.transparent = tr;
+      m.needsUpdate = true;
+    }
+    m.opacity = tr ? m.userData.fo * a : m.userData.fo;
+    m.depthWrite = !tr;
+  });
+  // colete, capacete, mochila e acessórios: somem quando a câmera está quase dentro (a arma fica)
+  const esconde = a < 0.45;
+  player.traverse((o) => {
+    if (!o.isMesh || o.isSkinnedMesh) return;
+    let p = o,
+      arma = false;
+    while (p && p !== player) {
+      if (p === u.gun || p === u._prop) arma = true;
+      p = p.parent;
+    }
+    if (arma) return;
+    if (esconde && o.visible) {
+      o.visible = false;
+      o.userData._fh = 1;
+    } else if (!esconde && o.userData._fh) {
+      o.visible = true;
+      delete o.userData._fh;
+    }
+  });
+}
+// botões que o jogador arrastou para cima do placar/relógio da zona descem sozinhos
+let hudKT = 0;
+function hudKeepTop() {
+  if (typeof hudEdit !== 'undefined' && hudEdit) return;
+  const a = document.getElementById('alive'),
+    z = document.getElementById('zoneBox');
+  if (!a) return;
+  const ra = a.getBoundingClientRect(),
+    zr = z ? z.getBoundingClientRect() : null;
+  if (!ra.height) return;
+  const bot = Math.max(ra.bottom + 40, zr && zr.height ? zr.bottom : 0) + 4,
+    half = Math.max(180, zr && zr.width ? zr.width / 2 + 12 : 0),
+    cx = innerWidth / 2,
+    muda = [];
+  const cand = [];
+  HUD_IDS.forEach(([id]) => {
+    const l = LAY[id],
+      e = document.getElementById(id);
+    if (!l || !e || id === 'hp') return;
+    const r = e.getBoundingClientRect();
+    if (!r.width) return;
+    const top0 = r.top - (e._nud || 0);
+    cand.push({ e, l, top0, x0: r.left, x1: r.right, h: r.height, n: 0 });
+  });
+  // quem está em cima do placar desce; um não fica em cima do outro (mantém a ordem de cima pra baixo)
+  const postos = [];
+  cand
+    .sort((A, B) => A.top0 - B.top0)
+    .forEach((c) => {
+      if (!(c.x1 > cx - half && c.x0 < cx + half && c.top0 < bot)) return;
+      let t = bot;
+      for (let k = 0; k < 6; k++) {
+        const bate = postos.find((p) => c.x1 > p.x0 && c.x0 < p.x1 && t < p.b && t + c.h > p.t);
+        if (!bate) break;
+        t = bate.b + 4;
+      }
+      c.n = Math.ceil(t - c.top0);
+      postos.push({ x0: c.x0, x1: c.x1, t, b: t + c.h });
+    });
+  cand.forEach((c) => Math.abs(c.n - (c.e._nud || 0)) > 1 && muda.push([c.e, c.l, c.n]));
+  muda.forEach(([e, l, n]) => {
+    e._nud = n;
+    e.style.translate = l.x + 'px ' + (l.y + n) + 'px';
+  });
+}
+
 function init() {
   scene = new THREE.Scene();
   scene.fog = new THREE.Fog(0xbfd9ee, 45, 170);
@@ -13336,6 +13506,13 @@ function animate() {
     _camRC.far = dist;
     const ch = _camRC.intersectObjects(camSolids, false);
     if (ch.length) dist = Math.max(0.4, ch[0].distance - 0.25);
+  }
+  const noChao = phase === 'ground' && !inLobby && !driving && !spec.on;
+  if (noChao) dist = camTrunk(px, pz, dx, dz, dist); // tronco de árvore atrás: a câmera chega perto (não atravessa)
+  camFade(noChao && !dead ? dist : 99); // câmera colada no boneco: ele fica transparente
+  if (inMatch && (hudKT += ldt) > 0.5) {
+    hudKT = 0;
+    hudKeepTop(); // botão arrastado para cima do placar/zona desce sozinho
   }
   camera.position.set(px - dx * dist, py - dy * dist, pz - dz * dist);
   if (phase === 'ground' && !inLobby) {
@@ -34403,6 +34580,7 @@ function applyLayout(src) {
       l = src[h[0]];
     if (!e) return;
     e.style.translate = l ? l.x + 'px ' + l.y + 'px' : '';
+    e._nud = 0;
     e.style.scale = l && l.s && l.s !== 1 ? String(l.s) : '';
   });
 }
