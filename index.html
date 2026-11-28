@@ -10448,6 +10448,127 @@
   .shCard .pv .bnPv {
     border-radius: 3px;
   }
+  /* v134: atualização disponível / aviso de reinício */
+  #verBan,
+  #reinBan {
+    position: fixed;
+    left: 50%;
+    top: 6px;
+    transform: translateX(-50%);
+    z-index: 9400;
+    display: none;
+    align-items: center;
+    gap: 8px;
+    max-width: 92vw;
+    padding: 7px 14px;
+    border-radius: 4px;
+    font: 700 12px var(--ffF, sans-serif);
+    color: #1a1200;
+    background: linear-gradient(180deg, #ffe066, #ffb300);
+    box-shadow: 0 3px 12px #000a;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  #verBan b,
+  #reinBan b {
+    font: 900 italic 14px var(--ffF, sans-serif);
+  }
+  #verBan.on {
+    display: flex;
+    animation: verPulsa 1.6s ease-in-out infinite;
+  }
+  #reinBan {
+    top: auto;
+    bottom: 8px;
+    color: #fff;
+    background: linear-gradient(180deg, #e53935, #b71c1c);
+    cursor: default;
+    pointer-events: none;
+  }
+  #reinBan.on {
+    display: flex;
+  }
+  #verBan span,
+  #reinBan span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  @keyframes verPulsa {
+    50% {
+      transform: translateX(-50%) scale(1.05);
+    }
+  }
+  #verModal {
+    position: fixed;
+    inset: 0;
+    z-index: 9450;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: #000b;
+  }
+  #verModal.on {
+    display: flex;
+  }
+  .verBox {
+    width: min(380px, 90vw);
+    padding: 16px;
+    text-align: center;
+    color: #fff;
+    background: linear-gradient(180deg, #1d1736, #0f0b20);
+    border: 1px solid #ffc92877;
+    border-top: 3px solid #ffc928;
+  }
+  .verIc {
+    font-size: 40px;
+  }
+  .verBox b {
+    display: block;
+    font: 900 italic 18px var(--ffF, sans-serif);
+    color: #ffc928;
+  }
+  .verBox p {
+    margin: 6px 0 12px;
+    font: 500 13px var(--ffF, sans-serif);
+    color: #ddd;
+  }
+  .verBt {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+  }
+  .verBt button {
+    min-width: 120px;
+    height: 38px;
+    border: 0;
+    font: 900 italic 14px var(--ffF, sans-serif);
+    color: #fff;
+    background: #3b4256;
+    clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+    cursor: pointer;
+  }
+  .verBt button.y {
+    color: #2b1a00;
+    background: linear-gradient(180deg, #ffe066, #ffb300);
+  }
+  .admUpSt {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 8px 10px;
+    margin: 6px 0;
+    background: #0d2a14;
+    border-left: 3px solid #4caf50;
+  }
+  .admUpSt small {
+    color: #aaa;
+  }
+  .admUpB {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+  }
 </style>
 </head>
 <body>
@@ -10461,7 +10582,7 @@
     <div class="spLoad"><div class="spTip" id="spTip">Preparando a ilha...</div><div class="spBar"><i id="spFill"></i></div><div class="spPct"><span id="spStep">Carregando</span><b id="spPct">0%</b></div></div>
     <div class="spTap" id="spTap"><b>TOQUE PARA JOGAR</b><div class="spWho" id="spWho"></div></div>
     <div class="spGate" id="spGate"></div>
-    <div class="spVer">v133 · Feito no Amapá 🇧🇷</div>
+    <div class="spVer">v135 · Feito no Amapá 🇧🇷</div>
   </div>
 </div>
 <!-- ===== GIRE O CELULAR: o jogo é só deitado ===== -->
@@ -10524,7 +10645,7 @@
 
 <!-- ===== EDITOR DE HUD — mover e redimensionar botões ===== -->
 <div id="hudEditDim"></div>
-<div id="hudTopGhost"><small>📊 placar e zona · botões aqui descem sozinhos</small></div><div id="hudEditor"><div class="he-t">🎛️ Personalizar HUD</div><div id="heSel">Toque e arraste um botão para mover</div><div class="he-r"><span>Tamanho</span><input id="heSize" type="range" min="0.6" max="1.6" step="0.05" value="1"><span id="heVal">100%</span></div><div class="he-b"><button id="heFlip" title="Mover esta barra para cima/baixo">⇅</button><button id="heReset">Restaurar</button><button id="heCancel">Cancelar</button><button id="heSave">Salvar</button></div></div>
+<div id="hudTopGhost"><small>📊 aqui ficam o placar e a zona</small></div><div id="hudEditor"><div class="he-t">🎛️ Personalizar HUD</div><div id="heSel">Toque e arraste um botão para mover</div><div class="he-r"><span>Tamanho</span><input id="heSize" type="range" min="0.6" max="1.6" step="0.05" value="1"><span id="heVal">100%</span></div><div class="he-b"><button id="heFlip" title="Mover esta barra para cima/baixo">⇅</button><button id="heReset">Restaurar</button><button id="heCancel">Cancelar</button><button id="heSave">Salvar</button></div></div>
 
 <!-- ===== ESPECTADOR E FIM DE PARTIDA ===== -->
 <div id="spec" class="box"><button id="specPrev">◀</button><span id="specName">👁</span><button id="specNext">▶</button><button id="specExit">Sair</button></div>
@@ -13410,46 +13531,14 @@ function camFade(d) {
 // botões que o jogador arrastou para cima do placar/relógio da zona descem sozinhos
 let hudKT = 0;
 function hudKeepTop() {
-  if (typeof hudEdit !== 'undefined' && hudEdit) return;
-  const a = document.getElementById('alive'),
-    z = document.getElementById('zoneBox');
-  if (!a) return;
-  const ra = a.getBoundingClientRect(),
-    zr = z ? z.getBoundingClientRect() : null;
-  if (!ra.height) return;
-  const bot = Math.max(ra.bottom + 40, zr && zr.height ? zr.bottom : 0) + 4,
-    half = Math.max(180, zr && zr.width ? zr.width / 2 + 12 : 0),
-    cx = innerWidth / 2,
-    muda = [];
-  const cand = [];
+  // v135: quem manda no HUD é o jogador. Nada desce sozinho (desfaz o empurrão que a v130 dava nos botões)
   HUD_IDS.forEach(([id]) => {
-    const l = LAY[id],
-      e = document.getElementById(id);
-    if (!l || !e || id === 'hp') return;
-    const r = e.getBoundingClientRect();
-    if (!r.width) return;
-    const top0 = r.top - (e._nud || 0);
-    cand.push({ e, l, top0, x0: r.left, x1: r.right, h: r.height, n: 0 });
-  });
-  // quem está em cima do placar desce; um não fica em cima do outro (mantém a ordem de cima pra baixo)
-  const postos = [];
-  cand
-    .sort((A, B) => A.top0 - B.top0)
-    .forEach((c) => {
-      if (!(c.x1 > cx - half && c.x0 < cx + half && c.top0 < bot)) return;
-      let t = bot;
-      for (let k = 0; k < 6; k++) {
-        const bate = postos.find((p) => c.x1 > p.x0 && c.x0 < p.x1 && t < p.b && t + c.h > p.t);
-        if (!bate) break;
-        t = bate.b + 4;
-      }
-      c.n = Math.ceil(t - c.top0);
-      postos.push({ x0: c.x0, x1: c.x1, t, b: t + c.h });
-    });
-  cand.forEach((c) => Math.abs(c.n - (c.e._nud || 0)) > 1 && muda.push([c.e, c.l, c.n]));
-  muda.forEach(([e, l, n]) => {
-    e._nud = n;
-    e.style.translate = l.x + 'px ' + (l.y + n) + 'px';
+    const e = document.getElementById(id),
+      l = LAY[id];
+    if (e && e._nud) {
+      e._nud = 0;
+      e.style.translate = l ? `${l.x}px ${l.y}px` : '';
+    }
   });
 }
 
@@ -13927,6 +14016,174 @@ async function admCorreioTodos() {
     go.textContent = '📢 MANDAR PARA TODOS';
     go.disabled = false;
   };
+}
+
+/* ============ v134: AVISO DE ATUALIZAÇÃO ============
+   - O servidor diz qual é a versão nova; se a sua for velha, aparece "Atualização disponível" no lobby
+     (nunca no meio da partida).
+   - O Criador pode avisar todo mundo antes de atualizar: "o servidor vai reiniciar em 3 minutos". */
+const WB_VER = 135;
+const VERS = { nova: 0, rein: 0, modalVisto: 0, salvou: 0 };
+function verCheck(v, rein) {
+  if (typeof rein === 'number') reinSet(rein);
+  v = +v || 0;
+  if (v > WB_VER && v !== VERS.nova) VERS.nova = v;
+  verTick();
+}
+async function verPergunta() {
+  if (!contaPode()) return;
+  try {
+    const j = await contaApi('versao', {});
+    verCheck(j.v, j.rein);
+  } catch (e) {}
+}
+function verEl(id, cls) {
+  let e = document.getElementById(id);
+  if (!e) {
+    e = document.createElement('div');
+    e.id = id;
+    if (cls) e.className = cls;
+    document.body.appendChild(e);
+  }
+  return e;
+}
+function verAtualiza() {
+  try {
+    contaSalvaJa();
+  } catch (e) {}
+  const b = verEl('verBan');
+  b.textContent = '🔄 Atualizando...';
+  setTimeout(() => location.reload(), 700);
+}
+// faixa "atualização disponível" (só no lobby) e o contador do aviso de reinício
+function verTick() {
+  const lob = typeof inLobby !== 'undefined' && inLobby && !inMatch;
+  const b = verEl('verBan');
+  if (VERS.nova && lob && !(VERS.rein > Date.now())) {
+    if (!b.dataset.on) {
+      b.dataset.on = 1;
+      b.innerHTML = '🔄 <b>Atualização disponível!</b> <span>Toque aqui pra atualizar (leva uns segundos)</span>';
+      b.onclick = verAtualiza;
+    }
+    b.classList.add('on');
+    // a primeira vez que vê no lobby: janelinha pra atualizar
+    if (!VERS.modalVisto) {
+      VERS.modalVisto = 1;
+      const M = verEl('verModal');
+      M.innerHTML = '<div class="verBox"><div class="verIc">🚀</div><b>Saiu versão nova do WorldBullet!</b><p>Atualize pra jogar com as novidades. Seu progresso fica salvo.</p><div class="verBt"><button class="y">ATUALIZAR AGORA</button><button>Depois</button></div></div>';
+      const [a, d] = M.querySelectorAll('button');
+      a.onclick = verAtualiza;
+      d.onclick = () => M.classList.remove('on');
+      M.classList.add('on');
+    }
+  } else b.classList.remove('on');
+  // aviso do Criador: o servidor vai reiniciar
+  const r = verEl('reinBan');
+  const falta = VERS.rein - Date.now();
+  if (VERS.rein && falta > -120e3) {
+    const s = Math.max(0, Math.ceil(falta / 1000));
+    r.innerHTML = falta > 0 ? '⚠️ <b>Atualização do servidor em ' + Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0') + '</b> <span>Termine sua partida online. Seu progresso está salvo.</span>' : '🔄 <b>Atualizando o servidor...</b> <span>O jogo volta sozinho em instantes.</span>';
+    r.classList.add('on');
+    if (falta < 25e3 && !VERS.salvou) {
+      VERS.salvou = 1;
+      try {
+        contaSalvaJa();
+      } catch (e) {}
+    }
+  } else {
+    r.classList.remove('on');
+    if (VERS.rein && falta <= -120e3) VERS.rein = 0;
+  }
+}
+function reinSet(ate) {
+  ate = +ate || 0;
+  if (ate && ate !== VERS.rein) {
+    VERS.salvou = 0;
+    try {
+      contaSalvaJa();
+    } catch (e) {}
+    if (typeof sfx === 'function') sfx('announce', 0.5);
+  }
+  VERS.rein = ate;
+  verTick();
+}
+setInterval(verTick, 1000);
+setInterval(() => {
+  if (typeof inLobby !== 'undefined' && inLobby && !document.hidden) verPergunta();
+}, 180e3);
+if (typeof document.addEventListener === 'function')
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) verPergunta();
+  });
+setTimeout(verPergunta, 15e3);
+// ---------- Painel do Criador: atualizar o jogo sem atrapalhar ninguém ----------
+async function admAtualizar() {
+  const box = socAbre('admUpP', 'adm');
+  box.appendChild(ctEl('div', 'amgTop', '<b>🔄 ATUALIZAR O JOGO</b>'));
+  const st = box.appendChild(ctEl('div', 'admUpSt', '⏳ Vendo quem está online...'));
+  const passo = box.appendChild(ctEl('div', 'ctInfo'));
+  passo.innerHTML = '<b>Como atualizar sem atrapalhar:</b><br>1. Olhe aqui quantos estão em <b>sala online</b>.<br>2. Se tiver gente, aperte o <b>aviso</b> e espere o tempo acabar.<br>3. Mande o <b>index.html</b> (e o server.js, se mudou) pro GitHub.<br>4. Pronto: quem estava com o jogo aberto vê "Atualização disponível".<br><small>Partida solo com bots não cai. Só as salas online caem quando o servidor reinicia.</small>';
+  const bts = box.appendChild(ctEl('div', 'admUpB'));
+  const mostra = (j) => {
+    st.innerHTML = '';
+    st.appendChild(ctEl('b')).textContent = '🟢 ' + j.online + ' jogo(s) aberto(s) agora · ' + j.emSala + ' em sala online (' + j.salas + ' sala' + (j.salas === 1 ? '' : 's') + ')';
+    st.appendChild(ctEl('small')).textContent = 'Versão no servidor: v' + (j.v || '?') + ' · seu jogo: v' + WB_VER;
+    bts.innerHTML = '';
+    if (j.rein) {
+      reinSet(j.rein);
+      const s = Math.max(0, Math.round((j.rein - Date.now()) / 1000));
+      bts.appendChild(ctEl('p', 'ctInfo')).textContent = s > 0 ? '⚠️ Aviso no ar: faltam ' + Math.floor(s / 60) + 'min ' + (s % 60) + 's. Quando acabar, pode mandar pro GitHub.' : '✅ O tempo do aviso acabou: pode mandar pro GitHub agora.';
+      const c = bts.appendChild(ctEl('button', 'ctBtn', 'Cancelar aviso'));
+      c.onclick = async () => {
+        c.disabled = true;
+        try {
+          const r = await contaApi('admin', { acao: 'reinicio_cancelar' });
+          reinSet(r.rein);
+          carrega();
+        } catch (e) {
+          toast('😕 ' + e.message);
+        }
+      };
+      return;
+    }
+    [1, 3, 5].forEach((min) => {
+      const b = bts.appendChild(ctEl('button', 'ctBtn' + (min === 3 ? ' y' : ''), '⚠️ Avisar: atualiza em ' + min + ' min'));
+      let conf = 0;
+      b.onclick = async () => {
+        if (!conf) {
+          conf = 1;
+          b.textContent = 'Toque de novo pra confirmar';
+          setTimeout(() => {
+            conf = 0;
+            b.textContent = '⚠️ Avisar: atualiza em ' + min + ' min';
+          }, 3500);
+          return;
+        }
+        b.disabled = true;
+        try {
+          const r = await contaApi('admin', { acao: 'reinicio', min });
+          reinSet(r.rein);
+          toast('⚠️ Aviso enviado pra todo mundo online!');
+          carrega();
+        } catch (e) {
+          toast('😕 ' + e.message);
+          b.disabled = false;
+        }
+      };
+    });
+  };
+  const carrega = async () => {
+    try {
+      mostra(await contaApi('admin', { acao: 'status' }));
+    } catch (e) {
+      st.textContent = '😕 ' + e.message;
+    }
+  };
+  carrega();
+  const tm = setInterval(() => {
+    if (!document.body.contains(box)) return clearInterval(tm);
+    carrega();
+  }, 5000);
 }
 
 function init() {
@@ -37011,11 +37268,13 @@ function wbSalaServidor(url) {
         } catch (e) {
           return;
         }
+        if (m.t === 'rein') return reinSet(m.ate); // v134: o Criador avisou que vai atualizar
         if (m.t === 'ct' || m.t === 'conv' || m.t === 'auth' || m.t === 'gch' || m.t === 'ev') {
           if (typeof contaMsg === 'function') contaMsg(m);
           return;
         }
         if (m.t === 'hi') {
+          if (m.v) verCheck(m.v, m.rein || 0); // v134: servidor reiniciou com versão nova?
           R.me = m.id;
           R.peers.clear();
         } else if (m.t === 'p') {
@@ -37939,6 +38198,7 @@ function admRender() {
   at.appendChild(ctEl('button', 'ctBtn sm', '🚩 Denúncias')).onclick = admDenuncias;
   at.appendChild(ctEl('button', 'ctBtn sm', '🎉 Eventos')).onclick = admEventos;
   at.appendChild(ctEl('button', 'ctBtn sm', '📢 Correio p/ todos')).onclick = admCorreioTodos; // v132
+  at.appendChild(ctEl('button', 'ctBtn sm', '🔄 Atualizar jogo')).onclick = admAtualizar; // v134
   at.appendChild(ctEl('button', 'ctBtn sm', '💰 Vendas')).onclick = admVendas;
   const f = box.appendChild(ctEl('form', 'amgAdd'));
   const i = f.appendChild(ctEl('input'));
@@ -39988,6 +40248,7 @@ async function netJoin(code, creator) {
     if (code.length < 3) toast('Digite o código da sala (4 letras)');
     return;
   }
+  if (VERS.rein > Date.now() - 120e3) return toast('⚠️ O servidor vai atualizar agora. Espere uns minutinhos pra entrar em sala.'); // v134
   if (NET.code) await netLeave();
   NET.busy = true;
   NET.err = '';
