@@ -10569,6 +10569,10 @@
     gap: 8px;
     margin-top: 8px;
   }
+  /* v136: botão de recarregar repetido some */
+  #relBtn {
+    display: none !important;
+  }
 </style>
 </head>
 <body>
@@ -10582,7 +10586,7 @@
     <div class="spLoad"><div class="spTip" id="spTip">Preparando a ilha...</div><div class="spBar"><i id="spFill"></i></div><div class="spPct"><span id="spStep">Carregando</span><b id="spPct">0%</b></div></div>
     <div class="spTap" id="spTap"><b>TOQUE PARA JOGAR</b><div class="spWho" id="spWho"></div></div>
     <div class="spGate" id="spGate"></div>
-    <div class="spVer">v135 · Feito no Amapá 🇧🇷</div>
+    <div class="spVer">v137 · Feito no Amapá 🇧🇷</div>
   </div>
 </div>
 <!-- ===== GIRE O CELULAR: o jogo é só deitado ===== -->
@@ -10854,6 +10858,11 @@ const DEF = {
   crossColor: '#ffffff',
   diff: 'normal',
   nbots: 19,
+  sensG: 50, // v136: sensibilidade igual à do FF (0 a 100)
+  sensRD: 50,
+  sens2x: 50,
+  sens4x: 50,
+  sensAWM: 50,
   assist: 'std', // auxílio de mira: 'std' Padrão (gruda), 'prec' Mira precisa, 'off' Controle total
   autoFire: false, // atira sozinho quando a mira está no inimigo
   autoPick: true, // pega itens (e arma, se tiver mão livre) sozinho
@@ -10885,26 +10894,12 @@ const SCHEMA = [
   { k: 'crossColor', t: 'color', l: 'Cor da mira' },
 
   { tab: 'ctrl', ic: '🎮', h: 'Controles', d: 'Sensibilidade e ajudas automáticas' },
-  {
-    k: 'sens',
-    t: 'range',
-    l: 'Sensibilidade horizontal',
-    d: 'Quanto a câmera gira para os lados quando você arrasta.',
-    min: 0.3,
-    max: 2.5,
-    step: 0.05,
-    fmt: (v) => (+v).toFixed(2) + 'x',
-  },
-  {
-    k: 'sensY',
-    t: 'range',
-    l: 'Sensibilidade vertical',
-    d: 'Quanto a câmera sobe e desce.',
-    min: 0.3,
-    max: 2.5,
-    step: 0.05,
-    fmt: (v) => (+v).toFixed(2) + 'x',
-  },
+  { sub: '🎯 Sensibilidade (igual ao Free Fire)' },
+  { k: 'sensG', t: 'range', l: 'Geral', d: 'Câmera e mira sem luneta.', min: 0, max: 100, step: 1, fmt: (v) => String(v) },
+  { k: 'sensRD', t: 'range', l: 'Ponto vermelho', d: 'Mirando com mira simples (holográfica).', min: 0, max: 100, step: 1, fmt: (v) => String(v) },
+  { k: 'sens2x', t: 'range', l: 'Mira 2x', min: 0, max: 100, step: 1, fmt: (v) => String(v) },
+  { k: 'sens4x', t: 'range', l: 'Mira 4x', min: 0, max: 100, step: 1, fmt: (v) => String(v) },
+  { k: 'sensAWM', t: 'range', l: 'Mira AWM (sniper)', min: 0, max: 100, step: 1, fmt: (v) => String(v) },
   { k: 'invY', t: 'check', l: 'Inverter eixo vertical' },
   { k: 'autoPick', t: 'check', l: '🎒 Coleta automática', d: 'Pega munição, cura e arma (se tiver mão livre) sozinho.' },
   { sub: '📱 Celular' },
@@ -11030,17 +11025,6 @@ const SCHEMA = [
   { k: 'sfx', t: 'check', l: 'Efeitos sonoros', d: 'Tiros, passos, carros e explosões.' },
   { k: 'announcer', t: 'check', l: 'Voz de abate', d: 'First Blood, Double Kill, Triple Kill...' },
 
-  { tab: 'jogo', ic: '⚔️', h: 'Partida', d: 'Vale para as partidas contra bots' },
-  {
-    k: 'nbots',
-    t: 'range',
-    l: 'Quantidade de bots',
-    d: 'Menos bots = jogo mais leve.',
-    min: 3,
-    max: 29,
-    step: 1,
-    fmt: (v) => v + ' (' + (+v + 1) + ' jogadores)',
-  },
 
   { tab: 'teclas', ic: '⌨️', h: 'Teclas (PC)', d: 'Atalhos do teclado e do mouse', pc: true },
   { t: 'keys' },
@@ -11337,7 +11321,6 @@ const HUD_IDS = [
   ['emoBtn', 'Emotes'],
   ['invBtn', 'Mochila'],
   ['swapBtn', 'Troca rápida de arma'],
-  ['relBtn', 'Recarregar'],
   ['holsBtn', 'Guardar arma / soco'],
 ];
 
@@ -11372,6 +11355,17 @@ if (!S.weakV) {
     }
     localStorage.setItem('br3d_settings', JSON.stringify(S));
   } catch (e) {}
+}
+// v136: sensibilidade nova (quem já jogava fica com a mesma de antes) e bots automáticos
+if (!S.sensV) {
+  S.sensV = 1;
+  S.sensG = Math.round(Math.max(0, Math.min(100, (+S.sens || 1) * 50)));
+  ['sensRD', 'sens2x', 'sens4x', 'sensAWM'].forEach((k) => (S[k] = S.sensG));
+}
+try {
+  S.nbots = weakDev() >= 2 ? 13 : 19;
+} catch (e) {
+  S.nbots = 19;
 }
 const PROF = Object.assign({}, PDEF);
 try {
@@ -11828,7 +11822,18 @@ function igrejaSantana(cx, cz) {
   lootSpots[lootSpots.length - 1].x += 6; // no telhado, longe da torre
   const g = new THREE.Group();
   // faixa azul e frontão
-  addBox(g, w + 0.1, 0.5, d + 0.1, 0x2f6db5, cx, 1.0, cz, { kind: KIND.PLASTER });
+  for (const sd of [-1, 1]) {
+    for (const [a, b] of [
+      [-w / 2 - 0.22, -2],
+      [2, w / 2 + 0.22],
+    ])
+      addBox(g, b - a, 0.5, 0.05, 0x2f6db5, cx + (a + b) / 2, 1.0, cz + sd * (d / 2 + 0.22), { kind: KIND.PLASTER });
+    for (const [a, b] of [
+      [-d / 2 - 0.22, -1.1],
+      [1.1, d / 2 + 0.22],
+    ])
+      addBox(g, 0.05, 0.5, b - a, 0x2f6db5, cx + sd * (w / 2 + 0.22), 1.0, cz + (a + b) / 2, { kind: KIND.PLASTER });
+  }
   // bancos (fileiras dos dois lados do corredor)
   for (const sx of [-1, 1])
     for (let i = 0; i < 4; i++) {
@@ -13626,7 +13631,7 @@ function leveTick() {
   leveT = agora;
   const c = camera.position,
     F = scene.fog ? scene.fog.far + 15 : 400,
-    FL = Math.min(F, 140);
+    FL = Math.min(F, 80); // v136: loot só aparece perto (tem mais loot agora)
   for (const b of bots) if (b.group) b.group._hid = 1;
   if (inMatch && !inLobby) {
     for (const L of loot) {
@@ -14022,7 +14027,7 @@ async function admCorreioTodos() {
    - O servidor diz qual é a versão nova; se a sua for velha, aparece "Atualização disponível" no lobby
      (nunca no meio da partida).
    - O Criador pode avisar todo mundo antes de atualizar: "o servidor vai reiniciar em 3 minutos". */
-const WB_VER = 135;
+const WB_VER = 137;
 const VERS = { nova: 0, rein: 0, modalVisto: 0, salvou: 0 };
 function verCheck(v, rein) {
   if (typeof rein === 'number') reinSet(rein);
@@ -25206,6 +25211,18 @@ function specPitch(T) {
   const v = T.pit !== undefined ? T.pit : T.lookP;
   return typeof v === 'number' && isFinite(v) ? v : -0.15;
 }
+// v136: sensibilidade igual à do Free Fire (0 a 100). Cada mira tem a sua.
+function sensMul() {
+  let v = S.sensG;
+  try {
+    if (adsActive()) {
+      const z = (WEAPONS[curId] && WEAPONS[curId].zoom) || 1;
+      v = z >= 3.3 ? S.sensAWM : z >= 2.6 ? S.sens4x : z >= 2 ? S.sens2x : S.sensRD;
+    }
+  } catch (e) {}
+  return Math.max(0.04, (+v || 0) / 50);
+}
+
 function aimDrag(dx, dy) {
   if (spec.on) return; // assistindo: a câmera segue a mira de quem você assiste
   let fx = 1,
@@ -25237,8 +25254,9 @@ function aimDrag(dx, dy) {
       vl = v.length() || 1;
     if (up > 0) capTop = Math.max(camPitch, Math.asin(Math.max(-1, Math.min(1, v.y / vl))) + 0.012);
   }
-  camYaw -= (dx * 0.005 * S.sens * fx) / zoomK;
-  camPitch = Math.max(-0.8, Math.min(capTop, camPitch - ((dy * 0.004 * S.sensY * fy) / zoomK) * (S.invY ? -1 : 1)));
+  const sm = sensMul(); // v136: sensibilidade do FF (geral / ponto vermelho / 2x / 4x / AWM)
+  camYaw -= (dx * 0.005 * sm * fx) / zoomK;
+  camPitch = Math.max(-0.8, Math.min(capTop, camPitch - ((dy * 0.004 * sm * fy) / zoomK) * (S.invY ? -1 : 1)));
 }
 const _capV = new THREE.Vector3();
 
@@ -25729,7 +25747,7 @@ function makeLoot(id, x, z, y, nid, box) {
   loot.push({ g: g, id: id, gun: gun, t: rnd(0, 6), nid: nid });
 }
 
-const LOOT_N = 95; // armas e itens no chão ao mesmo tempo (todo mundo começa sem arma)
+const LOOT_N = 160; // armas e itens no chão ao mesmo tempo (todo mundo começa sem arma)
 function respawnLoot() {
   let x,
     z,
@@ -25758,11 +25776,15 @@ function spawnLoot() {
 }
 
 function dropLoot(id, pos, nid, box) {
-  if (loot.length > 40 && !NET.mid) {
-    const o = loot.shift();
+  // v136: antes isso apagava as armas do MAPA (as mais antigas) a cada coisa que caía no chão
+  const larg = loot.filter((L) => L.drop);
+  if (larg.length > 40 && !NET.mid) {
+    const o = larg[0];
+    loot.splice(loot.indexOf(o), 1);
     scene.remove(o.g);
   }
   makeLoot(id, pos.x, pos.z, box && pos.y !== undefined ? pos.y : undefined, nid, box);
+  if (loot.length) loot[loot.length - 1].drop = true;
 }
 
 function clearLoot() {
@@ -41453,7 +41475,7 @@ function renderNet() {
   if (going) el('p', 'nInfo', '🔥 Tem uma partida rolando. Você entra na próxima quando ela acabar.');
   if (lh === NET.me) btn('▶ Começar partida', 'nBig', netStart);
   else el('p', 'nInfo', '⏳ Esperando ' + netNameOf(lh) + ' começar a partida...');
-  el('p', 'nSmall', 'O modo é o que o dono escolher: Battle Royale (cada um por si) ou Esquadrão (todo mundo da sala no mesmo time). A dificuldade dos bots também é a dele.');
+  el('p', 'nSmall', 'O modo é o que o dono escolher: Battle Royale (cada um por si) ou Esquadrão (todo mundo da sala no mesmo time).');
   btn('🚪 Sair da sala', 'nLeave', () => netLeave());
 }
 
