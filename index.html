@@ -10676,6 +10676,96 @@
     height: 4px;
     margin: -2px 0 0 -2px;
   }
+  /* v141: cartão do jogador */
+  #jgP {
+    position: fixed;
+    inset: 0;
+    z-index: 9300;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: #000a;
+  }
+  #jgP.on {
+    display: flex;
+  }
+  .jgBox {
+    position: relative;
+    width: min(460px, 94vw);
+    max-height: 92vh;
+    overflow: auto;
+    padding: 10px;
+    background: linear-gradient(180deg, #1c1733, #0f0b20);
+    border: 1px solid #ffc92855;
+    border-top: 3px solid #ffc928;
+    color: #fff;
+  }
+  .jgBox .ctX {
+    position: absolute;
+    right: 6px;
+    top: 6px;
+    z-index: 2;
+  }
+  .jgCab {
+    margin-bottom: 8px;
+  }
+  .jgG {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+  .jgB {
+    height: 36px;
+    border: 1px solid #ffffff22;
+    background: #ffffff10;
+    color: #fff;
+    font: 800 12px var(--ffF, sans-serif);
+    cursor: pointer;
+  }
+  .jgB.y {
+    color: #2b1a00;
+    border: 0;
+    background: linear-gradient(180deg, #ffe066, #ffb300);
+  }
+  .jgB.red {
+    color: #ff8a8a;
+    border-color: #ff5a5a55;
+  }
+  .jgB.off {
+    opacity: 0.6;
+  }
+  .jgVolta {
+    width: 100%;
+    margin-top: 8px;
+  }
+  .jgPerf {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+  .jgSt {
+    display: grid;
+    grid-template-columns: 26px 1fr;
+    align-items: center;
+    padding: 6px 8px;
+    background: #ffffff0d;
+    border-left: 2px solid #ffc928;
+  }
+  .jgSt span {
+    grid-row: span 2;
+    font-size: 18px;
+  }
+  .jgSt small {
+    color: #aab;
+    font: 600 10px var(--ffF, sans-serif);
+  }
+  .jgSt b {
+    font: 900 14px var(--ffF, sans-serif);
+  }
+  .amgRow .amgAv,
+  .amgRow .amgTx {
+    cursor: pointer;
+  }
 </style>
 </head>
 <body>
@@ -10689,7 +10779,7 @@
     <div class="spLoad"><div class="spTip" id="spTip">Preparando a ilha...</div><div class="spBar"><i id="spFill"></i></div><div class="spPct"><span id="spStep">Carregando</span><b id="spPct">0%</b></div></div>
     <div class="spTap" id="spTap"><b>TOQUE PARA JOGAR</b><div class="spWho" id="spWho"></div></div>
     <div class="spGate" id="spGate"></div>
-    <div class="spVer">v140 · Feito no Amapá 🇧🇷</div>
+    <div class="spVer">v141 · Feito no Amapá 🇧🇷</div>
   </div>
 </div>
 <!-- ===== GIRE O CELULAR: o jogo é só deitado ===== -->
@@ -14134,7 +14224,7 @@ async function admCorreioTodos() {
    - O servidor diz qual é a versão nova; se a sua for velha, aparece "Atualização disponível" no lobby
      (nunca no meio da partida).
    - O Criador pode avisar todo mundo antes de atualizar: "o servidor vai reiniciar em 3 minutos". */
-const WB_VER = 140;
+const WB_VER = 141;
 const VERS = { nova: 0, rein: 0, modalVisto: 0, salvou: 0 };
 function verCheck(v, rein) {
   if (typeof rein === 'number') reinSet(rein);
@@ -14379,6 +14469,164 @@ setTimeout(() => {
       contaAbre();
     } catch (e) {}
 }, 3000);
+
+/* ============ v141: CARTÃO DO JOGADOR (igual FF) ============
+   Toque no nome de um amigo ou de qualquer jogador: abre o cartão com Ver perfil, Favoritar,
+   Adicionar/Remover, Convidar, Copiar ID, Bloquear e Denunciar. E o "offline" mostra há quanto tempo. */
+function jgTempo(iso) {
+  const t = Date.parse(iso || '');
+  if (!t) return 'offline';
+  const s = Math.max(0, (Date.now() - t) / 1000);
+  if (s < 120) return 'visto agora há pouco';
+  if (s < 3600) return 'visto há ' + Math.floor(s / 60) + ' min';
+  if (s < 86400) return 'visto há ' + Math.floor(s / 3600) + ' h';
+  const d = Math.floor(s / 86400);
+  if (d < 7) return 'visto há ' + d + (d === 1 ? ' dia' : ' dias');
+  if (d < 60) return 'visto há ' + Math.floor(d / 7) + (d < 14 ? ' semana' : ' semanas');
+  return 'visto há ' + Math.floor(d / 30) + ' meses';
+}
+const jgFav = (uid) => (PROF.favs || []).includes(uid);
+const jgBloq = (uid) => (PROF.bloq || []).includes(uid);
+function jgLista(k, uid, on) {
+  const L = (PROF[k] || []).filter((x) => x !== uid);
+  if (on) L.push(uid);
+  PROF[k] = L.slice(-200);
+  saveProf();
+  try {
+    contaSalvaJa();
+  } catch (e) {}
+}
+async function jgAmigos(acao, uid) {
+  const j = await contaApi('amigos', { acao, uid });
+  if (j.msg) toast('👥 ' + j.msg);
+  contaAplica(Object.assign({}, CONTA.d, j.conta));
+}
+function jgFecha() {
+  const P = document.getElementById('jgP');
+  if (P) P.classList.remove('on');
+}
+// cartão com as ações
+function jgCard(a) {
+  if (!a || !a.uid) return;
+  let P = document.getElementById('jgP');
+  if (!P) {
+    P = document.createElement('div');
+    P.id = 'jgP';
+    P.onclick = (e) => e.target === P && jgFecha();
+    document.body.appendChild(P);
+  }
+  P.innerHTML = '';
+  const box = P.appendChild(ctEl('div', 'jgBox'));
+  box.appendChild(ctEl('button', 'ctX', '✕')).onclick = jgFecha;
+  const cab = box.appendChild(ctEl('div', 'jgCab'));
+  avCartao(cab, { nome: (jgFav(a.uid) ? '⭐ ' : '') + a.nome, av: a.av, bn: a.bn, ch: a.ch, sub: 'ID ' + fmtId(a.uid) + ' · ' + (a.on ? (a.st === 'play' ? '🎮 jogando' : '🟢 online') : '⚫ ' + jgTempo(a.visto)) });
+  const d = CONTA.d || { amigos: [], pedidos: [], enviados: [] },
+    eu = a.uid === PROF.uid,
+    amigo = d.amigos.some((x) => x.uid === a.uid),
+    enviado = d.enviados.some((x) => x.uid === a.uid),
+    pediu = d.pedidos.some((x) => x.uid === a.uid),
+    G = box.appendChild(ctEl('div', 'jgG'));
+  const bt = (txt, cls, fn) => {
+    const b = G.appendChild(ctEl('button', 'jgB ' + (cls || '')));
+    b.textContent = txt;
+    b.onclick = () => fn(b);
+    return b;
+  };
+  // duas batidas pra coisas que não dá pra desfazer fácil
+  const duas = (b, txt, fn) => {
+    if (b._c) return fn(b);
+    b._c = 1;
+    const t0 = b.textContent;
+    b.textContent = txt;
+    setTimeout(() => {
+      b._c = 0;
+      b.textContent = t0;
+    }, 3000);
+  };
+  bt('👤 Ver perfil', 'y', () => jgPerfil(a));
+  if (!eu) {
+    if (amigo) {
+      bt(jgFav(a.uid) ? '★ Desfavoritar' : '⭐ Favoritar', '', () => {
+        jgLista('favs', a.uid, !jgFav(a.uid));
+        toast(jgFav(a.uid) ? '⭐ ' + a.nome + ' fica no topo da lista' : 'Tirado dos favoritos');
+        jgCard(a);
+        try {
+          amgRender();
+        } catch (e) {}
+      });
+      if (a.on && a.st !== 'play') bt('🎮 Convidar pro time', '', (b) => amgConvida(a, b));
+      if (a.on && a.st === 'play' && a.sala) bt('👁️ Assistir', '', () => (jgFecha(), obsAssistir(a)));
+    } else if (pediu) bt('✔ Aceitar pedido', 'y', async (b) => ((b.disabled = true), await jgAmigos('aceitar', a.uid).catch((e) => toast('😕 ' + e.message)), jgCard(a), amgRender()));
+    else if (enviado) bt('⏳ Pedido enviado', 'off', () => {});
+    else if (!jgBloq(a.uid)) bt('➕ Adicionar amigo', 'y', async (b) => ((b.disabled = true), await jgAmigos('pedir', a.uid).catch((e) => toast('😕 ' + e.message)), jgCard(a), amgRender()));
+  }
+  bt('📋 Copiar ID', '', () => {
+    try {
+      navigator.clipboard.writeText(a.uid).then(() => toast('🆔 ID copiado!'));
+    } catch (e) {
+      toast('🆔 ' + a.uid);
+    }
+  });
+  if (!eu) {
+    if (amigo) bt('✖ Remover amigo', 'red', (b) => duas(b, 'Toque de novo pra remover', async () => (await jgAmigos('remover', a.uid).catch((e) => toast('😕 ' + e.message)), jgCard(a), amgRender())));
+    bt(jgBloq(a.uid) ? '✅ Desbloquear' : '🚫 Bloquear', 'red', (b) =>
+      jgBloq(a.uid)
+        ? (jgLista('bloq', a.uid, false), toast('Desbloqueado'), jgCard(a), amgRender())
+        : duas(b, 'Toque de novo pra bloquear', async () => {
+            // bloquear: sai dos amigos e ele não consegue mais te mandar pedido
+            jgLista('bloq', a.uid, true);
+            jgLista('favs', a.uid, false);
+            try {
+              if (amigo) await jgAmigos('remover', a.uid);
+              else if (pediu) await jgAmigos('recusar', a.uid);
+            } catch (e) {}
+            toast('🚫 ' + a.nome + ' bloqueado');
+            jgCard(a);
+            amgRender();
+          }),
+    );
+    bt('🚩 Denunciar', '', () => (jgFecha(), denAbre(a.uid, a.nome)));
+  }
+  P.classList.add('on');
+}
+// perfil de outro jogador (números do jogo)
+async function jgPerfil(a) {
+  const P = document.getElementById('jgP'),
+    box = P && P.querySelector('.jgBox');
+  if (!box) return;
+  const G = box.querySelector('.jgG');
+  G.className = 'jgPerf';
+  G.innerHTML = '<p class="ctInfo">⏳ Carregando perfil...</p>';
+  let j;
+  try {
+    j = (await contaApi('jogador', { uid: a.uid })).jogador;
+  } catch (e) {
+    G.innerHTML = '';
+    G.appendChild(ctEl('p', 'ctErr')).textContent = e.message;
+    return;
+  }
+  const f = j.ficha || {},
+    R = rankInfo(f.rp || 0),
+    kd = (f.kills || 0) / Math.max(1, (f.matches || 0) - (f.wins || 0));
+  G.innerHTML = '';
+  const it = [
+    ['🏆', 'Patente BR', R.name],
+    ['⭐', 'Nível', String(1 + Math.floor((f.kills || 0) / 10))],
+    ['🎮', 'Partidas', String(f.matches || 0)],
+    ['👑', 'Booyahs', String(f.wins || 0)],
+    ['💀', 'Abates', String(f.kills || 0)],
+    ['🎯', 'K/D', kd.toFixed(2)],
+    ['🔥', 'Recorde numa partida', String(f.best || 0)],
+    ['📅', 'Conta criada', j.criado ? new Date(j.criado).toLocaleDateString('pt-BR') : '—'],
+  ];
+  it.forEach(([ic, n, v]) => {
+    const r = G.appendChild(ctEl('div', 'jgSt'));
+    r.appendChild(ctEl('span', '', ic));
+    r.appendChild(ctEl('small')).textContent = n;
+    r.appendChild(ctEl('b')).textContent = v;
+  });
+  box.appendChild(ctEl('button', 'jgB jgVolta', '◀ Voltar')).onclick = () => jgCard(Object.assign({}, a, j));
+}
 
 function init() {
   scene = new THREE.Scene();
@@ -38126,10 +38374,11 @@ function amgRender() {
     avPoe(av, a); // v133: avatar do amigo
     const t = r.appendChild(ctEl('div', 'amgTx'));
     const nm = t.appendChild(ctEl('b'));
-    nm.textContent = a.nome;
+    nm.textContent = (jgFav(a.uid) ? '⭐ ' : '') + a.nome;
     verMark(nm, a.vf > 0);
     const sm = t.appendChild(ctEl('small'));
     sm.textContent = 'ID ' + fmtId(a.uid) + (extra ? ' · ' + extra : '');
+    av.onclick = t.onclick = () => jgCard(a); // v141: cartão do jogador
     return r;
   };
   const acao = async (acao, uid, b) => {
@@ -38149,9 +38398,9 @@ function amgRender() {
     if (!d.amigos.length) L.appendChild(ctEl('p', 'ctInfo', 'Nenhum amigo ainda. Toque em <b>➕ ADICIONAR</b> e digite o ID do seu amigo (ele vê o ID dele aqui em cima).'));
     d.amigos
       .slice()
-      .sort((a, b) => (b.on | 0) - (a.on | 0) || String(a.nome).localeCompare(b.nome))
+      .sort((a, b) => (jgFav(b.uid) | 0) - (jgFav(a.uid) | 0) || (b.on | 0) - (a.on | 0) || (Date.parse(b.visto || 0) || 0) - (Date.parse(a.visto || 0) || 0) || String(a.nome).localeCompare(b.nome))
       .forEach((a) => {
-        const st = !a.on ? '⚫ offline' : a.st === 'play' ? '🎮 jogando' : '🟢 no lobby';
+        const st = !a.on ? '⚫ ' + jgTempo(a.visto) : a.st === 'play' ? '🎮 jogando' : '🟢 no lobby';
         const r = linha(a, st);
         if (a.on && a.st !== 'play') {
           const b = r.appendChild(ctEl('button', 'ctBtn y sm', 'Convidar'));
@@ -38167,7 +38416,7 @@ function amgRender() {
       });
   } else if (CONTA.tab === 'pedidos') {
     if (!d.pedidos.length && !d.enviados.length) L.appendChild(ctEl('p', 'ctInfo', 'Nenhum pedido de amizade agora.'));
-    d.pedidos.forEach((a) => {
+    d.pedidos.filter((a) => !jgBloq(a.uid)).forEach((a) => {
       const r = linha(a, 'quer ser seu amigo');
       const y = r.appendChild(ctEl('button', 'ctBtn y sm', 'Aceitar'));
       y.onclick = () => acao('aceitar', a.uid, y);
@@ -38196,7 +38445,7 @@ function amgRender() {
       if (!j) return;
       if (j.erro) return (res.appendChild(ctEl('p', 'ctErr')).textContent = j.erro);
       const a = j.jogador,
-        r = linha(a, a.on ? '🟢 online' : '⚫ offline');
+        r = linha(a, a.on ? '🟢 online' : '⚫ ' + jgTempo(a.visto));
       res.appendChild(r);
       const ja = d.amigos.some((x) => x.uid === a.uid),
         env = d.enviados.some((x) => x.uid === a.uid);

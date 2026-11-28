@@ -136,7 +136,10 @@ function closeClient(c) {
   clients.delete(c.id);
   if (c.uid && porConta.has(c.uid)) {
     porConta.get(c.uid).delete(c);
-    if (!porConta.get(c.uid).size) porConta.delete(c.uid);
+    if (!porConta.get(c.uid).size) {
+      porConta.delete(c.uid);
+      DB.update(c.uid, { visto: agora() }).catch(() => {}); // v141: "visto há X" fica certinho
+    }
   }
   try {
     c.sock.destroy();
@@ -234,6 +237,8 @@ const ADMIN = envLimpo('ADMIN').toLowerCase(); // seu nome de usuário: vira o C
 const SEGREDO = process.env.SEGREDO || (SB_KEY ? crypto.createHash('sha256').update('wb-token|' + SB_KEY).digest('hex') : crypto.randomBytes(32).toString('hex'));
 const DADOS = path.join(__dirname, 'dados', 'contas.json');
 const PUB_COLS = 'uid,usuario,nome,vf,admin,banido,acesso,visto';
+// v141: avatar, banner e personagem também vêm nas listas de amigos (antes só vinham no perfil completo)
+const PUB_SEL = PUB_COLS + ',av:perfil->>av,bn:perfil->>bn,ch:perfil->>ch';
 const enc = encodeURIComponent;
 const agora = () => new Date().toISOString();
 
@@ -267,7 +272,7 @@ function bancoSupabase() {
     },
     async many(uids) {
       if (!uids.length) return [];
-      return sbReq('GET', '?uid=in.(' + uids.map(enc).join(',') + ')&select=' + PUB_COLS);
+      return sbReq('GET', '?uid=in.(' + uids.map(enc).join(',') + ')&select=' + PUB_SEL);
     },
     async insert(row) {
       try {
@@ -333,6 +338,7 @@ function bancoLocal() {
   const pub = (r) => {
     const o = {};
     for (const k of PUB_COLS.split(',')) o[k] = r[k];
+    for (const k of ['av', 'bn', 'ch']) o[k] = r.perfil ? r.perfil[k] : undefined; // v141
     return cp(o);
   };
   return {
@@ -685,10 +691,12 @@ function onlineDe(uid) {
 }
 // v133: avatar, banner e personagem aparecem para os amigos (só o nome do item, nada pessoal)
 const pfCampo = (r, k) => {
-  const v = r && r.perfil && typeof r.perfil === 'object' ? r.perfil[k] : null;
+  const v = r && r.perfil && typeof r.perfil === 'object' ? r.perfil[k] : r ? r[k] : null; // v141: listas trazem av/bn/ch soltos
   return typeof v === 'string' && /^[a-z0-9_]{1,30}$/.test(v) ? v : undefined;
 };
-const publico = (r) => ({ uid: r.uid, nome: r.nome, vf: r.vf | 0, on: !!onlineDe(r.uid), av: pfCampo(r, 'av'), bn: pfCampo(r, 'bn'), ch: pfCampo(r, 'ch') });
+const publico = (r) => ({ uid: r.uid, nome: r.nome, vf: r.vf | 0, on: !!onlineDe(r.uid), av: pfCampo(r, 'av'), bn: pfCampo(r, 'bn'), ch: pfCampo(r, 'ch'), visto: r.visto || null }); // v141: visto = última vez no jogo
+// v141: bloqueou? (a lista fica no perfil da pessoa)
+const bloqueou = (a, uid) => !!(a && a.perfil && Array.isArray(a.perfil.bloq) && a.perfil.bloq.includes(uid));
 async function minha(r, full) {
   const am = await DB.many(arr(r.amigos)),
     pe = await DB.many(arr(r.pedidos)),
@@ -1268,7 +1276,11 @@ const API = {
   },
   async jogador(b) {
     const a = await alvo(String(b.uid || '').replace(/\D/g, ''));
-    return { jogador: publico(a) };
+    // v141: ficha pública (perfil): só números do jogo, nada pessoal
+    const st = a.stats && typeof a.stats === 'object' ? a.stats : {},
+      ficha = {};
+    for (const k of ['kills', 'matches', 'wins', 'best', 'rp', 'st4', 'dmg', 'hs', 'top10']) if (typeof st[k] === 'number' && isFinite(st[k])) ficha[k] = st[k];
+    return { jogador: Object.assign(publico(a), { ficha, criado: a.criado || null }) };
   },
   async amigos(b) {
     const r = await quem(b),
@@ -1277,7 +1289,8 @@ const API = {
     const a = await alvo(String(b.uid || ''));
     if (a.uid === r.uid) throw new Erro(400, 'Esse é o seu próprio ID 😅');
     let msg = '';
-    if (ac === 'pedir') {
+    if (ac === 'pedir' && bloqueou(a, r.uid)) msg = 'Pedido enviado!'; // v141: a pessoa te bloqueou: não chega nada
+    else if (ac === 'pedir') {
       if (arr(r.amigos).includes(a.uid)) msg = 'Vocês já são amigos.';
       else if (arr(r.pedidos).includes(a.uid)) return API.amigos(Object.assign({}, b, { acao: 'aceitar' }));
       else {
