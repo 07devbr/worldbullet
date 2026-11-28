@@ -11683,7 +11683,7 @@
     <div class="spLoad"><div class="spTip" id="spTip">Preparando a ilha...</div><div class="spBar"><i id="spFill"></i></div><div class="spPct"><span id="spStep">Carregando</span><b id="spPct">0%</b></div></div>
     <div class="spTap" id="spTap"><b>TOQUE PARA JOGAR</b><div class="spWho" id="spWho"></div></div>
     <div class="spGate" id="spGate"></div>
-    <div class="spVer">v147 · Feito no Amapá 🇧🇷</div>
+    <div class="spVer">v148 · Feito no Amapá 🇧🇷</div>
   </div>
 </div>
 <!-- ===== GIRE O CELULAR: o jogo é só deitado ===== -->
@@ -15128,7 +15128,7 @@ async function admCorreioTodos() {
    - O servidor diz qual é a versão nova; se a sua for velha, aparece "Atualização disponível" no lobby
      (nunca no meio da partida).
    - O Criador pode avisar todo mundo antes de atualizar: "o servidor vai reiniciar em 3 minutos". */
-const WB_VER = 147;
+const WB_VER = 148;
 const VERS = { nova: 0, rein: 0, modalVisto: 0, salvou: 0 };
 function verCheck(v, rein) {
   if (typeof rein === 'number') reinSet(rein);
@@ -15906,7 +15906,9 @@ function rsBotTick(dt) {
       const p = o.group.position;
       for (const T of RS.torres)
         if (!T.usada) {
-          const d = Math.hypot(T.x - p.x, T.z - p.z);
+          // v148: torre fora da zona segura conta como bem mais longe (o bot não se mata no gás)
+          const fora = zone.on && Math.hypot(T.x - zone.tx, T.z - zone.tz) > zone.tr * 0.95,
+            d = Math.hypot(T.x - p.x, T.z - p.z) + (fora ? 400 : 0);
           if (d < bd) {
             bd = d;
             best = o;
@@ -16191,7 +16193,7 @@ function fimShow(title, sub, rankTxt, win) {
     const base = rk.x2 ? rk.delta / 2 : rk.delta,
       aj2 = base - pp - kp;
     const L = [
-      ['Colocação #' + rk.place, pp],
+      [SQ ? 'Colocação do time #' + (lastRank || rk.place) : 'Colocação #' + rk.place, pp],
       ['Abates (' + kills + ')', kp],
     ];
     if (aj2) L.push([rk.early ? 'Ajuste do ranque + saiu cedo' : 'Ajuste do ranque', aj2]);
@@ -16292,6 +16294,7 @@ function fimSoloMorte() {
 // "Sair" do modo espectador: mostra o resultado antes de ir pro lobby
 function fimSair() {
   if (!inMatch || TM || TR || matchOver || (NET.obs && NET.obs.on)) return false;
+  if (SQ && isRank() && !rkApplied) rkResult = applyRanked(sqRkPlace(sqPlace()), false); // v148: saiu: conta a colocação do time agora
   spec.on = false;
   spec.target = null;
   document.body.classList.remove('spec');
@@ -16590,6 +16593,13 @@ function voaTick(dt) {
 function rkPlaceIdx(place) {
   const tot = Math.max(20, (typeof FIM === 'object' && FIM.np) || 20);
   return Math.max(1, Math.ceil((place * 20) / tot));
+}
+
+// v148: colocação do esquadrão vira "colocação de jogador" (2º time de 8 com 32 jogadores = 8º)
+function sqRkPlace(tp) {
+  const nt = Math.max(1, (typeof FIM === 'object' && FIM.n0) || 1),
+    np = Math.max(nt, (typeof FIM === 'object' && FIM.np) || bots.length + 1);
+  return Math.max(1, Math.ceil((tp * np) / nt));
 }
 
 function init() {
@@ -26952,7 +26962,7 @@ function die() {
     95,
     'sawtooth',
   );
-  if (isRank() && !rkApplied) rkResult = applyRanked(lastRank, false);
+  if (isRank() && !rkApplied && !SQ) rkResult = applyRanked(lastRank, false); // v148: no esquadrão espera o time todo cair (dá pra voltar pela torre)
   if (rkResult) setTimeout(() => rpPop(rkResult.delta), 500);
   const who = lastAttacker ? lastAttacker.name : 'a queda';
   feed(who, PROF.name, lastAttacker && WEAPONS[lastAttacker.w] ? WEAPONS[lastAttacker.w].name : '');
@@ -31220,16 +31230,17 @@ function updateBot(b, dt) {
   }
   // esquadrão: aliado caído perto = vai levantar (se não estiver no meio do tiroteio); senão segue o time
   let SG = null;
-  if (sqOn() && !gn && mode !== 'zone' && !b.wantCar) {
+  if (b.team === 0 && knock && !dead) b.wantCar = null; // v148: você caiu: larga o carro e vem
+  if (sqOn() && !gn && (mode !== 'zone' || (b.team === 0 && ((knock && !dead) || (dead && RSB.b === b)))) && !b.wantCar) {
     const R = sqReviveTarget(b);
-    if (R && !(b.los && dist < (R === player ? 9 : 12) && b.mem > 0)) {
+    if (R && !(b.los && dist < (R === player ? 6 : 10) && b.mem > 0)) {
       mode = 'revive';
       b.revTgt = R;
     } else {
       b.revT = 0;
       const RG = rsBotAlvo(b); // v145: indo na torre te trazer de volta
       if (RG && !(b.los && dist < 12 && b.mem > 0)) SG = RG;
-      else if (SQ && (mode === 'wander' || (mode === 'loot' && b.w && sqLeaderDist(b) > 28))) SG = sqGoal(b);
+      else if (SQ && (mode === 'wander' || (b.team === 0 ? !engaged && mode !== 'nade' && sqLeaderDist(b) > 22 : mode === 'loot' && b.w && sqLeaderDist(b) > 28))) SG = sqGoal(b); // v148: o seu time anda junto (só se afasta pra brigar)
     }
   }
   const bw = BW[b.w] || BW.none;
@@ -31247,7 +31258,7 @@ function updateBot(b, dt) {
     if (el > 1.5) {
       mx = ex / el;
       mz = ez / el;
-      sp = el > 8 ? (R === player ? 5.6 : 4.8) : 3;
+      sp = el > 8 ? (R === player ? 7 : 5) : 3;
       face = Math.atan2(mx, mz);
       navG = tp;
       b.revT = 0;
@@ -32350,7 +32361,7 @@ function sqReviveTarget(b) {
     bd = 35;
   if (b.team === 0 && knock && !dead) {
     const d = Math.hypot(player.position.x - p.x, player.position.z - p.z);
-    if (d < 60) {
+    if (d < 120) { // v148: te vê caído de bem longe
       bd = d;
       best = player;
     }
@@ -32381,6 +32392,7 @@ function sqGoal(b) {
   if (!L) return null;
   const d = Math.hypot(L.x - b.group.position.x, L.z - b.group.position.z);
   if (d < (b.team === 0 ? 7 : 12)) return null;
+  if (b.team === 0) return { x: L.x, z: L.z, y: L.y, sp: d > 14 ? 7 : d > 9 ? 5.4 : 3.6 }; // v148: o seu time corre junto com você
   return { x: L.x, z: L.z, y: L.y, sp: d > 22 ? 5 : 3.2 };
 }
 function sqRevProgress(R, by, f) {
@@ -34536,7 +34548,7 @@ function endMatch() {
   nvGanha(pxp * evMult('xp2x')); // v145: EXP do nível da conta (tela de subiu de nível no lobby)
   saveStats();
   if (isRank() && !rkApplied)
-    rkResult = applyRanked(Math.max(1, bots.length + 1), !dead && !matchOver);
+    rkResult = applyRanked(SQ ? sqRkPlace(matchOver && !dead ? 1 : sqPlace()) : Math.max(1, bots.length + 1), !dead && !matchOver);
   if (isTeamRank() && !rkApplied) rkResult = applyTeamRanked(false); // saiu no meio do 4v4 ranqueado = derrota
   lastResult = { kills: kills, score: earned, rk: rkResult, done, pxp };
   STATS.speak = Math.max(STATS.speak || 0, STATS.rp || 0); // melhor ranque da temporada
@@ -34567,6 +34579,7 @@ function finishSpectated() {
   document.getElementById('spec').style.display = 'none';
   if (SQ) {
     lastRank = sqPlace();
+    if (isRank() && !rkApplied) rkResult = applyRanked(sqRkPlace(lastRank), false); // v148: agora sim conta o ranque do time
     return showEnd('Esquadrão eliminado', 'Seu time caiu. Ainda restam ' + (lastRank - 1) + (lastRank - 1 === 1 ? ' time.' : ' times.'), 'Seu esquadrão ficou em ' + lastRank + 'º lugar', false);
   }
   showEnd(
