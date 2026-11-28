@@ -10259,6 +10259,195 @@
       opacity: 1;
     }
   }
+  /* ===== v133: avatar e banner ===== */
+  .avA {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+  .avA svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .avCh {
+    background-size: 320%;
+    background-position: 50% 3%;
+    background-repeat: no-repeat;
+    background-color: #2a3550;
+    background-image: none;
+  }
+  .avEmo {
+    display: grid;
+    place-items: center;
+    font-size: 24px;
+  }
+  body.ffUI #lobby #lbAv .avA {
+    border-radius: 2px;
+  }
+  body.ffUI #lobby #lbProfile.avBn {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+  body.ffUI #lobby #lbProfile.avBn .pi b,
+  body.ffUI #lobby #lbProfile.avBn .pi small {
+    text-shadow: 0 1px 3px #000;
+  }
+  .bnPv {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+  }
+  .amgAv.temAv {
+    padding: 0;
+    overflow: hidden;
+    background: #222;
+  }
+  /* cartão: banner com avatar e nome */
+  .avCard {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    min-height: 62px;
+    background-size: cover;
+    background-position: center;
+    border: 1px solid #ffc92866;
+    box-sizing: border-box;
+  }
+  .avCardA {
+    width: 52px;
+    height: 52px;
+    flex: 0 0 52px;
+    border: 2px solid #ffc928;
+    background: #111;
+  }
+  .avCardN b {
+    display: block;
+    font: 900 italic 18px var(--ffF, sans-serif);
+    color: #fff;
+    text-shadow: 0 2px 4px #000;
+  }
+  .avCardN small {
+    color: #ffe08a;
+    font: 700 12px var(--ffF, sans-serif);
+    text-shadow: 0 1px 3px #000;
+  }
+  /* cabeçalho do Perfil com o banner */
+  .fvCardH.avBn {
+    padding: 8px;
+    margin: -10px -10px 0;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+  }
+  .fvCardH.avBn .fvCardN b,
+  .fvCardH.avBn .fvCardN small {
+    text-shadow: 0 2px 4px #000;
+  }
+  .fvCardAv .avA {
+    position: absolute;
+    inset: 0;
+  }
+  .fvCardAv {
+    cursor: pointer;
+    overflow: hidden;
+  }
+  .avEdit {
+    position: absolute;
+    right: 6px;
+    bottom: 6px;
+    padding: 3px 8px;
+    border: 0;
+    border-radius: 3px;
+    font: 800 11px var(--ffF, sans-serif);
+    color: #1a1200;
+    background: #ffc928;
+    cursor: pointer;
+  }
+  /* tela de escolher */
+  .avW {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    gap: 12px;
+    padding: 10px 14px;
+    box-sizing: border-box;
+  }
+  .avPrev {
+    width: min(300px, 34vw);
+    align-self: flex-start;
+    min-height: 92px;
+  }
+  .avGrid {
+    flex: 1;
+    min-width: 0;
+    overflow: auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+    gap: 8px;
+    align-content: start;
+    padding-bottom: 10px;
+  }
+  .avGrid.bn {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+  .avOp {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
+    padding: 5px;
+    border: 2px solid #ffffff22;
+    background: #0d0a1ccc;
+    color: #fff;
+    cursor: pointer;
+    text-align: center;
+  }
+  .avOp.rar-r {
+    border-color: #2f7fd888;
+  }
+  .avOp.rar-e {
+    border-color: #9c4dff88;
+  }
+  .avOp.rar-l {
+    border-color: #ffcc3399;
+  }
+  .avOp.on {
+    border-color: #ffc928;
+    box-shadow: 0 0 10px #ffc92888;
+  }
+  .avOp.lock .avOpArt {
+    filter: grayscale(0.5) brightness(0.7);
+  }
+  .avOp.conf {
+    border-color: #4caf50;
+  }
+  .avOpArt {
+    aspect-ratio: 1;
+  }
+  .avGrid.bn .avOpArt {
+    aspect-ratio: 3;
+  }
+  .avOp b {
+    font: 800 11px var(--ffF, sans-serif);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .avOp small {
+    font: 700 10px var(--ffF, sans-serif);
+    color: #ffe08a;
+  }
+  .shCard .pv .bnPv {
+    border-radius: 3px;
+  }
 </style>
 </head>
 <body>
@@ -10272,7 +10461,7 @@
     <div class="spLoad"><div class="spTip" id="spTip">Preparando a ilha...</div><div class="spBar"><i id="spFill"></i></div><div class="spPct"><span id="spStep">Carregando</span><b id="spPct">0%</b></div></div>
     <div class="spTap" id="spTap"><b>TOQUE PARA JOGAR</b><div class="spWho" id="spWho"></div></div>
     <div class="spGate" id="spGate"></div>
-    <div class="spVer">v132 · Feito no Amapá 🇧🇷</div>
+    <div class="spVer">v133 · Feito no Amapá 🇧🇷</div>
   </div>
 </div>
 <!-- ===== GIRE O CELULAR: o jogo é só deitado ===== -->
@@ -10423,7 +10612,7 @@
 <!-- ===== LOJA E MISSÕES ===== -->
 <div id="shop" class="sheetBg"><div class="sheet">
   <div class="ash"><b>🛒 Loja <span id="shopCoins" class="coinTag"></span></b><button class="shClose" data-c="shop">✕</button></div>
-  <div class="shTabs"><button data-t="d" class="on">⭐ Destaques</button><button data-t="g">🔫 Armas</button><button data-t="p">🪂 Paraq.</button><button data-t="e">😄 Emotes</button></div>
+  <div class="shTabs"><button data-t="d" class="on">⭐ Destaques</button><button data-t="g">🔫 Armas</button><button data-t="p">🪂 Paraq.</button><button data-t="e">😄 Emotes</button><button data-t="a">🖼️ Avatar</button><button data-t="b">🏳️ Banner</button></div>
   <div class="shBody" id="shopList"></div>
   <div class="asf"><button id="shopAct">Equipar</button></div>
 </div></div>
@@ -10436,7 +10625,7 @@
 <div id="rlSpin"><div class="rlStrip" id="rlStrip"><div id="rlTrack"></div><i class="rlMark"></i></div><div id="rlRes"></div><div class="rlBtnRow"><button id="rlEq">Equipar</button><button id="rlOk">OK</button></div></div>
 <div id="vault" class="sheetBg"><div class="sheet">
   <div class="ash"><b>🗄️ Cofre <span id="vCount" class="coinTag"></span></b><button class="shClose" data-c="vault">✕</button></div>
-  <div class="shTabs" id="vTabs"><button data-v="g" class="on">🔫</button><button data-v="p">🪂</button><button data-v="e">😀</button><button data-v="c" style="display:none">🧍</button></div>
+  <div class="shTabs" id="vTabs"><button data-v="g" class="on">🔫</button><button data-v="p">🪂</button><button data-v="e">😀</button><button data-v="a">🖼️</button><button data-v="b">🏳️</button><button data-v="c" style="display:none">🧍</button></div>
   <div class="shBody" id="vBody"></div>
 </div></div>
 <div id="missions" class="sheetBg"><div class="sheet">
@@ -13520,7 +13709,7 @@ function giftInfo(g) {
       nome: (it && (it.n || it.name)) || g.nome || g.item,
       art: art || '<b class="rwEmo">' + ({ e: '😄', g: '🔫', p: '🪂', o: '👕' }[g.cat] || '🎁') + '</b>',
       rar: (it && it.rar) || 'e',
-      eq: it && (g.cat === 'g' || g.cat === 'p') ? g.cat : it && g.cat === 'e' ? 'e' : null,
+      eq: it && 'gpab'.includes(g.cat) ? g.cat : it && g.cat === 'e' ? 'e' : null,
     });
   }
   return I;
@@ -29996,6 +30185,341 @@ const ROYALE = {
 };
 const COSM_CAT = { o: OUTFITS, g: GSKINS, p: CHUTES };
 const COSM_N = { o: 'Roupa', g: 'Skin de arma', p: 'Paraquedas', e: 'Emote' };
+/* ============ v133: AVATAR E BANNER (igual o cartão do Free Fire) ============
+   Avatar = foto quadrada do jogador. Banner = faixa com arte atrás do nome.
+   Aparecem no topo do lobby, no Perfil, na lista de amigos e no cartão de quem você vê.
+   Compra na Loja (moedas), ganha no Royale ou de presente. Troca no Perfil ou no Cofre. */
+let _avN = 0;
+const AV_RAR = { c: ['#5b6474', '#20252e', '#c9d1dd'], r: ['#2f7fd8', '#0f2447', '#8cc4ff'], e: ['#9c4dff', '#250f47', '#d6b4ff'], l: ['#ffcc33', '#6a2c00', '#fff1a8'] };
+// avatares de arte (o personagem que você tem também vira avatar, de graça)
+const AVATARS = [
+  { id: 'av_noel', name: 'Noel', ic: '🎅', rar: 'c', p: 0, c: '#d32f2f' },
+  { id: 'av_mira', name: 'Na Mira', ic: '🎯', rar: 'c', p: 300 },
+  { id: 'av_arara', name: 'Arara', ic: '🦜', rar: 'r', p: 700, c: '#1e88e5' },
+  { id: 'av_raio', name: 'Relâmpago', ic: '⚡', rar: 'r', p: 700 },
+  { id: 'av_robo', name: 'Robô', ic: '🤖', rar: 'r', p: 750 },
+  { id: 'av_alien', name: 'Alien', ic: '👽', rar: 'r', p: 800, c: '#2e7d32' },
+  { id: 'av_caveira', name: 'Caveira Neon', ic: '💀', rar: 'e', p: 1400, c: '#00e676' },
+  { id: 'av_fogo', name: 'Em Chamas', ic: '🔥', rar: 'e', p: 1400, c: '#ff5722' },
+  { id: 'av_ninja', name: 'Ninja', ic: '🥷', rar: 'e', p: 1500 },
+  { id: 'av_onca', name: 'Onça', ic: '🐆', rar: 'e', p: 1500, c: '#ff9800' },
+  { id: 'av_coroa', name: 'Realeza', ic: '👑', rar: 'l', p: 2800 },
+  { id: 'av_booyah', name: 'Booyah', ic: '🏆', rar: 'l', p: 3000 },
+  { id: 'av_dragao', name: 'Dragão', ic: '🐉', rar: 'l', rl: 'ouro', c: '#00bfa5' },
+];
+const BANNERS = [
+  { id: 'bn_padrao', name: 'WorldBullet', rar: 'c', p: 0 },
+  { id: 'bn_natal', name: 'Natal', rar: 'c', p: 0 },
+  { id: 'bn_camuflado', name: 'Camuflado', rar: 'c', p: 500 },
+  { id: 'bn_amazonia', name: 'Amazônia', rar: 'r', p: 800 },
+  { id: 'bn_por_do_sol', name: 'Pôr do Sol', rar: 'r', p: 800 },
+  { id: 'bn_onca', name: 'Pele de Onça', rar: 'r', p: 900 },
+  { id: 'bn_neon', name: 'Cidade Neon', rar: 'e', p: 1500 },
+  { id: 'bn_fogo', name: 'Inferno', rar: 'e', p: 1500 },
+  { id: 'bn_gelo', name: 'Era do Gelo', rar: 'e', p: 1500 },
+  { id: 'bn_carnaval', name: 'Carnaval', rar: 'e', p: 1600 },
+  { id: 'bn_ouro', name: 'Ouro Real', rar: 'l', p: 3000 },
+  { id: 'bn_galaxia', name: 'Galáxia', rar: 'l', p: 3000 },
+  { id: 'bn_tempestade', name: 'Tempestade', rar: 'l', rl: 'ouro' },
+];
+COSM_CAT.a = AVATARS;
+COSM_CAT.b = BANNERS;
+COSM_N.a = 'Avatar';
+COSM_N.b = 'Banner';
+// número "aleatório" fixo (a arte sai sempre igual)
+function avRnd(seed) {
+  let s = seed >>> 0 || 1;
+  return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296);
+}
+function avSvg(it) {
+  const k = ++_avN,
+    R = AV_RAR[it.rar] || AV_RAR.c,
+    c = it.c || R[0];
+  let raios = '';
+  for (let i = 0; i < 12; i++) raios += '<path d="M50 50 L' + (50 + 80 * Math.cos((i * Math.PI) / 6)).toFixed(1) + ' ' + (50 + 80 * Math.sin((i * Math.PI) / 6)).toFixed(1) + ' L' + (50 + 80 * Math.cos((i * Math.PI) / 6 + 0.22)).toFixed(1) + ' ' + (50 + 80 * Math.sin((i * Math.PI) / 6 + 0.22)).toFixed(1) + 'z"/>';
+  return (
+    '<svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="av' + k + '" cx="50%" cy="42%" r="70%"><stop offset="0" stop-color="' + c + '"/><stop offset="1" stop-color="' + R[1] + '"/></radialGradient></defs>' +
+    '<rect width="100" height="100" fill="url(#av' + k + ')"/><g fill="' + R[2] + '" opacity=".16">' + raios + '</g>' +
+    '<circle cx="50" cy="52" r="33" fill="#0003" stroke="' + R[2] + '" stroke-width="2.5" stroke-opacity=".7"/>' +
+    '<text x="50" y="68" font-size="44" text-anchor="middle">' + it.ic + '</text></svg>'
+  );
+}
+// arte dos banners (300 x 100)
+function bnSvg(id) {
+  const k = ++_avN,
+    g = (a, b, c, v) => '<linearGradient id="g' + k + '" x1="0" y1="0" x2="' + (v ? 0 : 1) + '" y2="' + (v ? 1 : 0) + '"><stop offset="0" stop-color="' + a + '"/>' + (c ? '<stop offset=".55" stop-color="' + c + '"/>' : '') + '<stop offset="1" stop-color="' + b + '"/></linearGradient>',
+    bg = '<rect width="300" height="100" fill="url(#g' + k + ')"/>',
+    R = avRnd(id.split('').reduce((a, ch) => a * 31 + ch.charCodeAt(0), 7));
+  let d = '',
+    s = '';
+  if (id === 'bn_padrao') {
+    d = g('#16204a', '#0a0f24');
+    for (let x = -100; x < 320; x += 26) s += '<path d="M' + x + ' 100 L' + (x + 60) + ' 0 L' + (x + 72) + ' 0 L' + (x + 12) + ' 100z" fill="#ffc928" opacity=".07"/>';
+    s += '<text x="292" y="78" font-size="70" font-weight="900" font-style="italic" text-anchor="end" fill="#ffc928" opacity=".14" font-family="sans-serif">WB</text>';
+  } else if (id === 'bn_natal') {
+    d = g('#b71c1c', '#5d0b0b', '#8e1414');
+    for (let i = 0; i < 18; i++) s += '<text x="' + (R() * 300).toFixed(0) + '" y="' + (12 + R() * 90).toFixed(0) + '" font-size="' + (8 + R() * 12).toFixed(0) + '" fill="#fff" opacity=".5">❄</text>';
+    let p = 'M0 14';
+    for (let x = 0; x <= 300; x += 30) p += ' Q' + (x + 15) + ' 30 ' + (x + 30) + ' 14';
+    s += '<path d="' + p + '" stroke="#1b5e20" stroke-width="2" fill="none"/>';
+    for (let x = 15, i = 0; x < 300; x += 30, i++) s += '<circle cx="' + x + '" cy="22" r="4" fill="' + ['#ffeb3b', '#4fc3f7', '#76ff03', '#ff80ab'][i % 4] + '"/>';
+  } else if (id === 'bn_camuflado') {
+    d = g('#55613a', '#3b4527');
+    const cs = ['#2f3a1f', '#6f7a46', '#4a3a22', '#7d8a55'];
+    for (let i = 0; i < 34; i++) {
+      const x = (R() * 300).toFixed(0),
+        y = (R() * 100).toFixed(0);
+      s += '<ellipse cx="' + x + '" cy="' + y + '" rx="' + (12 + R() * 22).toFixed(0) + '" ry="' + (6 + R() * 10).toFixed(0) + '" transform="rotate(' + (R() * 180).toFixed(0) + ' ' + x + ' ' + y + ')" fill="' + cs[i % 4] + '" opacity=".85"/>';
+    }
+  } else if (id === 'bn_amazonia') {
+    d = g('#7fd3c4', '#e8f7d0', null, 1);
+    s += '<circle cx="245" cy="28" r="14" fill="#fff6c8" opacity=".9"/>';
+    s += '<path d="M0 60 Q60 30 120 55 T240 45 T300 50 V100 H0z" fill="#3f8f4a"/><path d="M0 75 Q70 50 150 72 T300 66 V100 H0z" fill="#2c6e36"/>';
+    s += '<path d="M0 92 Q80 78 160 88 T300 84 V100 H0z" fill="#3aa0c8"/>';
+    for (let i = 0; i < 14; i++) {
+      const x = R() * 300,
+        y = 58 + R() * 16;
+      s += '<circle cx="' + x.toFixed(0) + '" cy="' + y.toFixed(0) + '" r="' + (6 + R() * 7).toFixed(0) + '" fill="#1f5a2a"/>';
+    }
+  } else if (id === 'bn_por_do_sol') {
+    d = g('#5b2a86', '#ffb347', '#ff6f61', 1);
+    s += '<circle cx="150" cy="70" r="30" fill="#ffe082"/><rect y="70" width="300" height="30" fill="#2d1b4e" opacity=".85"/>';
+    for (let i = 0; i < 5; i++) s += '<rect x="' + (118 + i * 3) + '" y="' + (74 + i * 5) + '" width="' + (64 - i * 6) + '" height="2" fill="#ffe082" opacity=".6"/>';
+    const palm = (x, h, f) => '<path d="M' + x + ' 100 Q' + (x + 4 * f) + ' ' + (100 - h / 2) + ' ' + (x + 10 * f) + ' ' + (100 - h) + '" stroke="#1a0f2e" stroke-width="4" fill="none"/>' + [-60, -20, 20, 60, 100].map((a) => '<path d="M' + (x + 10 * f) + ' ' + (100 - h) + ' q' + 20 * Math.cos((a * Math.PI) / 180) + ' ' + (-8 + 20 * Math.sin((a * Math.PI) / 180)) + ' ' + 30 * Math.cos((a * Math.PI) / 180) + ' ' + (6 + 22 * Math.sin((a * Math.PI) / 180)) + '" stroke="#1a0f2e" stroke-width="3" fill="none"/>').join('');
+    s += palm(30, 70, 1) + palm(272, 60, -1);
+  } else if (id === 'bn_onca') {
+    d = g('#f3b04a', '#c97a1c');
+    for (let i = 0; i < 30; i++) {
+      const x = (R() * 300).toFixed(0),
+        y = (R() * 100).toFixed(0),
+        r = (5 + R() * 6).toFixed(1);
+      s += '<circle cx="' + x + '" cy="' + y + '" r="' + r + '" fill="#a8641a" stroke="#2b1a0b" stroke-width="2.6" stroke-dasharray="7 4"/><circle cx="' + x + '" cy="' + y + '" r="1.6" fill="#2b1a0b"/>';
+    }
+  } else if (id === 'bn_neon') {
+    d = g('#0b0221', '#2a0845', null, 1);
+    s += '<circle cx="150" cy="52" r="30" fill="#ff2fb5" opacity=".9"/>';
+    for (let i = 0; i < 6; i++) s += '<rect x="110" y="' + (56 + i * 5) + '" width="80" height="' + (1 + i * 0.5) + '" fill="#2a0845"/>';
+    s += '<rect y="62" width="300" height="38" fill="#12052b"/>';
+    for (let x = -300; x <= 600; x += 40) s += '<line x1="150" y1="62" x2="' + x + '" y2="100" stroke="#ff2fb5" stroke-width="1" opacity=".7"/>';
+    for (let y = 66, j = 1; y < 100; y += 3 * j, j++) s += '<line x1="0" y1="' + y + '" x2="300" y2="' + y + '" stroke="#ff2fb5" stroke-width="1" opacity=".6"/>';
+    s += '<line x1="0" y1="62" x2="300" y2="62" stroke="#22e6ff" stroke-width="2"/>';
+    for (let i = 0; i < 9; i++) {
+      const w = 14 + R() * 18,
+        h = 12 + R() * 30,
+        x = R() * 300;
+      s += '<rect x="' + x.toFixed(0) + '" y="' + (62 - h).toFixed(0) + '" width="' + w.toFixed(0) + '" height="' + h.toFixed(0) + '" fill="#160733" stroke="#22e6ff" stroke-width=".8" opacity=".9"/>';
+    }
+  } else if (id === 'bn_fogo') {
+    d = g('#3a0000', '#120000', null, 1);
+    const fl = (x, h, c, o) => '<path d="M' + (x - 22) + ' 100 C' + (x - 26) + ' ' + (100 - h * 0.5) + ' ' + (x - 4) + ' ' + (100 - h * 0.6) + ' ' + x + ' ' + (100 - h) + ' C' + (x + 6) + ' ' + (100 - h * 0.6) + ' ' + (x + 26) + ' ' + (100 - h * 0.45) + ' ' + (x + 22) + ' 100z" fill="' + c + '" opacity="' + o + '"/>';
+    for (let x = 0; x <= 300; x += 26) s += fl(x + R() * 10, 60 + R() * 40, '#ff3d00', 0.8);
+    for (let x = 10; x <= 300; x += 30) s += fl(x + R() * 10, 40 + R() * 30, '#ff9100', 0.85);
+    for (let x = 5; x <= 300; x += 36) s += fl(x + R() * 10, 20 + R() * 22, '#ffea00', 0.8);
+    for (let i = 0; i < 18; i++) s += '<circle cx="' + (R() * 300).toFixed(0) + '" cy="' + (R() * 60).toFixed(0) + '" r="' + (0.8 + R() * 1.6).toFixed(1) + '" fill="#ffcc80"/>';
+  } else if (id === 'bn_gelo') {
+    d = g('#e3f6ff', '#5aa9e6', '#a9dcff', 1);
+    for (let i = 0; i < 16; i++) {
+      const x = R() * 300,
+        h = 30 + R() * 60,
+        w = 8 + R() * 14;
+      s += '<path d="M' + x.toFixed(0) + ' 100 L' + (x + w / 2).toFixed(0) + ' ' + (100 - h).toFixed(0) + ' L' + (x + w).toFixed(0) + ' 100z" fill="#fff" opacity="' + (0.25 + R() * 0.4).toFixed(2) + '" stroke="#e6fbff" stroke-width=".6"/>';
+    }
+    for (let i = 0; i < 12; i++) s += '<text x="' + (R() * 300).toFixed(0) + '" y="' + (10 + R() * 60).toFixed(0) + '" font-size="' + (7 + R() * 9).toFixed(0) + '" fill="#fff">❄</text>';
+  } else if (id === 'bn_carnaval') {
+    d = g('#6a1b9a', '#ff4081', '#c2185b');
+    const cs = ['#ffeb3b', '#00e5ff', '#76ff03', '#ff9100', '#fff'];
+    for (let i = 0; i < 60; i++) s += '<rect x="' + (R() * 300).toFixed(0) + '" y="' + (R() * 100).toFixed(0) + '" width="4" height="7" fill="' + cs[i % 5] + '" transform="rotate(' + (R() * 360).toFixed(0) + ' ' + (R() * 300).toFixed(0) + ' ' + (R() * 100).toFixed(0) + ')"/>';
+    for (let i = 0; i < 4; i++) s += '<path d="M' + (R() * 300).toFixed(0) + ' 0 q30 25 0 50 t0 50" stroke="' + cs[i] + '" stroke-width="2.5" fill="none" opacity=".8"/>';
+  } else if (id === 'bn_ouro') {
+    d = g('#3b2300', '#c79100', '#7a4f00');
+    for (let x = -100; x < 400; x += 22) s += '<path d="M' + x + ' 0 L' + (x + 100) + ' 100 M' + (x + 100) + ' 0 L' + x + ' 100" stroke="#ffd54f" stroke-width=".8" opacity=".35"/>';
+    s += '<rect x="-80" y="0" width="40" height="100" fill="#fff" opacity=".25" transform="skewX(-20)"><animate attributeName="x" from="-80" to="380" dur="3s" repeatCount="indefinite"/></rect>';
+    s += '<rect x="2" y="2" width="296" height="96" fill="none" stroke="#ffe082" stroke-width="2"/>';
+  } else if (id === 'bn_galaxia') {
+    d = g('#05010f', '#1a0b3d', '#0b1a4a');
+    s += '<ellipse cx="90" cy="55" rx="90" ry="30" fill="#7c4dff" opacity=".3"/><ellipse cx="200" cy="40" rx="80" ry="26" fill="#00b0ff" opacity=".22"/><ellipse cx="150" cy="60" rx="50" ry="14" fill="#ff4081" opacity=".2"/>';
+    for (let i = 0; i < 70; i++) s += '<circle cx="' + (R() * 300).toFixed(0) + '" cy="' + (R() * 100).toFixed(0) + '" r="' + (0.3 + R() * 1.2).toFixed(1) + '" fill="#fff" opacity="' + (0.4 + R() * 0.6).toFixed(2) + '"/>';
+    s += '<circle cx="250" cy="30" r="12" fill="#ffb74d"/><ellipse cx="250" cy="30" rx="22" ry="5" fill="none" stroke="#ffe0b2" stroke-width="1.5" transform="rotate(-20 250 30)"/>';
+  } else if (id === 'bn_tempestade') {
+    d = g('#1a1f2e', '#3c4a6b', null, 1);
+    for (let i = 0; i < 40; i++) {
+      const x = R() * 320;
+      s += '<line x1="' + x.toFixed(0) + '" y1="' + (R() * 100).toFixed(0) + '" x2="' + (x - 6).toFixed(0) + '" y2="' + (R() * 100 + 12).toFixed(0) + '" stroke="#9fb3d9" stroke-width=".8" opacity=".5"/>';
+    }
+    const raio = (x) => '<polyline points="' + x + ',0 ' + (x - 12) + ',38 ' + (x + 4) + ',38 ' + (x - 10) + ',100" stroke="#fffde7" stroke-width="3.5" fill="none"><animate attributeName="opacity" values="1;.2;1;1;.1;1" dur="2.2s" repeatCount="indefinite"/></polyline>';
+    s += '<ellipse cx="150" cy="6" rx="170" ry="22" fill="#0d111c" opacity=".85"/>' + raio(80) + raio(230);
+  } else {
+    d = g('#333', '#111');
+  }
+  return '<svg viewBox="0 0 300 100" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs>' + d + '</defs>' + bg + s + '</svg>';
+}
+const _bnCache = {};
+function bnUrl(id) {
+  if (!BANNERS.some((b) => b.id === id)) id = 'bn_padrao';
+  return _bnCache[id] || (_bnCache[id] = "url('data:image/svg+xml;charset=utf-8," + encodeURIComponent(bnSvg(id)).replace(/'/g, '%27') + "')");
+}
+// avatar do personagem: recorte do rosto na foto do personagem
+function avChar(ch) {
+  const im = typeof MX_THUMB === 'object' && MX_THUMB[ch];
+  return im ? '<span class="avA avCh" style="background-image:url(' + im + ')"></span>' : '<span class="avA avEmo">🧍</span>';
+}
+// HTML do avatar (id: 'avc' = seu personagem atual, 'avc_<id>' = um personagem, 'av_*' = arte)
+function avHTML(id, ch) {
+  if (!id || id === 'avc') return avChar(ch || (typeof myCh === 'function' ? myCh() : PROF.ch));
+  if (id.startsWith('avc_')) return avChar(id.slice(4));
+  const it = AVATARS.find((a) => a.id === id);
+  return it ? '<span class="avA">' + avSvg(it) + '</span>' : avChar(ch || PROF.ch);
+}
+function avMeu() {
+  const id = PROF.av || 'avc';
+  if (id.startsWith('avc_') && typeof chOwned === 'function' && !chOwned(id.slice(4))) return 'avc';
+  if (id.startsWith('av_')) {
+    const it = AVATARS.find((a) => a.id === id);
+    if (!it || !ownsCosm(it)) return 'avc';
+  }
+  return id;
+}
+function bnMeu() {
+  const it = BANNERS.find((b) => b.id === PROF.bn);
+  return it && ownsCosm(it) ? it.id : 'bn_padrao';
+}
+// cartão do item na Loja/Cofre
+function avPv(cat, it) {
+  if (cat === 'a') return avSvg(it);
+  return '<span class="bnPv" style="background-image:' + bnUrl(it.id) + '"></span>';
+}
+// topo do lobby: avatar + banner atrás do nome
+function avLobby() {
+  const P = document.getElementById('lbProfile'),
+    A = document.getElementById('lbAv');
+  if (!P || !A) return;
+  const k = avMeu() + '|' + bnMeu() + '|' + PROF.ch;
+  if (P._avk === k) return;
+  P._avk = k;
+  P.classList.add('avBn');
+  P.style.backgroundImage = 'linear-gradient(90deg,#0009,#0005 55%,#0001),' + bnUrl(bnMeu());
+  A.style.background = '';
+  let s = A.querySelector('.avA');
+  const tmp = document.createElement('span');
+  tmp.innerHTML = avHTML(avMeu());
+  if (s) s.replaceWith(tmp.firstChild);
+  else {
+    if (A.firstChild && A.firstChild.nodeType === 3) A.firstChild.remove(); // tira o 🎅 antigo
+    A.insertBefore(tmp.firstChild, A.firstChild);
+  }
+}
+// amigos/guilda: põe o avatar (ou a inicial, se a pessoa não escolheu)
+function avPoe(el, a) {
+  if (!el) return;
+  if (a && a.av && /^(av_|avc)/.test(a.av)) {
+    el.innerHTML = avHTML(a.av, a.ch);
+    el.classList.add('temAv');
+  } else el.textContent = String((a && a.nome) || '?').slice(0, 1).toUpperCase();
+}
+// ---------- escolher avatar e banner ----------
+function avEscolher(aba) {
+  aba = aba || 'a';
+  const P = fvTela('fvVisual', 'AVATAR E BANNER');
+  fvAbas(
+    P,
+    [
+      ['a', '🖼️ Avatar'],
+      ['b', '🏳️ Banner'],
+    ],
+    aba,
+    (k) => avEscolher(k),
+  );
+  const W = P.appendChild(fvEl('div', 'avW'));
+  // prévia do cartão
+  const pv = W.appendChild(fvEl('div', 'avPrev'));
+  avCartao(pv, { nome: PROF.name, av: avMeu(), bn: bnMeu(), ch: PROF.ch, sub: 'Nv. ' + fvLevel() });
+  const G = W.appendChild(fvEl('div', 'avGrid' + (aba === 'b' ? ' bn' : '')));
+  const lista = [];
+  if (aba === 'a') {
+    lista.push({ id: 'avc', name: 'Meu personagem', livre: 1 });
+    CHARS.filter((c) => chOwned(c.id) && MX_THUMB[c.id]).forEach((c) => lista.push({ id: 'avc_' + c.id, name: c.n, livre: 1 }));
+    AVATARS.forEach((it) => lista.push(it));
+  } else BANNERS.forEach((it) => lista.push(it));
+  const atual = aba === 'a' ? avMeu() : bnMeu();
+  lista.forEach((it) => {
+    const tem = it.livre || ownsCosm(it),
+      b = G.appendChild(fvEl('button', 'avOp' + (it.id === atual ? ' on' : '') + (tem ? '' : ' lock') + (it.rar ? ' rar-' + it.rar : '')));
+    b.innerHTML = '<div class="avOpArt">' + (aba === 'a' ? avHTML(it.id) : '<span class="bnPv" style="background-image:' + bnUrl(it.id) + '"></span>') + '</div>';
+    b.appendChild(fvEl('b')).textContent = it.name;
+    b.appendChild(fvEl('small')).textContent = it.id === atual ? '✓ Usando' : tem ? 'Usar' : it.rl ? '🎰 Royale' : '⭐ ' + it.p;
+    b.onclick = () => {
+      if (tem) {
+        if (aba === 'a') PROF.av = it.id;
+        else PROF.bn = it.id;
+        saveProf();
+        avLobby();
+        sfx('swap', 0.5);
+        return avEscolher(aba);
+      }
+      if (it.rl) return toast('🎰 Esse só sai no Royale!');
+      if (b._conf) {
+        if ((STATS.coins || 0) < it.p) return toast('Faltam ⭐ ' + (it.p - (STATS.coins || 0)) + ' moedas');
+        STATS.coins -= it.p;
+        PROF.owned.push(it.id);
+        if (aba === 'a') PROF.av = it.id;
+        else PROF.bn = it.id;
+        saveStats();
+        saveProf();
+        avLobby();
+        try {
+          refreshLobbyHUD();
+        } catch (e) {}
+        sfx('coin', 1);
+        toast('🛒 ' + it.name + ' comprado e equipado!');
+        return avEscolher(aba);
+      }
+      b._conf = 1;
+      b.querySelector('small').textContent = 'Comprar? ⭐ ' + it.p;
+      b.classList.add('conf');
+      setTimeout(() => {
+        b._conf = 0;
+        b.classList.remove('conf');
+        b.querySelector('small').textContent = '⭐ ' + it.p;
+      }, 3000);
+    };
+  });
+  fvTick();
+}
+// cartão (banner + avatar + nome), usado no Perfil, na prévia e no cartão dos amigos
+function avCartao(el, o) {
+  el.classList.add('avCard');
+  el.style.backgroundImage = 'linear-gradient(90deg,#000a,#0004 60%,#0000),' + bnUrl(o.bn || 'bn_padrao');
+  el.innerHTML = '<div class="avCardA">' + avHTML(o.av || 'avc', o.ch) + '</div><div class="avCardN"><b></b><small></small></div>';
+  el.querySelector('b').textContent = o.nome || 'Jogador';
+  el.querySelector('small').textContent = o.sub || '';
+}
+// Cofre: abas de Avatar e Banner
+function avVault(B, t) {
+  const g = document.createElement('div');
+  g.className = 'shGrid';
+  B.appendChild(g);
+  const cat = t,
+    L = cat === 'a' ? AVATARS : BANNERS,
+    atual = cat === 'a' ? avMeu() : bnMeu();
+  L.filter(ownsCosm).forEach((it) => {
+    const b = document.createElement('button');
+    b.className = 'shCard' + (it.id === atual ? ' sel' : '');
+    b.innerHTML = '<div class="pv">' + avPv(cat, it) + '</div>' + it.name + (it.id === atual ? '<small class="own">✓ Usando</small>' : '<small class="own">Usar</small>');
+    b.onclick = () => {
+      if (cat === 'a') PROF.av = it.id;
+      else PROF.bn = it.id;
+      saveProf();
+      avLobby();
+      renderVault();
+    };
+    g.appendChild(b);
+  });
+  const d = document.createElement('div');
+  d.className = 'shSec';
+  d.textContent = (cat === 'a' ? '🖼️ Seus personagens também viram avatar: troque no Perfil (toque no seu nome).' : '🏳️ O banner aparece atrás do seu nome no lobby e no seu perfil.') + ' Mais na Loja e no Royale.';
+  B.appendChild(d);
+}
+
 COSM_CAT.e = EMO_CAT; // v128: emotes à venda
 function ownsCosm(it) {
   return it.id === 'none' || PROF.owned.includes(it.id) || (!it.rl && !it.p);
@@ -30333,6 +30857,7 @@ function chuteArt(it) {
 }
 // desenho do item para os cartões
 function cosmPv(cat, it) {
+  if (cat === 'a' || cat === 'b') return avPv(cat, it); // v133
   const st = (cs) => cs.map((x) => '<i style="background:' + hex(x) + '"></i>').join('');
   if (cat === 'c') return '<i class="coin">⭐ ' + it.n + '</i>';
   try {
@@ -30363,6 +30888,13 @@ function rarTag(r) {
 }
 // equipar um item (roupa, skin de arma para todas, paraquedas)
 function equipCosm(cat, id) {
+  if (cat === 'a' || cat === 'b') {
+    if (cat === 'a') PROF.av = id;
+    else PROF.bn = id;
+    saveProf();
+    avLobby();
+    return;
+  }
   if (cat === 'o') {
     PROF.outfit = id;
     PROF.model = fitModel(id);
@@ -30390,7 +30922,7 @@ function dailyDeals() {
   const R = mulberry32([...dayKey()].reduce((a, c) => a * 31 + c.charCodeAt(0), 7) >>> 0),
     pick = (arr) => arr[Math.floor(R() * arr.length)];
   const all = [];
-  ['g', 'p', 'e'].forEach((cat) => COSM_CAT[cat].forEach((it) => it.p && !it.rl && all.push({ cat, it })));
+  ['g', 'p', 'e', 'a', 'b'].forEach((cat) => COSM_CAT[cat].forEach((it) => it.p && !it.rl && all.push({ cat, it })));
   const fresh = all.filter((x) => !ownsCosm(x.it)),
     src = fresh.length >= 3 ? fresh : all,
     offers = [];
@@ -30547,7 +31079,7 @@ function renderShop() {
   }
   const { cat, it, price } = shopSel,
     own = ownsCosm(it),
-    cur = (cat === 'o' && PROF.outfit === it.id) || (cat === 'g' && PROF.gskin === it.id) || (cat === 'p' && PROF.chute === it.id);
+    cur = (cat === 'o' && PROF.outfit === it.id) || (cat === 'g' && PROF.gskin === it.id) || (cat === 'p' && PROF.chute === it.id) || (cat === 'a' && avMeu() === it.id) || (cat === 'b' && bnMeu() === it.id);
   if (cur) {
     a.textContent = '✓ Equipado';
     a.disabled = true;
@@ -30584,7 +31116,7 @@ let rlTab = 'ouro',
   rlBusy = false;
 function rlPool(k) {
   const it = [];
-  ['e', 'g', 'p'].forEach((cat) => COSM_CAT[cat].forEach((x) => x.rl === k && it.push({ t: cat, id: x.id, rar: x.rar, name: x.name, it: x })));
+  ['e', 'g', 'p', 'a', 'b'].forEach((cat) => COSM_CAT[cat].forEach((x) => x.rl === k && it.push({ t: cat, id: x.id, rar: x.rar, name: x.name, it: x })));
   ROYALE[k].coins.forEach((n) => it.push({ t: 'c', n, rar: 'c', name: n + ' moedas', it: { n } }));
   return it;
 }
@@ -30818,7 +31350,7 @@ function closeVault() {
 function vaultCount() {
   let have = 0,
     all = 0;
-  ['o', 'g', 'p'].forEach((cat) =>
+  ['o', 'g', 'p', 'a', 'b'].forEach((cat) =>
     COSM_CAT[cat].forEach((it) => {
       if (it.id === 'none') return;
       all++;
@@ -30833,6 +31365,7 @@ function renderVault() {
   document.querySelectorAll('#vTabs button').forEach((b) => b.classList.toggle('on', b.dataset.v === vTab));
   const B = document.getElementById('vBody');
   B.innerHTML = '';
+  if (vTab === 'a' || vTab === 'b') return avVault(B, vTab); // v133
   const grid = () => {
     const g = document.createElement('div');
     g.className = 'shGrid';
@@ -32693,7 +33226,7 @@ function refreshLobbyHUD() {
   verMark(document.getElementById('lbPName'), VER.me);
   const ri = rankInfo(STATS.rp);
   document.getElementById('lbLvl').textContent = 'Nv. ' + lvl + ' · ' + ri.tier.e + ' ' + ri.name;
-  document.getElementById('lbAv').style.background = '#' + outfitColors(PROF.outfit).shirt.toString(16).padStart(6, '0');
+  avLobby(); // v133: avatar e banner no topo
   updateMisBadge();
   refreshStoreBadges();
   document.getElementById('armNames').textContent =
@@ -33315,9 +33848,12 @@ function fvPerfil(aba) {
   const card = M.appendChild(fvEl('div', 'fvCard'));
   const ri = rankInfo(STATS.rp || 0),
     r4 = starInfo(STATS.st4 || 0);
-  const h = card.appendChild(fvEl('div', 'fvCardH'));
+  const h = card.appendChild(fvEl('div', 'fvCardH avBn'));
+  h.style.backgroundImage = 'linear-gradient(90deg,#000b,#0005 60%,#0002),' + bnUrl(bnMeu()); // v133: banner atrás do nome
   const av = h.appendChild(fvEl('span', 'fvCardAv'));
-  av.textContent = document.getElementById('lbAv') ? document.getElementById('lbAv').firstChild.textContent || '🙂' : '🙂';
+  av.innerHTML = avHTML(avMeu());
+  av.onclick = () => avEscolher('a');
+  h.appendChild(fvEl('button', 'avEdit', '✏️ Avatar e banner')).onclick = () => avEscolher('a');
   av.appendChild(fvEl('i', 'fvLv')).textContent = fvLevel();
   const nm = h.appendChild(fvEl('div', 'fvCardN'));
   const b = nm.appendChild(fvEl('b'));
@@ -37071,7 +37607,7 @@ function amgRender() {
   const linha = (a, extra) => {
     const r = L.appendChild(ctEl('div', 'amgRow' + (a.on ? ' on' : '')));
     const av = r.appendChild(ctEl('span', 'amgAv'));
-    av.textContent = String(a.nome || '?').slice(0, 1).toUpperCase();
+    avPoe(av, a); // v133: avatar do amigo
     const t = r.appendChild(ctEl('div', 'amgTx'));
     const nm = t.appendChild(ctEl('b'));
     nm.textContent = a.nome;
@@ -37373,6 +37909,8 @@ function admItens() {
   const L = [];
   CHAR_DEF.forEach((c) => c.preco && L.push(['ch', c.id, '🧍 ' + c.n]));
   EMO_CAT.forEach((o) => L.push(['e', o.id, '😄 ' + (o.n || o.name || o.id)])); // v132: emotes (roupas saíram na v129)
+  AVATARS.forEach((o) => (o.p || o.rl) && L.push(['a', o.id, '🖼️ ' + o.name])); // v133
+  BANNERS.forEach((o) => (o.p || o.rl) && L.push(['b', o.id, '🏳️ ' + o.name]));
   GSKINS.forEach((o) => o.id !== 'none' && L.push(['g', o.id, '🔫 ' + o.name]));
   CHUTES.forEach((o) => o.id !== 'none' && L.push(['p', o.id, '🪂 ' + o.name]));
   return L;
@@ -37437,7 +37975,7 @@ function admRender() {
     return;
   }
   const card = out.appendChild(ctEl('div', 'amgRow on'));
-  card.appendChild(ctEl('span', 'amgAv')).textContent = String(a.nome).slice(0, 1).toUpperCase();
+  avPoe(card.appendChild(ctEl('span', 'amgAv')), a);
   const tx = card.appendChild(ctEl('div', 'amgTx'));
   const nm = tx.appendChild(ctEl('b'));
   nm.textContent = a.nome;
@@ -38824,7 +39362,7 @@ function gdDentro(box) {
   if (GD.tab === 'membros') {
     g.membros.forEach((m) => {
       const r = L.appendChild(ctEl('div', 'amgRow' + (m.on ? ' on' : '')));
-      r.appendChild(ctEl('span', 'amgAv')).textContent = String(m.nome).slice(0, 1).toUpperCase();
+      avPoe(r.appendChild(ctEl('span', 'amgAv')), m);
       const t = r.appendChild(ctEl('div', 'amgTx'));
       const nm = t.appendChild(ctEl('b'));
       nm.textContent = m.nome + (m.uid === PROF.uid ? ' (você)' : '');
@@ -38893,7 +39431,7 @@ function gdDentro(box) {
     if (!g.pedidos || !g.pedidos.length) L.appendChild(ctEl('p', 'ctInfo', 'Nenhum pedido pra entrar agora.'));
     (g.pedidos || []).forEach((a) => {
       const r = L.appendChild(ctEl('div', 'amgRow'));
-      r.appendChild(ctEl('span', 'amgAv')).textContent = String(a.nome).slice(0, 1).toUpperCase();
+      avPoe(r.appendChild(ctEl('span', 'amgAv')), a);
       const t = r.appendChild(ctEl('div', 'amgTx'));
       t.appendChild(ctEl('b')).textContent = a.nome;
       t.appendChild(ctEl('small')).textContent = 'ID ' + fmtId(a.uid);
