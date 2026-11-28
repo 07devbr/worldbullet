@@ -13629,6 +13629,116 @@ function giftRecebeu(itens) {
   sfx('announce', 0.6);
   setTimeout(() => sfx('coin', 0.8), 250);
 }
+// ---------- Painel do Criador: mandar a mesma coisa para o correio de TODO MUNDO ----------
+async function admCorreioTodos() {
+  const box = socAbre('admCgP', 'adm');
+  box.appendChild(ctEl('div', 'amgTop', '<b>📢 CORREIO PARA TODOS</b>'));
+  box.appendChild(ctEl('p', 'ctInfo', 'Todo jogador que entrar no jogo até o fim do prazo recebe no correio (uma vez só). Quem está online recebe na hora.'));
+  const L = box.appendChild(ctEl('div'));
+  const mostra = (lista) => {
+    L.innerHTML = '';
+    if (!lista.length) L.appendChild(ctEl('p', 'ctInfo', 'Nenhum envio ativo agora.'));
+    lista.forEach((x) => {
+      const r = L.appendChild(ctEl('div', 'amgRow on'));
+      const tx = r.appendChild(ctEl('div', 'amgTx'));
+      tx.appendChild(ctEl('b')).textContent = '📢 ' + x.premio + (x.msg ? ' — “' + x.msg.slice(0, 40) + '”' : '');
+      tx.appendChild(ctEl('small')).textContent = 'entregando por mais ' + socTempo(x.fim - Date.now());
+      const p = r.appendChild(ctEl('button', 'ctBtn sm', 'Parar'));
+      p.onclick = async () => {
+        p.disabled = true;
+        try {
+          mostra((await contaApi('admin', { acao: 'correio_fim', id: x.id })).lista);
+          toast('Parou de entregar (quem já recebeu continua com o presente).');
+        } catch (er) {
+          toast('😕 ' + er.message);
+          p.disabled = false;
+        }
+      };
+    });
+  };
+  try {
+    mostra((await contaApi('admin', { acao: 'correio' })).lista);
+  } catch (e) {
+    L.appendChild(ctEl('p', 'ctErr')).textContent = e.message;
+  }
+  box.appendChild(ctEl('div', 'amgSub', 'NOVO ENVIO'));
+  const G = box.appendChild(ctEl('div', 'admGrid'));
+  const ln = () => G.appendChild(ctEl('div', 'admLine'));
+  const l1 = ln();
+  const it = l1.appendChild(ctEl('select'));
+  [
+    ['msg', '✉️ Só mensagem'],
+    ['moedas', '🪙 Moedas'],
+  ]
+    .concat(admItens().map(([c, id, n]) => [c + ':' + id, n]))
+    .forEach(([v, t]) => {
+      const o = it.appendChild(ctEl('option'));
+      o.value = v;
+      o.textContent = t;
+    });
+  it.value = 'moedas';
+  const qt = l1.appendChild(ctEl('input'));
+  qt.type = 'number';
+  qt.value = 500;
+  const l2 = ln();
+  const msg = l2.appendChild(ctEl('input'));
+  msg.placeholder = 'Mensagem (ex.: Valeu por jogar! 🎄)';
+  msg.maxLength = 200;
+  const l3 = ln();
+  const dur = l3.appendChild(ctEl('select'));
+  [
+    [1, 'Entregar por 1 dia'],
+    [3, 'Entregar por 3 dias'],
+    [7, 'Entregar por 1 semana'],
+    [14, 'Entregar por 2 semanas'],
+    [30, 'Entregar por 30 dias'],
+  ].forEach(([v, t]) => {
+    const o = dur.appendChild(ctEl('option'));
+    o.value = v;
+    o.textContent = t;
+  });
+  dur.value = 7;
+  const mostraQt = () => (qt.style.display = it.value === 'moedas' ? 'block' : 'none');
+  it.onchange = mostraQt;
+  mostraQt();
+  const go = box.appendChild(ctEl('button', 'ctOk', '📢 MANDAR PARA TODOS'));
+  let conf = 0;
+  go.onclick = async () => {
+    if (!conf) {
+      // dois toques: evita mandar sem querer
+      conf = 1;
+      go.textContent = '⚠️ Toque de novo para confirmar';
+      setTimeout(() => {
+        conf = 0;
+        go.textContent = '📢 MANDAR PARA TODOS';
+      }, 3500);
+      return;
+    }
+    go.disabled = true;
+    const b = { acao: 'correio_todos', msg: msg.value, dias: +dur.value };
+    if (it.value === 'msg') b.tipo = 'msg';
+    else if (it.value === 'moedas') {
+      b.tipo = 'moedas';
+      b.n = +qt.value;
+    } else {
+      const [c, id] = it.value.split(':');
+      b.tipo = 'item';
+      b.cat = c;
+      b.id = id;
+      b.nome = it.options[it.selectedIndex].textContent.replace(/^\S+\s/, '');
+    }
+    try {
+      mostra((await contaApi('admin', b)).lista);
+      toast('📢 Enviado! Vai chegando no correio de todo mundo.');
+      msg.value = '';
+    } catch (e) {
+      toast('😕 ' + e.message);
+    }
+    conf = 0;
+    go.textContent = '📢 MANDAR PARA TODOS';
+    go.disabled = false;
+  };
+}
 
 function init() {
   scene = new THREE.Scene();
@@ -37290,6 +37400,7 @@ function admRender() {
   const at = box.appendChild(ctEl('div', 'amgTop', '<b>🛠️ PAINEL DO CRIADOR</b>'));
   at.appendChild(ctEl('button', 'ctBtn sm', '🚩 Denúncias')).onclick = admDenuncias;
   at.appendChild(ctEl('button', 'ctBtn sm', '🎉 Eventos')).onclick = admEventos;
+  at.appendChild(ctEl('button', 'ctBtn sm', '📢 Correio p/ todos')).onclick = admCorreioTodos; // v132
   at.appendChild(ctEl('button', 'ctBtn sm', '💰 Vendas')).onclick = admVendas;
   const f = box.appendChild(ctEl('form', 'amgAdd'));
   const i = f.appendChild(ctEl('input'));

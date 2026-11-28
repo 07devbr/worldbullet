@@ -742,7 +742,7 @@ async function devolveRoupas(r) {
 async function contaDoToken(uid) {
   let r = await DB.get(uid);
   if (!r && !ID6.test(uid)) r = await DB.byOld(uid);
-  return devolveRoupas(r);
+  return entregaGlobais(await devolveRoupas(r)); // v132: correio para todos
 }
 async function quem(b) {
   const uid = leToken(b.token);
@@ -1052,6 +1052,48 @@ async function eventosAtivos(forca) {
   const now = Date.now();
   return EV.list.filter((e) => e && e.fim > now && e.ini <= now);
 }
+// ---------------- CORREIO PARA TODOS (v132) ----------------
+// O Criador manda uma vez; cada jogador recebe no correio quando entra no jogo (até a data de fim).
+// Quem já recebeu fica marcado em "eventos" com 'cg:' na frente (não precisa mudar o banco).
+const CG = { t: 0, list: [] };
+async function correioGlobal(forca) {
+  if (forca || Date.now() - CG.t > 20e3) {
+    try {
+      CG.list = arr(await XB.c.get('correio'));
+    } catch (e) {}
+    CG.t = Date.now();
+  }
+  const now = Date.now();
+  return CG.list.filter((x) => x && x.fim > now && x.ini <= now);
+}
+async function entregaGlobais(r) {
+  if (!r || r.banido) return r;
+  let L;
+  try {
+    L = await correioGlobal();
+  } catch (e) {
+    return r;
+  }
+  if (!L.length || !L.some((x) => !arr(r.eventos).includes('cg:' + x.id))) return r;
+  try {
+    return await filaDm(r.uid, async () => {
+      const a = await DB.get(r.uid); // lê de novo dentro da fila (não entrega duas vezes)
+      if (!a) return r;
+      const ja = arr(a.eventos),
+        nv = L.filter((x) => !ja.includes('cg:' + x.id));
+      if (!nv.length) return a;
+      const caixa = arr(a.caixa)
+        .concat(nv.map((x) => Object.assign({ id: novoId(), de: x.de || 'WorldBullet', t: Date.now() }, x.item)))
+        .slice(-50);
+      const a2 = await DB.update(a.uid, { caixa, eventos: ja.concat(nv.map((x) => 'cg:' + x.id)).slice(-200) });
+      return a2 || Object.assign(a, { caixa });
+    });
+  } catch (e) {
+    console.warn('entregaGlobais', e.message);
+    return r;
+  }
+}
+const cgPub = (x) => ({ id: x.id, ini: x.ini, fim: x.fim, de: x.de, tipo: x.item.tipo, msg: x.item.msg || '', premio: x.item.tipo === 'moedas' ? (x.item.n | 0) + ' moedas' : x.item.tipo === 'item' ? x.item.nome || x.item.item : 'Mensagem' });
 const fatorMoedas = () => (EV.list.some((e) => e && e.tipo === 'moedas2x' && e.fim > Date.now() && e.ini <= Date.now()) ? 2 : 1);
 const evPub = (e) => ({ id: e.id, tipo: e.tipo, nome: e.nome, ini: e.ini, fim: e.fim, premio: e.tipo === 'presente' ? (e.item ? e.item.nome : (e.n | 0) + ' moedas') : null });
 // ---------------- GUILDAS ----------------
@@ -1652,7 +1694,7 @@ const API = {
         nome = limpaTxt(b.nome, 40) || (tipo === 'moedas2x' ? 'Moedas em dobro' : tipo === 'xp2x' ? 'XP em dobro' : 'Presente');
       const e = { id: novoId(), tipo, nome, ini: Date.now(), fim: Date.now() + h * 3600e3 };
       if (tipo === 'presente') {
-        if (b.cat && ['o', 'g', 'p', 'ch'].includes(b.cat) && b.id) e.item = { cat: b.cat, id: limpaTxt(b.id, 40), nome: limpaTxt(b.nomeItem, 40) || 'Item' };
+        if (b.cat && ['g', 'p', 'ch', 'e'].includes(b.cat) && b.id) e.item = { cat: b.cat, id: limpaTxt(b.id, 40), nome: limpaTxt(b.nomeItem, 40) || 'Item' };
         else e.n = Math.max(1, Math.min(1e5, Math.floor(+b.n || 0)));
       }
       await eventosAtivos(true);
@@ -1669,6 +1711,37 @@ const API = {
       EV.t = 0;
       for (const S of porConta.values()) for (const c of S) send(c, { t: 'ev' });
       return { ok: true, eventos: (await eventosAtivos(true)).map(evPub) };
+    }
+    if (b.acao === 'correio') return { lista: (await correioGlobal(true)).map(cgPub) };
+    if (b.acao === 'correio_todos') {
+      const msg = limpaTxt(b.msg, 200),
+        dias = Math.max(1, Math.min(60, Math.floor(+b.dias || 7)));
+      let item;
+      if (b.tipo === 'moedas') {
+        const n = Math.floor(+b.n);
+        if (!(n >= 1 && n <= 1e6)) throw new Erro(400, 'Quantidade de moedas inválida.');
+        item = { tipo: 'moedas', n, msg };
+      } else if (b.tipo === 'item') {
+        const cat = String(b.cat || ''),
+          id = limpaTxt(b.id, 40);
+        if (!['g', 'p', 'ch', 'e'].includes(cat) || !id) throw new Erro(400, 'Item inválido.');
+        item = { tipo: 'item', cat, item: id, nome: limpaTxt(b.nome, 40), msg };
+      } else {
+        if (!msg) throw new Erro(400, 'Escreva a mensagem.');
+        item = { tipo: 'msg', msg };
+      }
+      const x = { id: novoId(), ini: Date.now(), fim: Date.now() + dias * 864e5, de: r.nome, item };
+      await correioGlobal(true);
+      await XB.c.set('correio', CG.list.filter((y) => y && y.fim > Date.now()).concat(x));
+      CG.t = 0;
+      for (const S of porConta.values()) for (const c of S) send(c, { t: 'ct' }); // quem está online recebe na hora
+      return { ok: true, lista: (await correioGlobal(true)).map(cgPub) };
+    }
+    if (b.acao === 'correio_fim') {
+      await correioGlobal(true);
+      await XB.c.set('correio', CG.list.filter((y) => y && y.id !== b.id && y.fim > Date.now()));
+      CG.t = 0;
+      return { ok: true, lista: (await correioGlobal(true)).map(cgPub) };
     }
     const a = await alvo(String(b.uid || '').replace(/\D/g, '')),
       ac = String(b.acao || ''),
