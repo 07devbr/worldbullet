@@ -714,6 +714,7 @@ async function minha(r, full) {
     enviados: en.map(publico),
   };
   o.diamantes = n0(r.diamantes);
+  o.likes = n0((r.stats || {}).likes); // v143
   o.itensPagos = arr(r.itens_pagos);
   o.idade = r.idade || null;
   o.email = mascara(r.email);
@@ -1251,7 +1252,7 @@ const API = {
     b.perfil.uid = r.uid;
     const seg = (Date.now() - (Date.parse(r.visto) || 0)) / 1000,
       cortou = confereStats(r.stats, b.stats, seg, r.uid);
-    await DB.update(r.uid, { perfil: b.perfil, stats: b.stats, nome: limpaNome(b.perfil.name), visto: agora() });
+    await DB.update(r.uid, { perfil: b.perfil, stats: Object.assign({}, b.stats, { likes: n0((r.stats || {}).likes) }), nome: limpaNome(b.perfil.name), visto: agora() });
     return { ok: true, ajuste: cortou.length ? { rp: b.stats.rp, st4: b.stats.st4, coins: b.stats.coins, matches: b.stats.matches, kills: b.stats.kills, wins: b.stats.wins } : null };
   },
   async online(b) {
@@ -1279,8 +1280,25 @@ const API = {
     // v141: ficha pública (perfil): só números do jogo, nada pessoal
     const st = a.stats && typeof a.stats === 'object' ? a.stats : {},
       ficha = {};
-    for (const k of ['kills', 'matches', 'wins', 'best', 'rp', 'st4', 'dmg', 'hs', 'top10']) if (typeof st[k] === 'number' && isFinite(st[k])) ficha[k] = st[k];
+    for (const k of ['kills', 'matches', 'wins', 'best', 'rp', 'st4', 'dmg', 'hs', 'top10', 'likes']) if (typeof st[k] === 'number' && isFinite(st[k])) ficha[k] = st[k];
     return { jogador: Object.assign(publico(a), { ficha, criado: a.criado || null }) };
+  },
+  // v143: curtir o perfil de alguém (1 vez por dia cada um)
+  async curtir(b) {
+    const r = await quem(b);
+    if (estourou('lk:' + r.uid, 30, 60e3)) throw new Erro(429, 'Calma aí, muitas curtidas seguidas.');
+    const a = await alvo(String(b.uid || '').replace(/\D/g, ''));
+    if (a.uid === r.uid) throw new Erro(400, 'Não dá pra curtir o próprio perfil 😅');
+    const dia = new Date(Date.now() - 3 * 3600e3).toISOString().slice(0, 10),
+      chave = 'lk|' + a.uid + '|' + dia,
+      ev = arr(r.eventos);
+    if (ev.includes(chave)) return { ok: false, msg: 'Você já curtiu ' + a.nome + ' hoje. Volte amanhã!', likes: n0((a.stats || {}).likes) };
+    // guarda só as curtidas de hoje (as velhas saem)
+    await DB.update(r.uid, { eventos: ev.filter((x) => !(typeof x === 'string' && x.startsWith('lk|') && !x.endsWith('|' + dia))).concat(chave) });
+    const n = n0((a.stats || {}).likes) + 1;
+    await DB.update(a.uid, { stats: Object.assign({}, a.stats || {}, { likes: n }) });
+    avisa(a.uid, { t: 'ct', like: { nome: r.nome } });
+    return { ok: true, msg: '👍 Você curtiu ' + a.nome + '!', likes: n };
   },
   async amigos(b) {
     const r = await quem(b),

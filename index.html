@@ -10799,6 +10799,67 @@
     width: 104vh;
     height: 104vh;
   }
+  /* v143: ressurgimento e olhinho */
+  #rsBar {
+    position: fixed;
+    left: 50%;
+    bottom: calc(120px + env(safe-area-inset-bottom, 0px));
+    transform: translateX(-50%);
+    z-index: 30;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    max-width: 80vw;
+    background: #0b1a2acc;
+    border: 1px solid #29e0ff88;
+    border-radius: 4px;
+    color: #e6fbff;
+    font: 800 12px var(--ffF, sans-serif);
+    pointer-events: none;
+    text-align: center;
+  }
+  #rsBar.on {
+    display: flex;
+  }
+  #rsBar i {
+    display: block;
+    width: 220px;
+    height: 5px;
+    background: #ffffff22;
+  }
+  #rsBar s {
+    display: block;
+    height: 100%;
+    width: 0;
+    background: linear-gradient(90deg, #29e0ff, #7dffb0);
+  }
+  #olhoN {
+    position: fixed;
+    z-index: 30;
+    display: none;
+    transform: translateX(-50%);
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: #000a;
+    color: #fff;
+    font: 800 12px var(--ffF, sans-serif);
+    pointer-events: none;
+  }
+  #olhoN.on {
+    display: block;
+  }
+  .fvLikes {
+    position: absolute;
+    right: 8px;
+    top: 6px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: #000a;
+    font: 800 12px var(--ffF, sans-serif);
+    color: #fff;
+  }
 </style>
 </head>
 <body>
@@ -10812,7 +10873,7 @@
     <div class="spLoad"><div class="spTip" id="spTip">Preparando a ilha...</div><div class="spBar"><i id="spFill"></i></div><div class="spPct"><span id="spStep">Carregando</span><b id="spPct">0%</b></div></div>
     <div class="spTap" id="spTap"><b>TOQUE PARA JOGAR</b><div class="spWho" id="spWho"></div></div>
     <div class="spGate" id="spGate"></div>
-    <div class="spVer">v142 · Feito no Amapá 🇧🇷</div>
+    <div class="spVer">v143 · Feito no Amapá 🇧🇷</div>
   </div>
 </div>
 <!-- ===== GIRE O CELULAR: o jogo é só deitado ===== -->
@@ -10878,7 +10939,7 @@
 <div id="hudTopGhost"><small>📊 aqui ficam o placar e a zona</small></div><div id="hudEditor"><div class="he-t">🎛️ Personalizar HUD</div><div id="heSel">Toque e arraste um botão para mover</div><div class="he-r"><span>Tamanho</span><input id="heSize" type="range" min="0.6" max="1.6" step="0.05" value="1"><span id="heVal">100%</span></div><div class="he-b"><button id="heFlip" title="Mover esta barra para cima/baixo">⇅</button><button id="heReset">Restaurar</button><button id="heCancel">Cancelar</button><button id="heSave">Salvar</button></div></div>
 
 <!-- ===== ESPECTADOR E FIM DE PARTIDA ===== -->
-<div id="spec" class="box"><button id="specPrev">◀</button><span id="specName">👁</span><button id="specNext">▶</button><button id="specExit">Sair</button></div>
+<div id="spec" class="box"><button id="specPrev">◀</button><span id="specName">👁</span><button id="specNext">▶</button><button id="specDen" onclick="specDenuncia()">🚩</button><button id="specExit">Sair</button></div>
 <div id="specInfo"><div class="siTop"><span class="siEye">👁 ASSISTINDO</span><b id="siName"></b></div><div class="siHp"><i id="siHpF"></i><span id="siHpT"></span></div><div class="siRow"><span id="siGun"></span><span id="siSt"></span><span id="siK"></span></div></div>
 <div id="endPanel"><div id="endBox"><div id="confetti"></div><div id="endTitle"></div><div id="endSub"></div><div id="endStats"></div><div id="rkAnim"></div><div class="endBtns"><button id="endLobby">🏠 Lobby</button><button id="endAgain">▶ Jogar de novo</button></div></div></div>
 
@@ -14257,7 +14318,7 @@ async function admCorreioTodos() {
    - O servidor diz qual é a versão nova; se a sua for velha, aparece "Atualização disponível" no lobby
      (nunca no meio da partida).
    - O Criador pode avisar todo mundo antes de atualizar: "o servidor vai reiniciar em 3 minutos". */
-const WB_VER = 142;
+const WB_VER = 143;
 const VERS = { nova: 0, rein: 0, modalVisto: 0, salvou: 0 };
 function verCheck(v, rein) {
   if (typeof rein === 'number') reinSet(rein);
@@ -14577,6 +14638,7 @@ function jgCard(a) {
     }, 3000);
   };
   bt('👤 Ver perfil', 'y', () => jgPerfil(a));
+  if (!eu) bt('👍 Curtir' + (a.likes ? ' (' + a.likes + ')' : ''), '', (b) => jgCurtir(a, b)); // v143
   if (!eu) {
     if (amigo) {
       bt(jgFav(a.uid) ? '★ Desfavoritar' : '⭐ Favoritar', '', () => {
@@ -14650,6 +14712,7 @@ async function jgPerfil(a) {
     ['💀', 'Abates', String(f.kills || 0)],
     ['🎯', 'K/D', kd.toFixed(2)],
     ['🔥', 'Recorde numa partida', String(f.best || 0)],
+    ['👍', 'Curtidas', String(f.likes || 0)],
     ['📅', 'Conta criada', j.criado ? new Date(j.criado).toLocaleDateString('pt-BR') : '—'],
   ];
   it.forEach(([ic, n, v]) => {
@@ -14740,6 +14803,267 @@ function lunetaMostra(mode) {
     document.getElementById('ads').appendChild(E);
   }
   E.innerHTML = mode === 's2' || mode === 's4' || mode === 's8' ? lunetaSvg(mode) : '';
+}
+
+/* ============ v143: PONTOS DE RESSURGIMENTO, OLHINHO 👁️ e CURTIDAS ============
+   - Torres de ressurgimento espalhadas pelo mapa: alguém do time morreu? Fique 10 s na torre
+     e ele volta caindo do céu de paraquedas (bots do seu time e amigos online).
+   - 👁️ N perto do mapa: quantas pessoas estão te assistindo agora.
+   - 👍 Curtir no cartão do jogador. */
+const RS = { torres: [], mortos: [], prog: 0, rsN: 0, rsX: 0, rsZ: 0, vv: 0, visto: {}, uiT: 0 };
+const RS_T = 10; // segundos parado na torre
+function rsAtivo() {
+  return inMatch && !inLobby && sqOn() && !TM && !TR && sqSize() > 1;
+}
+// monta as torres no começo da partida (perto dos lugares com nome do mapa, em chão livre)
+function rsInit() {
+  RS.torres.forEach((t) => t.g.parent && t.g.parent.remove(t.g));
+  RS.torres = [];
+  RS.mortos = [];
+  RS.prog = 0;
+  RS.visto = {};
+  if (!rsAtivo()) return;
+  const P = POIS.slice().sort((a, b) => a.x - b.x || a.z - b.z),
+    passo = Math.max(1, Math.floor(P.length / 6));
+  for (let i = 0; i < P.length && RS.torres.length < 6; i += passo) {
+    const c = P[i];
+    for (let k = 0; k < 24; k++) {
+      const a = k * 2.4,
+        rr = 10 + k * 1.2,
+        x = c.x + Math.cos(a) * rr,
+        z = c.z + Math.sin(a) * rr;
+      if (Math.abs(x) > MAPH - 15 || Math.abs(z) > MAPH - 15) continue;
+      if (carBlocked(x, z, 2.2) || groundAt(x, z, 100) - heightAt(x, z) > 0.3) continue;
+      if (typeof waterAt === 'function' && waterAt(x, z)) continue;
+      RS.torres.push(rsTorre(x, z));
+      break;
+    }
+  }
+}
+function rsTorre(x, z) {
+  const g = new THREE.Group(),
+    y = heightAt(x, z),
+    m = (c, e) => new THREE.MeshLambertMaterial({ color: c, emissive: e || 0 });
+  const base = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.3, 1.4), m(0x2b3345));
+  base.position.y = 0.15;
+  const col = new THREE.Mesh(new THREE.BoxGeometry(0.8, 2.1, 0.55), m(0xe8eef6));
+  col.position.y = 1.35;
+  const tela = new THREE.Mesh(new THREE.PlaneGeometry(0.6, 0.7), new THREE.MeshBasicMaterial({ color: 0x29e0ff }));
+  tela.position.set(0, 1.7, 0.28);
+  const tela2 = tela.clone();
+  tela2.position.z = -0.28;
+  tela2.rotation.y = Math.PI;
+  const topo = new THREE.Mesh(new THREE.SphereGeometry(0.22, 12, 8), new THREE.MeshBasicMaterial({ color: 0x29e0ff }));
+  topo.position.y = 2.65;
+  const anel = new THREE.Mesh(new THREE.RingGeometry(3.0, 3.25, 40), new THREE.MeshBasicMaterial({ color: 0x29e0ff, transparent: true, opacity: 0.55, side: THREE.DoubleSide, depthWrite: false }));
+  anel.rotation.x = -Math.PI / 2;
+  anel.position.y = 0.06;
+  // facho de luz pro alto (dá pra ver de longe quando tem alguém do time morto)
+  const facho = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.35, 120, 10, 1, true), new THREE.MeshBasicMaterial({ color: 0x29e0ff, transparent: true, opacity: 0.22, depthWrite: false, fog: false, blending: THREE.AdditiveBlending }));
+  facho.position.y = 62;
+  [base, col, tela, tela2, topo, anel, facho].forEach((o) => {
+    o.raycast = () => {};
+    g.add(o);
+  });
+  col.castShadow = true;
+  g.position.set(x, y, z);
+  scene.add(g);
+  circles.push({ x, z, r: 0.55 }); // não atravessa a torre
+  return { g, x, z, anel, facho, topo, usada: false };
+}
+// bot do seu time morreu: guarda pra poder trazer de volta
+function rsMorreu(b) {
+  if (b && b.team === 0 && !b.puppet && !NET.mid && rsAtivo()) RS.mortos.push({ name: b.name });
+}
+// quem do time pode voltar agora
+function rsMortosAgora() {
+  let n = RS.mortos.length;
+  if (NET.mid && NET.pres)
+    for (const k in NET.pres) {
+      const p = NET.pres[k];
+      if (p && p.m === NET.mid && p.st === 'dead' && p.u !== PROF.uid) n++;
+    }
+  return n;
+}
+function rsUI(txt, k) {
+  let e = document.getElementById('rsBar');
+  if (!e) {
+    e = document.createElement('div');
+    e.id = 'rsBar';
+    e.innerHTML = '<b></b><i><s></s></i>';
+    document.body.appendChild(e);
+  }
+  if (!txt) return e.classList.remove('on');
+  e.querySelector('b').textContent = txt;
+  e.querySelector('s').style.width = Math.round((k || 0) * 100) + '%';
+  e.classList.add('on');
+}
+// todo quadro
+function rsTick(dt) {
+  if (!RS.torres.length) return rsUI('');
+  const mortos = rsMortosAgora(),
+    t = performance.now() / 1000;
+  for (const T of RS.torres) {
+    const on = !T.usada && mortos > 0;
+    T.facho.visible = on;
+    T.anel.material.opacity = T.usada ? 0.12 : 0.35 + 0.25 * Math.sin(t * 3);
+    T.topo.material.color.setHex(T.usada ? 0x555b66 : 0x29e0ff);
+  }
+  if (dead || phase !== 'ground' || driving || knock || matchOver || !mortos) {
+    RS.prog = 0;
+    return rsUI('');
+  }
+  const P = player.position,
+    T = RS.torres.find((o) => !o.usada && Math.hypot(o.x - P.x, o.z - P.z) < 3.2);
+  if (!T) {
+    RS.prog = 0;
+    // dica: onde fica a torre livre mais perto (com setinha pra onde ir)
+    let best = null,
+      bd = 1e9;
+    for (const o of RS.torres)
+      if (!o.usada) {
+        const d = Math.hypot(o.x - P.x, o.z - P.z);
+        if (d < bd) {
+          bd = d;
+          best = o;
+        }
+      }
+    if (!best) return rsUI('');
+    const ang = Math.atan2(best.x - P.x, best.z - P.z) - (camYaw + Math.PI),
+      seta = ['⬆️', '↖️', '⬅️', '↙️', '⬇️', '↘️', '➡️', '↗️'][((Math.round(ang / (Math.PI / 4)) % 8) + 8) % 8];
+    return rsUI('🛰️ ' + (mortos > 1 ? mortos + ' do time caídos' : '1 do time caído') + ' · torre de ressurgimento a ' + Math.round(bd) + ' m ' + seta, 0);
+  }
+  RS.prog += dt;
+  rsUI('🛰️ Ressurgindo seu time... fique na torre ' + Math.max(0, Math.ceil(RS_T - RS.prog)) + ' s', RS.prog / RS_T);
+  if (RS.prog < RS_T) return;
+  // pronto: o time volta caindo do céu
+  RS.prog = 0;
+  T.usada = true;
+  sfx('announce', 0.9);
+  vib(60);
+  toast('🛰️ Seu time está voltando! Eles caem de paraquedas aqui perto.');
+  for (const m of RS.mortos.splice(0)) rsBotVolta(m.name, T.x, T.z);
+  if (NET.mid) {
+    RS.rsN++;
+    RS.rsX = Math.round(T.x);
+    RS.rsZ = Math.round(T.z);
+    NET.dirty = true;
+  }
+  updateAlive();
+}
+// bot do time volta caindo de paraquedas
+function rsBotVolta(name, x, z) {
+  const b = spawnBot({ team: 0, w: 'pt1', name });
+  const g = b.group,
+    tx = x + rnd(-6, 6),
+    tz = z + rnd(-6, 6);
+  b.drop = { state: 'free', tx, tz, vx: 0, vz: 0, vy: -6, open: false, t: 0, openAt: 45, ch: null, dive: false, jumpS: 0 };
+  g.position.set(tx, heightAt(tx, tz) + 80 + rnd(0, 10), tz);
+  g.visible = true;
+  g.rotation.order = 'YXZ';
+  setPose(g, 'free');
+  g.rotation.x = 1.35;
+}
+// você estava morto e um amigo te trouxe de volta (online)
+function rsVoltar(x, z, quem) {
+  if (!dead || matchOver || !inMatch || inLobby) return;
+  dead = false;
+  knock = null;
+  hp = typeof MAX_HP === 'number' ? MAX_HP : 200;
+  lastHurt = clock.elapsedTime;
+  spec.on = false;
+  spec.target = null;
+  document.body.classList.remove('spec');
+  const se = document.getElementById('spec');
+  if (se) se.style.display = 'none';
+  RS.vv++;
+  loadout.w1 = 'pt1';
+  loadout.w2 = null;
+  ammo.pt1 = WEAPONS.pt1.mag;
+  slot = 1;
+  curId = 'pt1';
+  holstered = false;
+  const tx = x + rnd(-5, 5),
+    tz = z + rnd(-5, 5);
+  player.visible = true;
+  player.position.set(tx, heightAt(tx, tz) + 85, tz);
+  vel.set(0, -6, 0);
+  phase = 'free';
+  chuteT = 0;
+  flightRX = 1.35;
+  player.rotation.order = 'YXZ';
+  player.rotation.y = camYaw + Math.PI;
+  setPose(player, 'free');
+  try {
+    sfxLoop('wind', true);
+  } catch (e) {}
+  setPhaseUI();
+  updateHP();
+  updateAmmo();
+  updateAlive();
+  NET.dirty = true;
+  sfx('announce', 0.9);
+  toast('🛰️ ' + (quem || 'Seu time') + ' te trouxe de volta! Abra o paraquedas.');
+}
+// presença dos outros: sinal de ressurgimento e quem me assiste
+function rsPresenca(peer, pr) {
+  if (!pr) return;
+  const n = pr.rsg && typeof pr.rsg.n === 'number' ? pr.rsg.n : 0;
+  if (RS.visto[peer] === undefined) RS.visto[peer] = n; // primeira vez que vejo: não conta o que já passou
+  else if (n > RS.visto[peer]) {
+    RS.visto[peer] = n;
+    if (dead && rsAtivo()) rsVoltar(+pr.rsg.x || 0, +pr.rsg.z || 0, netName(pr.n));
+  }
+}
+// 👁️ quantos estão me assistindo (perto do minimapa)
+function olhoTick() {
+  const agora = performance.now();
+  if (agora - RS.uiT < 1000) return;
+  RS.uiT = agora;
+  let n = 0;
+  if (NET.mid && NET.pres && inMatch)
+    for (const k in NET.pres) {
+      const p = NET.pres[k];
+      if (p && p.w && p.w === PROF.uid && (p.st === 'spec' || p.st === 'dead')) n++;
+    }
+  let e = document.getElementById('olhoN');
+  if (!e) {
+    e = document.createElement('div');
+    e.id = 'olhoN';
+    document.body.appendChild(e);
+  }
+  if (!n || dead) return e.classList.remove('on');
+  const mm = document.getElementById('minimap'),
+    r = mm && mm.getBoundingClientRect();
+  if (r && r.width) {
+    e.style.left = Math.round(r.left + r.width / 2) + 'px';
+    e.style.top = Math.round(r.bottom + 4) + 'px';
+  }
+  e.textContent = '👁️ ' + n;
+  e.classList.add('on');
+}
+// ---------- 👍 curtir ----------
+async function jgCurtir(a, b) {
+  if (b) b.disabled = true;
+  try {
+    const j = await contaApi('curtir', { uid: a.uid });
+    toast(j.msg || '👍');
+    if (j.ok) sfx('coin', 0.6);
+    a.likes = j.likes;
+    if (b) b.textContent = '👍 ' + j.likes;
+  } catch (e) {
+    toast('😕 ' + e.message);
+    if (b) b.disabled = false;
+  }
+}
+// ---------- 🚩 denunciar quem você está assistindo ----------
+function specDenuncia() {
+  const T = spec.target;
+  if (!T) return toast('Escolha alguém pra assistir primeiro.');
+  const pr = T.net && NET.pres ? NET.pres[T.net] : null;
+  if (pr && pr.u) return denAbre(pr.u, T.name || netName(pr.n));
+  // bot (não tem conta): só agradece
+  toast('🚩 Denúncia de ' + (T.name || 'jogador') + ' recebida. Valeu por ajudar a manter o jogo limpo!');
 }
 
 function init() {
@@ -15287,6 +15611,10 @@ function animate() {
   sun.position.set(P.x + 30, 50, P.z + 20);
   sun.target.position.set(P.x, 0, P.z);
   leveTick(); // v131: esconde loot/carro longe e marca o que pode pular a conta
+  if (inMatch) {
+    rsTick(Math.min(0.1, ldt || 0.016)); // v143
+    olhoTick();
+  }
   mxfTick(); // personagens completos: copia a pose para o esqueleto inteiro
   if (FT.q.length) fitThumbTick(); // foto da roupa (antes de desenhar a tela)
   renderer.render(scene, camera);
@@ -28963,6 +29291,7 @@ function damageBot(t, dmg, by) {
 }
 
 function killBot(b, by) {
+  rsMorreu(b); // v143
   if (b.mtag) b.mtag.visible = false; // companheiro morreu: some a plaquinha
   if (TR && (b.dummy || b.duel)) return trKilled(b);
   if (by && typeof by === 'object' && by !== player && by.group) by.kc = (by.kc || 0) + 1;
@@ -30762,6 +31091,7 @@ function startMatch() {
   });
 }
 function startMatchNow() {
+  setTimeout(rsInit, 0); // v143: torres de ressurgimento desta partida
   lobMatesClear(); // os amigos do palco somem (vocês vão para a partida)
   if (!inLobby) return;
   inLobby = false;
@@ -34725,6 +35055,7 @@ function fvPerfil(aba) {
   av.innerHTML = avHTML(avMeu());
   av.onclick = () => avEscolher('a');
   h.appendChild(fvEl('button', 'avEdit', '✏️ Avatar e banner')).onclick = () => avEscolher('a');
+  h.appendChild(fvEl('span', 'fvLikes', '👍 ' + ((CONTA.d && CONTA.d.likes) || 0))); // v143: suas curtidas
   av.appendChild(fvEl('i', 'fvLv')).textContent = fvLevel();
   const nm = h.appendChild(fvEl('div', 'fvCardN'));
   const b = nm.appendChild(fvEl('b'));
@@ -38149,6 +38480,7 @@ function contaMsg(m) {
       sfx('announce', 0.4);
     }
     if (m.aceito) toast('🤝 ' + m.aceito.nome + ' aceitou seu pedido de amizade!');
+    if (m.like) toast('👍 ' + m.like.nome + ' curtiu seu perfil!'); // v143
     if (m.dm && m.dm.n) {
       toast('💎 +' + m.dm.n + ' diamantes na sua conta!');
       sfx('coin', 0.8);
@@ -41675,6 +42007,9 @@ function netRecvNades(peer, pr) {
   NET.gseen[peer] = top;
 }
 function netApplyPlayer(peer, pr) {
+  rsPresenca(peer, pr); // v143
+  // v143: ele morreu e voltou pela torre: aparece de novo
+  if (pr.st === 'play' && NET.deadP.has(peer) && (pr.vv || 0) > ((NET.deadV || {})[peer] || 0)) NET.deadP.delete(peer);
   const b0 = netAvatar(peer);
   if (pr.st === 'spec') {
     if (b0) netRemove(b0, undefined, '', true); // espectador não aparece
@@ -41692,6 +42027,7 @@ function netApplyPlayer(peer, pr) {
   if (pr.st === 'dead') {
     if (NET.deadP.has(peer)) return;
     NET.deadP.add(peer);
+    (NET.deadV || (NET.deadV = {}))[peer] = pr.vv || 0; // v143
     const kd = Array.isArray(pr.kd) ? pr.kd : [],
       kid = typeof kd[0] === 'string' ? kd[0] : '',
       w = typeof kd[1] === 'string' ? kd[1] : '';
@@ -41784,6 +42120,10 @@ function netBuild() {
     P = player.position;
   o.st = dead ? 'dead' : 'play';
   o.m = NET.mid;
+  // v143: morto assistindo um amigo (pro olhinho dele), sinal de ressurgimento e quantas vezes voltei
+  if (dead && spec.on && spec.target && spec.target.net && NET.pres[spec.target.net]) o.w = NET.pres[spec.target.net].u;
+  if (RS.rsN) o.rsg = { n: RS.rsN, x: RS.rsX, z: RS.rsZ };
+  if (RS.vv) o.vv = RS.vv;
   if (NET.obs && NET.obs.on) {
     o.st = 'spec'; // só assistindo: ninguém vê nem conta
     // quem estou assistindo (pro olhinho dele contar)
