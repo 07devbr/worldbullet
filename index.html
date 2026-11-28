@@ -10039,6 +10039,226 @@
       box-shadow: 0 0 14px #ffd54a;
     }
   }
+  /* v132: anexo do presente no correio */
+  .fvAnexo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 10px 0;
+    padding: 8px 10px;
+    background: #0000000f;
+    border: 1px dashed #b9a679;
+    border-radius: 6px;
+  }
+  .fvAnexo.ok {
+    opacity: 0.8;
+  }
+  .fvAnexoT {
+    width: 100%;
+    font: 900 italic 11px var(--ffF, sans-serif);
+    letter-spacing: 1px;
+    color: #7a6a45;
+  }
+  .fvAnexo .fvColeta {
+    min-width: 120px;
+    height: 36px;
+  }
+  .fvColetado {
+    font-weight: 800;
+    color: #2e7d32 !important;
+  }
+  .fvMailI.feito {
+    opacity: 0.6;
+  }
+  /* cartão do item (correio e tela de recompensa) */
+  .rwCard {
+    --c1: #4a505b;
+    --c2: #262a31;
+    width: 116px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    text-align: center;
+  }
+  .rwCard.rar-r {
+    --c1: #2f7fd8;
+    --c2: #152a4a;
+  }
+  .rwCard.rar-e {
+    --c1: #9c4dff;
+    --c2: #2a1450;
+  }
+  .rwCard.rar-l {
+    --c1: #ffcc33;
+    --c2: #7a3500;
+  }
+  .rwArt {
+    position: relative;
+    width: 108px;
+    height: 108px;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at 50% 40%, var(--c1), var(--c2));
+    border: 2px solid var(--c1);
+    box-shadow: 0 0 14px var(--c1), inset 0 0 18px #0007;
+  }
+  .rwArt svg,
+  .rwArt .pv {
+    width: 100%;
+    height: 100%;
+  }
+  .rwImg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .rwEmo {
+    font-size: 54px;
+    filter: drop-shadow(0 3px 4px #0009);
+  }
+  .rwQtd {
+    position: absolute;
+    right: 4px;
+    bottom: 2px;
+    font: 900 italic 14px var(--ffF, sans-serif);
+    color: #fff;
+    text-shadow: 0 1px 3px #000;
+    font-style: normal;
+  }
+  .rwNome {
+    font: 900 13px var(--ffF, sans-serif);
+    line-height: 1.1;
+  }
+  .rwRar {
+    font: 800 10px var(--ffF, sans-serif);
+    color: var(--c1) !important;
+    text-transform: uppercase;
+    filter: brightness(0.8);
+  }
+  .rwCard.mini {
+    width: 92px;
+  }
+  .rwCard.mini .rwArt {
+    width: 84px;
+    height: 84px;
+  }
+  .rwCard.mini .rwEmo {
+    font-size: 40px;
+  }
+  /* tela VOCÊ RECEBEU */
+  #rwP {
+    position: fixed;
+    inset: 0;
+    z-index: 9500;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at 50% 45%, #1d2a4acc, #050811f2 70%);
+  }
+  #rwP.open {
+    display: flex;
+    animation: rwFade 0.25s ease-out;
+  }
+  .rwRaios {
+    position: absolute;
+    left: 50%;
+    top: 46%;
+    width: 160vmax;
+    height: 160vmax;
+    margin: -80vmax 0 0 -80vmax;
+    background: repeating-conic-gradient(#ffd54a22 0 6deg, #0000 6deg 18deg);
+    mask: radial-gradient(circle, #000 0, #0000 45%);
+    -webkit-mask: radial-gradient(circle, #000 0, #0000 45%);
+    animation: rwGira 18s linear infinite;
+    pointer-events: none;
+  }
+  .rwBox {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    max-width: 96vw;
+  }
+  .rwTit {
+    font: 900 italic 40px var(--ffF, sans-serif);
+    color: #ffd54a;
+    letter-spacing: 2px;
+    text-shadow: 0 3px 0 #a15c00, 0 0 24px #ffb30088;
+    animation: rwPop 0.45s cubic-bezier(0.2, 1.6, 0.4, 1);
+  }
+  .rwSub {
+    font: 800 13px var(--ffF, sans-serif);
+    letter-spacing: 4px;
+    color: #cfd8ff;
+    margin-bottom: 8px;
+  }
+  .rwRow {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    flex-wrap: wrap;
+    max-height: 52vh;
+    overflow: auto;
+    padding: 6px;
+  }
+  .rwRow .rwCard {
+    color: #fff;
+    opacity: 0;
+    animation: rwCard 0.5s cubic-bezier(0.2, 1.5, 0.4, 1) forwards;
+  }
+  .rwBtns {
+    display: flex;
+    gap: 12px;
+    margin-top: 14px;
+  }
+  .rwB {
+    min-width: 130px;
+    height: 42px;
+    border: 0;
+    border-radius: 4px;
+    font: 900 italic 16px var(--ffF, sans-serif);
+    color: #fff;
+    background: linear-gradient(180deg, #3b4256, #232838);
+    box-shadow: 0 3px 0 #0008;
+    clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+    cursor: pointer;
+  }
+  .rwB.y {
+    color: #2b1a00;
+    background: linear-gradient(180deg, #ffe066, #ffb300);
+  }
+  @keyframes rwFade {
+    from {
+      opacity: 0;
+    }
+  }
+  @keyframes rwGira {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes rwPop {
+    from {
+      transform: scale(0.3);
+      opacity: 0;
+    }
+  }
+  @keyframes rwCard {
+    from {
+      transform: translateY(30px) scale(0.6);
+      opacity: 0;
+    }
+    to {
+      transform: none;
+      opacity: 1;
+    }
+  }
 </style>
 </head>
 <body>
@@ -10052,7 +10272,7 @@
     <div class="spLoad"><div class="spTip" id="spTip">Preparando a ilha...</div><div class="spBar"><i id="spFill"></i></div><div class="spPct"><span id="spStep">Carregando</span><b id="spPct">0%</b></div></div>
     <div class="spTap" id="spTap"><b>TOQUE PARA JOGAR</b><div class="spWho" id="spWho"></div></div>
     <div class="spGate" id="spGate"></div>
-    <div class="spVer">v131 · Feito no Amapá 🇧🇷</div>
+    <div class="spVer">v132 · Feito no Amapá 🇧🇷</div>
   </div>
 </div>
 <!-- ===== GIRE O CELULAR: o jogo é só deitado ===== -->
@@ -13166,37 +13386,6 @@ function giftAbreCorreio() {
   if (c) c.classList.remove('open');
   fvCorreio('aviso');
 }
-async function giftColeta(btn) {
-  const cx = (CONTA.d && CONTA.d.caixa) || [];
-  if (!cx.length) return;
-  if (btn) btn.disabled = true;
-  try {
-    const j = await contaApi('resgatar', { id: '*' });
-    let n = 0;
-    j.itens.forEach((g) => (n += giftAplica(g)));
-    saveProf();
-    saveStats();
-    contaSalvaJa();
-    CONTA.d.caixa = [];
-    toast('🎉 Presentes coletados!' + (n ? ' (+' + n + ' moedas)' : ''));
-    sfx('coin', 0.8);
-    try {
-      refreshLobbyHUD();
-      renderLobby();
-    } catch (e) {}
-    try {
-      contaRender();
-    } catch (e) {}
-    const P = document.getElementById('fvMailP');
-    if (P && P.classList.contains('open')) fvCorreio('aviso');
-    try {
-      fvTick();
-    } catch (e) {}
-  } catch (e) {
-    toast('😕 ' + e.message);
-    if (btn) btn.disabled = false;
-  }
-}
 // ---------- colisão do carro: grade do mapa (antes testava as ~2 mil paredes/árvores a cada chamada) ----------
 const CBG = { S: 24, m: new Map(), c: null, b: null, p: null, nc: -1, nb: -1, np: -1, lc: null, lb: null, lp: null, vazio: { c: [], b: [], p: [] } };
 function cbGrid() {
@@ -13282,6 +13471,164 @@ function leveCongela() {
   LV.congelados = n;
 }
 const LV = { congelados: 0 };
+
+/* ============ v132: presentes do jeito do Free Fire ============
+   - no correio aparece a FOTO do item que veio no presente
+   - depois de coletar, a mensagem fica lá (marcada como coletada)
+   - ao coletar abre a tela "VOCÊ RECEBEU" com o item, EQUIPAR e OK */
+function giftHistKey() {
+  return 'wb_presentes_' + ((CONTA.d && CONTA.d.uid) || 'sem');
+}
+function giftHist() {
+  try {
+    const L = JSON.parse(localStorage.getItem(giftHistKey()) || '[]');
+    return Array.isArray(L) ? L.filter((h) => h && h.g) : [];
+  } catch (e) {
+    return [];
+  }
+}
+function giftHistAdd(itens) {
+  const L = giftHist(),
+    ids = new Set(L.map((h) => h.g.id));
+  itens.forEach((g) => {
+    if (g && !ids.has(g.id)) L.unshift({ g, t: Date.now() });
+  });
+  try {
+    localStorage.setItem(giftHistKey(), JSON.stringify(L.slice(0, 40)));
+  } catch (e) {}
+}
+// o que é o item (nome, desenho, raridade, se dá para equipar)
+function giftInfo(g) {
+  const I = { nome: 'Presente', art: '<b class="rwEmo">🎁</b>', rar: 'r', qtd: '', eq: null };
+  if (!g) return I;
+  if (g.tipo === 'moedas') return Object.assign(I, { nome: (g.n | 0).toLocaleString('pt-BR') + ' moedas', art: '<b class="rwEmo">⭐</b>', rar: 'l', qtd: 'x' + (g.n | 0).toLocaleString('pt-BR') });
+  if (g.tipo === 'vf') return Object.assign(I, { nome: 'Selo verificado', art: '<b class="rwEmo">💙</b>', rar: 'e' });
+  if (g.tipo === 'acesso') return Object.assign(I, { nome: 'Acesso: ' + g.tag, art: '<b class="rwEmo">🔑</b>', rar: 'e' });
+  if (g.tipo === 'msg') return Object.assign(I, { nome: 'Mensagem', art: '<b class="rwEmo">✉️</b>', rar: 'c' });
+  if (g.tipo === 'item') {
+    if (g.cat === 'ch') {
+      const C = typeof CHAR_BY === 'object' ? CHAR_BY[g.item] : null,
+        im = typeof MX_THUMB === 'object' && MX_THUMB[g.item];
+      return Object.assign(I, { nome: (C && C.n) || g.nome || 'Personagem', art: im ? '<img class="rwImg" src="' + im + '">' : '<b class="rwEmo">' + ((C && C.ic) || '🧍') + '</b>', rar: 'l', eq: C ? 'ch' : null });
+    }
+    const it = cosmFind(g.cat, g.item);
+    let art = '';
+    try {
+      art = it ? cosmPv(g.cat, it) : '';
+    } catch (e) {}
+    return Object.assign(I, {
+      nome: (it && (it.n || it.name)) || g.nome || g.item,
+      art: art || '<b class="rwEmo">' + ({ e: '😄', g: '🔫', p: '🪂', o: '👕' }[g.cat] || '🎁') + '</b>',
+      rar: (it && it.rar) || 'e',
+      eq: it && (g.cat === 'g' || g.cat === 'p') ? g.cat : it && g.cat === 'e' ? 'e' : null,
+    });
+  }
+  return I;
+}
+function giftNome(g) {
+  return giftInfo(g).nome;
+}
+const RAR_NOME = { c: 'Comum', r: 'Raro', e: 'Épico', l: 'Lendário' };
+function giftCard(g, modo) {
+  const I = giftInfo(g),
+    d = document.createElement('div');
+  d.className = 'rwCard rar-' + I.rar + (modo ? ' ' + modo : '');
+  d.innerHTML = '<div class="rwArt">' + I.art + (I.qtd ? '<i class="rwQtd">' + I.qtd + '</i>' : '') + '</div><b class="rwNome"></b><small class="rwRar">' + (RAR_NOME[I.rar] || '') + '</small>';
+  d.querySelector('.rwNome').textContent = I.nome;
+  return d;
+}
+// coleta um presente (id) ou todos (sem id)
+async function giftColeta(btn, id) {
+  const cx = (CONTA.d && CONTA.d.caixa) || [];
+  if (!cx.length) return;
+  if (btn) btn.disabled = true;
+  try {
+    const j = await contaApi('resgatar', { id: id || '*' });
+    const itens = (j && j.itens) || [];
+    let n = 0;
+    itens.forEach((g) => (n += giftAplica(g)));
+    saveProf();
+    saveStats();
+    contaSalvaJa();
+    const pegos = new Set(itens.map((g) => g.id));
+    CONTA.d.caixa = id ? cx.filter((g) => g.id !== id && !pegos.has(g.id)) : [];
+    giftHistAdd(itens.length ? itens : cx.filter((g) => !id || g.id === id));
+    itens.forEach((g) => fvMarca('gc' + g.id));
+    try {
+      refreshLobbyHUD();
+      renderLobby();
+    } catch (e) {}
+    try {
+      contaRender();
+    } catch (e) {}
+    const P = document.getElementById('fvMailP');
+    if (P && P.classList.contains('open')) fvCorreio('aviso', id ? 'gc' + id : undefined);
+    try {
+      fvTick();
+    } catch (e) {}
+    giftRecebeu(itens.filter((g) => g.tipo !== 'msg'));
+  } catch (e) {
+    toast('😕 ' + e.message);
+    if (btn) btn.disabled = false;
+  }
+}
+// tela "VOCÊ RECEBEU"
+function giftRecebeu(itens) {
+  if (!itens.length) return toast('✅ Coletado!');
+  let P = document.getElementById('rwP');
+  if (!P) {
+    P = document.createElement('div');
+    P.id = 'rwP';
+    document.body.appendChild(P);
+  }
+  P.innerHTML = '<div class="rwRaios"></div><div class="rwBox"><div class="rwTit">PARABÉNS!</div><div class="rwSub">VOCÊ RECEBEU</div><div class="rwRow"></div><div class="rwBtns"></div></div>';
+  const row = P.querySelector('.rwRow');
+  itens.forEach((g, i) => {
+    const c = row.appendChild(giftCard(g));
+    c.style.animationDelay = 0.15 + i * 0.12 + 's';
+  });
+  const bt = P.querySelector('.rwBtns'),
+    fecha = () => P.classList.remove('open');
+  // um item só que dá para usar: botão EQUIPAR
+  const eqs = itens.map((g) => [g, giftInfo(g).eq]).filter((x) => x[1]);
+  if (itens.length === 1 && eqs.length === 1) {
+    const [g, k] = eqs[0];
+    const b = bt.appendChild(document.createElement('button'));
+    b.className = 'rwB y';
+    b.textContent = k === 'e' ? 'FAZER EMOTE' : 'EQUIPAR';
+    b.onclick = () => {
+      fecha();
+      try {
+        if (k === 'ch') {
+          PROF.ch = g.item;
+          PROF.model = 'recruta';
+          saveProf();
+          makePlayer();
+          refreshLobbyHUD();
+        } else if (k === 'e') {
+          const M = document.getElementById('fvMailP');
+          if (M) fvFecha(M);
+          if (inLobby) playEmote(g.item);
+        } else equipCosm(k, g.item);
+        if (k !== 'e') toast('✅ Equipado: ' + giftNome(g));
+      } catch (e) {
+        toast('😕 Não deu pra equipar agora.');
+      }
+    };
+  }
+  const ok = bt.appendChild(document.createElement('button'));
+  ok.className = 'rwB';
+  ok.textContent = 'OK';
+  ok.onclick = fecha;
+  P.onclick = (e) => {
+    if (e.target === P) fecha();
+  };
+  P.classList.remove('open');
+  void P.offsetWidth;
+  P.classList.add('open');
+  sfx('announce', 0.6);
+  setTimeout(() => sfx('coin', 0.8), 250);
+}
 
 function init() {
   scene = new THREE.Scene();
@@ -32962,12 +33309,14 @@ function fvMarca(id) {
 function fvMails() {
   const L = [];
   const cx = (CONTA.d && CONTA.d.caixa) || [];
-  cx.forEach((g, i) => L.push({ id: 'g' + (g.id || i), t: 'aviso', ic: '🎁', tit: 'Presente: ' + giftTxt(g), de: g.de || 'WorldBullet', txt: (g.msg ? '“' + g.msg + '”\n\n' : '') + 'Você recebeu um presente! Toque em COLETAR para guardar.', gift: g }));
+  // v132: presente chega com a foto do item; depois de coletar ele CONTINUA no correio (marcado como coletado)
+  cx.forEach((g, i) => L.push({ id: 'g' + (g.id || i), t: 'aviso', ic: '🎁', tit: 'Presente: ' + giftNome(g), de: g.de || 'WorldBullet', txt: g.msg ? '“' + g.msg + '”' : 'Você recebeu um presente!', gift: g, pend: true }));
+  giftHist().forEach((h) => L.push({ id: 'gc' + h.g.id, t: 'aviso', ic: '✅', tit: 'Presente: ' + giftNome(h.g), de: h.g.de || 'WorldBullet', txt: h.g.msg ? '“' + h.g.msg + '”' : 'Presente coletado.', gift: h.g, pend: false, quando: h.t }));
   EVT.list
     .filter((e) => e.fim > Date.now() + EVT.delta)
     .forEach((e) => L.push({ id: 'e' + e.id, t: 'aviso', ic: '🎉', tit: e.nome, de: 'Eventos', txt: 'Evento ativo! Acaba em ' + fvTempo(e.fim - Date.now() - EVT.delta) + '.' }));
   L.push({ id: 's-t' + fvTemporadaN(), t: 'sistema', ic: '🏆', tit: 'Temporada ' + fvTemporadaN() + ' começou!', de: 'Equipe WorldBullet', txt: 'Nova temporada do ranqueado. Ela acaba em ' + fvTempo(fvFimTemp() - Date.now()) + '. Suba de patente no BR e no 4v4!' });
-  L.push({ id: 's-pers', t: 'sistema', ic: '🧍', tit: '11 personagens novos', de: 'Equipe WorldBullet', txt: 'O Tático já é seu de graça. Os outros estão em Personagens, com moedas ou diamantes.' });
+  L.push({ id: 's-pers', t: 'sistema', ic: '🧍', tit: 'Personagens novos', de: 'Equipe WorldBullet', txt: 'O Tático e a Soldada já são seus de graça. Os outros estão em Personagens, com moedas ou diamantes.' });
   L.push({ id: 's-grupo', t: 'sistema', ic: '👥', tit: 'Ranqueada em grupo', de: 'Equipe WorldBullet', txt: 'Chame os amigos pro lobby e joguem a ranqueada juntos. Vale pontos pra todo mundo!' });
   L.push({ id: 's-bv', t: 'sistema', ic: '👋', tit: 'Bem-vindo ao WorldBullet!', de: 'Equipe WorldBullet', txt: 'Valeu por jogar! Complete as missões diárias, gire o Royale e chame a galera. Boa sorte e muito Booyah!' });
   return L;
@@ -32991,7 +33340,7 @@ function fvCorreio(aba, sel) {
   const atual = M.find((m) => m.id === sel) || M[0];
   if (!M.length) ver.appendChild(fvEl('p', 'fvVazio', 'Nenhuma mensagem aqui.'));
   M.forEach((m) => {
-    const r = lista.appendChild(fvEl('button', 'fvMailI' + (m === atual ? ' on' : '') + (fvLido(m.id) ? '' : ' novo')));
+    const r = lista.appendChild(fvEl('button', 'fvMailI' + (m === atual ? ' on' : '') + (fvLido(m.id) ? '' : ' novo') + (m.gift && !m.pend ? ' feito' : '')));
     r.appendChild(fvEl('span')).textContent = m.ic;
     r.appendChild(fvEl('b')).textContent = m.tit;
     r.onclick = () => fvCorreio(aba, m.id);
@@ -33000,6 +33349,16 @@ function fvCorreio(aba, sel) {
     fvMarca(atual.id);
     ver.appendChild(fvEl('h3')).textContent = atual.tit;
     ver.appendChild(fvEl('p', 'fvPaperT')).textContent = atual.txt;
+    // anexo: a foto do item que veio no presente
+    if (atual.gift && atual.gift.tipo !== 'msg') {
+      const ax = ver.appendChild(fvEl('div', 'fvAnexo' + (atual.pend ? '' : ' ok')));
+      ax.appendChild(fvEl('div', 'fvAnexoT', atual.pend ? '📎 ANEXO' : '✅ COLETADO'));
+      ax.appendChild(giftCard(atual.gift, 'mini'));
+      if (atual.pend) {
+        const b = ax.appendChild(fvEl('button', 'fvBtnY fvColeta', 'COLETAR'));
+        b.onclick = () => giftColeta(b, atual.gift.id);
+      } else ax.appendChild(fvEl('small', 'fvColetado', 'Coletado ' + (atual.quando ? 'em ' + new Date(atual.quando).toLocaleDateString('pt-BR') : '')));
+    }
     ver.appendChild(fvEl('small')).textContent = '— ' + atual.de;
   }
   const pe = P.appendChild(fvEl('div', 'fvMailPe'));
@@ -36903,7 +37262,7 @@ const temAcesso = (tag) => !!(CONTA.d && (CONTA.d.admin || (CONTA.d.acesso || []
 function admItens() {
   const L = [];
   CHAR_DEF.forEach((c) => c.preco && L.push(['ch', c.id, '🧍 ' + c.n]));
-  OUTFITS.forEach((o) => o.id !== 'none' && L.push(['o', o.id, '👕 ' + o.name]));
+  EMO_CAT.forEach((o) => L.push(['e', o.id, '😄 ' + (o.n || o.name || o.id)])); // v132: emotes (roupas saíram na v129)
   GSKINS.forEach((o) => o.id !== 'none' && L.push(['g', o.id, '🔫 ' + o.name]));
   CHUTES.forEach((o) => o.id !== 'none' && L.push(['p', o.id, '🪂 ' + o.name]));
   return L;

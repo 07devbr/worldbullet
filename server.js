@@ -1697,7 +1697,7 @@ const API = {
     } else if (ac === 'item') {
       const cat = String(b.cat || ''),
         id = limpaTxt(b.id, 40);
-      if (!['o', 'g', 'p', 'ch'].includes(cat) || !id) throw new Erro(400, 'Item inválido.');
+      if (!['g', 'p', 'ch', 'e'].includes(cat) || !id) throw new Erro(400, 'Item inválido.'); // v132: emotes também (roupas saíram)
       await daPresente(a, { tipo: 'item', cat, item: id, nome: limpaTxt(b.nome, 40), msg }, de);
     } else if (ac === 'acesso') {
       const tag = String(b.tag || '').toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 20);
