@@ -22,7 +22,9 @@ const MAX_PLAYERS = 300; // jogadores ao mesmo tempo no servidor
 // ---------------- site: entrega o jogo ----------------
 let gameHtml = null,
   gameGz = null,
-  gameTag = '';
+  gameTag = '',
+  GAME_VER = 0; // v134: número da versão do jogo (lido do index.html)
+const REIN = { ate: 0 }; // v134: aviso de atualização (o servidor vai reiniciar)
 function loadGame() {
   try {
     gameHtml = fs.readFileSync(GAME);
@@ -31,6 +33,8 @@ function loadGame() {
   }
   gameGz = zlib.gzipSync(gameHtml, { level: 9 }); // o jogo vai compactado (metade do tamanho)
   gameTag = '"' + crypto.createHash('md5').update(gameHtml).digest('hex') + '"';
+  const mv = /const WB_VER = (\d+);/.exec(gameHtml.toString('utf8'));
+  GAME_VER = mv ? +mv[1] : 0;
 }
 loadGame();
 const server = http.createServer((req, res) => {
@@ -679,7 +683,12 @@ function onlineDe(uid) {
   }
   return { st, sala };
 }
-const publico = (r) => ({ uid: r.uid, nome: r.nome, vf: r.vf | 0, on: !!onlineDe(r.uid) });
+// v133: avatar, banner e personagem aparecem para os amigos (só o nome do item, nada pessoal)
+const pfCampo = (r, k) => {
+  const v = r && r.perfil && typeof r.perfil === 'object' ? r.perfil[k] : null;
+  return typeof v === 'string' && /^[a-z0-9_]{1,30}$/.test(v) ? v : undefined;
+};
+const publico = (r) => ({ uid: r.uid, nome: r.nome, vf: r.vf | 0, on: !!onlineDe(r.uid), av: pfCampo(r, 'av'), bn: pfCampo(r, 'bn'), ch: pfCampo(r, 'ch') });
 async function minha(r, full) {
   const am = await DB.many(arr(r.amigos)),
     pe = await DB.many(arr(r.pedidos)),
@@ -714,9 +723,10 @@ async function minha(r, full) {
   return o;
 }
 class Erro extends Error {
-  constructor(st, msg) {
+  constructor(st, msg, extra) {
     super(msg);
     this.st = st;
+    this.extra = extra; // v139: dados a mais na resposta (ex.: suspensão da conta)
   }
 }
 // v129: as roupas saíram do jogo — quem comprou com diamante recebe os diamantes de volta (uma vez)
@@ -744,13 +754,33 @@ async function contaDoToken(uid) {
   if (!r && !ID6.test(uid)) r = await DB.byOld(uid);
   return entregaGlobais(await devolveRoupas(r)); // v132: correio para todos
 }
+// ---------------- SUSPENSÃO DA CONTA (v139) ----------------
+// Fica guardada em "eventos" como 'ban|<até quando>|<motivo>' (até = 0: permanente). Não precisa mudar o banco.
+const BAN_MOTIVOS = { trapaca: 'Trapaça', toxico: 'Comportamento tóxico', arquivos: 'Alteração de arquivos/código' };
+function banInfo(r) {
+  if (!r || !r.banido) return null;
+  const e = arr(r.eventos).find((x) => typeof x === 'string' && x.startsWith('ban|'));
+  if (!e) return { ate: 0, motivo: '' }; // ban antigo: permanente
+  const [, ate, motivo] = e.split('|');
+  return { ate: +ate || 0, motivo: BAN_MOTIVOS[motivo] ? motivo : '' };
+}
+const semBan = (r) => arr(r.eventos).filter((x) => !(typeof x === 'string' && x.startsWith('ban|')));
+// se a suspensão já acabou, libera a conta; se não, barra com os dados da suspensão
+async function banChk(r) {
+  const B = banInfo(r);
+  if (!B) return r;
+  if (B.ate && B.ate <= Date.now()) {
+    const r2 = await DB.update(r.uid, { banido: false, eventos: semBan(r) });
+    return r2 || Object.assign(r, { banido: false });
+  }
+  throw new Erro(403, B.ate ? 'Esta conta está suspensa temporariamente.' : 'Esta conta foi suspensa permanentemente.', { ban: B });
+}
 async function quem(b) {
   const uid = leToken(b.token);
   if (!uid) throw new Erro(401, 'Sua sessão expirou. Entre de novo.');
   const r = await contaDoToken(uid);
   if (!r) throw new Erro(401, 'Conta não encontrada. Entre de novo.');
-  if (r.banido) throw new Erro(403, 'Esta conta foi banida.');
-  return r;
+  return banChk(r);
 }
 async function alvo(uid) {
   if (!okUid(uid)) throw new Erro(400, 'ID inválido (são 6 números).');
@@ -1190,11 +1220,15 @@ const API = {
       throw new Erro(401, 'Usuário ou senha errados.');
     }
     RL.delete('falha:' + usuario);
-    if (r.banido) throw new Erro(403, 'Esta conta foi banida.');
+    r = await banChk(r); // v139: suspensa? mostra o tempo e o motivo
     const patch = { visto: agora() };
     if (ADMIN && usuario === ADMIN && !r.admin) Object.assign(patch, { admin: true, vf: 2 });
     r = (await DB.update(r.uid, patch)) || r;
     return { token: fazToken(r.uid), conta: await minha(r, true) };
+  },
+  // v134: qual é a versão do jogo agora (o jogo aberto confere e mostra "atualização disponível")
+  async versao() {
+    return { v: GAME_VER, rein: REIN.ate > Date.now() ? REIN.ate : 0 };
   },
   async eu(b) {
     const r = await quem(b),
@@ -1694,7 +1728,7 @@ const API = {
         nome = limpaTxt(b.nome, 40) || (tipo === 'moedas2x' ? 'Moedas em dobro' : tipo === 'xp2x' ? 'XP em dobro' : 'Presente');
       const e = { id: novoId(), tipo, nome, ini: Date.now(), fim: Date.now() + h * 3600e3 };
       if (tipo === 'presente') {
-        if (b.cat && ['g', 'p', 'ch', 'e'].includes(b.cat) && b.id) e.item = { cat: b.cat, id: limpaTxt(b.id, 40), nome: limpaTxt(b.nomeItem, 40) || 'Item' };
+        if (b.cat && ['g', 'p', 'ch', 'e', 'a', 'b'].includes(b.cat) && b.id) e.item = { cat: b.cat, id: limpaTxt(b.id, 40), nome: limpaTxt(b.nomeItem, 40) || 'Item' };
         else e.n = Math.max(1, Math.min(1e5, Math.floor(+b.n || 0)));
       }
       await eventosAtivos(true);
@@ -1712,6 +1746,17 @@ const API = {
       for (const S of porConta.values()) for (const c of S) send(c, { t: 'ev' });
       return { ok: true, eventos: (await eventosAtivos(true)).map(evPub) };
     }
+    // v134: quantos estão online e aviso de atualização
+    if (b.acao === 'status') {
+      let emSala = 0;
+      for (const c of clients.values()) if (c.code) emSala++;
+      return { online: clients.size, contas: porConta.size, salas: roomCount(), emSala, v: GAME_VER, rein: REIN.ate > Date.now() ? REIN.ate : 0 };
+    }
+    if (b.acao === 'reinicio' || b.acao === 'reinicio_cancelar') {
+      REIN.ate = b.acao === 'reinicio' ? Date.now() + Math.max(1, Math.min(10, Math.floor(+b.min || 3))) * 60e3 : 0;
+      for (const c of clients.values()) send(c, { t: 'rein', ate: REIN.ate });
+      return { ok: true, rein: REIN.ate };
+    }
     if (b.acao === 'correio') return { lista: (await correioGlobal(true)).map(cgPub) };
     if (b.acao === 'correio_todos') {
       const msg = limpaTxt(b.msg, 200),
@@ -1724,7 +1769,7 @@ const API = {
       } else if (b.tipo === 'item') {
         const cat = String(b.cat || ''),
           id = limpaTxt(b.id, 40);
-        if (!['g', 'p', 'ch', 'e'].includes(cat) || !id) throw new Erro(400, 'Item inválido.');
+        if (!['g', 'p', 'ch', 'e', 'a', 'b'].includes(cat) || !id) throw new Erro(400, 'Item inválido.');
         item = { tipo: 'item', cat, item: id, nome: limpaTxt(b.nome, 40), msg };
       } else {
         if (!msg) throw new Erro(400, 'Escreva a mensagem.');
@@ -1749,7 +1794,7 @@ const API = {
       msg = limpaTxt(b.msg, 200);
     if (ac === 'ver')
       return {
-        jogador: Object.assign(publico(a), { usuario: a.usuario, admin: !!a.admin, banido: !!a.banido, acesso: arr(a.acesso), criado: a.criado, visto: a.visto, sus: n0(obj(a.stats)._sus), diamantes: n0(a.diamantes) }),
+        jogador: Object.assign(publico(a), { usuario: a.usuario, admin: !!a.admin, banido: !!a.banido, ban: banInfo(a), acesso: arr(a.acesso), criado: a.criado, visto: a.visto, sus: n0(obj(a.stats)._sus), diamantes: n0(a.diamantes) }),
       };
     if (ac === 'verificar') {
       if (a.admin) throw new Erro(400, 'Essa conta é de Criador.');
@@ -1770,7 +1815,7 @@ const API = {
     } else if (ac === 'item') {
       const cat = String(b.cat || ''),
         id = limpaTxt(b.id, 40);
-      if (!['g', 'p', 'ch', 'e'].includes(cat) || !id) throw new Erro(400, 'Item inválido.'); // v132: emotes também (roupas saíram)
+      if (!['g', 'p', 'ch', 'e', 'a', 'b'].includes(cat) || !id) throw new Erro(400, 'Item inválido.'); // v132: emotes também (roupas saíram)
       await daPresente(a, { tipo: 'item', cat, item: id, nome: limpaTxt(b.nome, 40), msg }, de);
     } else if (ac === 'acesso') {
       const tag = String(b.tag || '').toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 20);
@@ -1795,11 +1840,21 @@ const API = {
       await DB.update(a.uid, { senha: await hashSenha(nova) });
     } else if (ac === 'banir') {
       if (a.admin) throw new Erro(400, 'Não dá para banir um Criador.');
-      await DB.update(a.uid, { banido: !!b.on });
       if (b.on) {
+        // v139: suspensão com tempo (horas; 0 = permanente) e motivo
+        const motivo = BAN_MOTIVOS[b.motivo] ? b.motivo : '';
+        if (!motivo) throw new Erro(400, 'Escolha o motivo da suspensão.');
+        const horas = Math.max(0, Math.min(24 * 365, +b.horas || 0)),
+          ate = horas ? Date.now() + horas * 3600e3 : 0;
+        await DB.update(a.uid, { banido: true, eventos: semBan(a).concat('ban|' + ate + '|' + motivo) });
+        // quem estiver jogando recebe o aviso NA HORA e cai para a tela de entrar
         const S = porConta.get(a.uid);
-        if (S) for (const c of [...S]) closeClient(c);
-      }
+        if (S)
+          for (const c of [...S]) {
+            send(c, { t: 'ban', ate, motivo });
+            setTimeout(() => closeClient(c), 400);
+          }
+      } else await DB.update(a.uid, { banido: false, eventos: semBan(a) });
     } else throw new Erro(400, 'Ação desconhecida.');
     return { ok: true, jogador: publico(await DB.get(a.uid)) };
   },
@@ -1868,7 +1923,7 @@ function apiHttp(req, res, url) {
     try {
       responde(res, 200, await fn(b, ip, req));
     } catch (e) {
-      if (e instanceof Erro) return responde(res, e.st, { erro: e.message });
+      if (e instanceof Erro) return responde(res, e.st, Object.assign({ erro: e.message }, e.extra || {}));
       console.warn('api', nome, e.message);
       DIAG = { ok: false, msg: explicaErro(e) };
       console.warn('Contas (banco):', DIAG.msg);
@@ -1889,10 +1944,17 @@ async function wsAuth(c, tk) {
   try {
     r = uid ? await contaDoToken(uid) : null;
   } catch (e) {}
+  let B = null;
+  if (r && r.banido)
+    try {
+      r = await banChk(r); // suspensão acabou? libera
+    } catch (e) {
+      B = (e.extra && e.extra.ban) || { ate: 0, motivo: '' };
+    }
   if (!c.alive) return;
-  if (!r || r.banido) {
+  if (!r || r.banido || B) {
     sai();
-    return send(c, { t: 'auth', ok: false });
+    return send(c, B ? { t: 'auth', ok: false, ban: B } : { t: 'auth', ok: false });
   }
   sai();
   c.uid = r.uid;
@@ -1923,7 +1985,7 @@ server.on('upgrade', (req, sock) => {
   const c = { id: 'j' + nextId++, sock, alive: true, deflate, pr: null, code: null, buf: Buffer.alloc(0), frag: [], fragZ: false, rateT: 0, rateN: 0, seen: Date.now() };
   clients.set(c.id, c);
   // boas-vindas: seu número e o resumo de quem já está no servidor
-  send(c, { t: 'hi', id: c.id, n: clients.size });
+  send(c, { t: 'hi', id: c.id, n: clients.size, v: GAME_VER, rein: REIN.ate > Date.now() ? REIN.ate : 0 });
   for (const o of clients.values()) if (o !== c && o.pr) send(c, { t: 'p', id: o.id, pr: light(o.pr) });
   broadcastCount();
 

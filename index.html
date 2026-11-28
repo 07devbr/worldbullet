@@ -10573,6 +10573,72 @@
   #relBtn {
     display: none !important;
   }
+  /* v139: conta suspensa */
+  #banP {
+    position: fixed;
+    inset: 0;
+    z-index: 9800;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: #000d;
+  }
+  #banP.on {
+    display: flex;
+  }
+  .banBox {
+    width: min(420px, 92vw);
+    padding: 0 0 14px;
+    text-align: center;
+    color: #fff;
+    background: linear-gradient(180deg, #2a0d12, #12070a);
+    border: 1px solid #ff3b3b88;
+    box-shadow: 0 0 30px #ff000044;
+    font-family: var(--ffF, sans-serif);
+  }
+  .banTop {
+    padding: 10px;
+    margin-bottom: 10px;
+    font: 900 italic 20px var(--ffF, sans-serif);
+    letter-spacing: 1px;
+    background: linear-gradient(180deg, #e53935, #8e1212);
+  }
+  .banTx {
+    margin: 4px 14px;
+    font: 700 14px var(--ffF, sans-serif);
+  }
+  .banTempo {
+    font: 900 28px var(--ffF, sans-serif);
+    color: #ffcc33;
+    letter-spacing: 2px;
+    margin: 4px 0;
+    font-variant-numeric: tabular-nums;
+  }
+  .banMot {
+    margin: 8px 14px;
+    padding: 6px;
+    font: 600 13px var(--ffF, sans-serif);
+    background: #ffffff10;
+  }
+  .banMot b {
+    color: #ff6b6b;
+  }
+  .banBox small {
+    display: block;
+    margin: 6px 14px 12px;
+    color: #aaa;
+    font: 500 11px var(--ffF, sans-serif);
+  }
+  .banOk {
+    min-width: 140px;
+    height: 40px;
+    border: 0;
+    font: 900 italic 16px var(--ffF, sans-serif);
+    color: #2b1a00;
+    background: linear-gradient(180deg, #ffe066, #ffb300);
+    clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+    cursor: pointer;
+  }
 </style>
 </head>
 <body>
@@ -10586,7 +10652,7 @@
     <div class="spLoad"><div class="spTip" id="spTip">Preparando a ilha...</div><div class="spBar"><i id="spFill"></i></div><div class="spPct"><span id="spStep">Carregando</span><b id="spPct">0%</b></div></div>
     <div class="spTap" id="spTap"><b>TOQUE PARA JOGAR</b><div class="spWho" id="spWho"></div></div>
     <div class="spGate" id="spGate"></div>
-    <div class="spVer">v138 · Feito no Amapá 🇧🇷</div>
+    <div class="spVer">v139 · Feito no Amapá 🇧🇷</div>
   </div>
 </div>
 <!-- ===== GIRE O CELULAR: o jogo é só deitado ===== -->
@@ -14031,7 +14097,7 @@ async function admCorreioTodos() {
    - O servidor diz qual é a versão nova; se a sua for velha, aparece "Atualização disponível" no lobby
      (nunca no meio da partida).
    - O Criador pode avisar todo mundo antes de atualizar: "o servidor vai reiniciar em 3 minutos". */
-const WB_VER = 138;
+const WB_VER = 139;
 const VERS = { nova: 0, rein: 0, modalVisto: 0, salvou: 0 };
 function verCheck(v, rein) {
   if (typeof rein === 'number') reinSet(rein);
@@ -14194,6 +14260,88 @@ async function admAtualizar() {
     carrega();
   }, 5000);
 }
+
+/* ============ v139: SUSPENSÃO DA CONTA (igual FF) ============
+   - Suspendeu? A pessoa vê o aviso NA HORA e cai para a tela de entrar.
+   - Tentou entrar: "Esta conta foi suspensa temporariamente por 2d 13:45:10" ou "permanentemente" + o motivo. */
+const BAN_NOMES = { trapaca: 'Trapaça', toxico: 'Comportamento tóxico', arquivos: 'Alteração de arquivos/código' };
+function banFmt(ms) {
+  const s = Math.max(0, Math.floor(ms / 1000)),
+    d = Math.floor(s / 86400),
+    p = (n) => String(n).padStart(2, '0');
+  return (d ? d + 'd ' : '') + p(Math.floor((s % 86400) / 3600)) + ':' + p(Math.floor((s % 3600) / 60)) + ':' + p(s % 60);
+}
+// a conta foi suspensa enquanto jogava (ou ao abrir o jogo): sai da conta e mostra o aviso
+function banRecebe(B) {
+  if (!B) return;
+  const tinha = !!CONTA.tk;
+  CONTA.tk = null;
+  CONTA.d = null;
+  try {
+    contaGuarda();
+  } catch (e) {}
+  if (tinha)
+    try {
+      localStorage.removeItem('br3d_profile');
+      localStorage.removeItem('br3d_stats');
+      sessionStorage.setItem('wb_ban_entrar', '1');
+    } catch (e) {}
+  banTela(B, tinha);
+}
+function banTela(B, recarrega) {
+  let M = document.getElementById('banP');
+  if (!M) {
+    M = document.createElement('div');
+    M.id = 'banP';
+    document.body.appendChild(M);
+  }
+  M.innerHTML = '<div class="banBox"><div class="banTop">⛔ CONTA SUSPENSA</div><p class="banTx"></p><div class="banTempo"></div><div class="banMot">Motivo: <b></b></div><small>Se você acha que foi um engano, fale com a equipe do WorldBullet.</small><button class="banOk">OK</button></div>';
+  M.querySelector('.banMot b').textContent = BAN_NOMES[B.motivo] || 'Violação das regras do jogo';
+  const tx = M.querySelector('.banTx'),
+    tp = M.querySelector('.banTempo');
+  const tick = () => {
+    if (!B.ate) {
+      tx.textContent = 'Esta conta foi suspensa permanentemente.';
+      tp.textContent = '';
+      return;
+    }
+    const f = B.ate - Date.now();
+    if (f <= 0) {
+      tx.textContent = 'A suspensão acabou! Você já pode entrar de novo.';
+      tp.textContent = '';
+      return;
+    }
+    tx.textContent = 'Esta conta foi suspensa temporariamente por:';
+    tp.textContent = banFmt(f);
+  };
+  tick();
+  clearInterval(M._t);
+  M._t = setInterval(tick, 1000);
+  M.querySelector('.banOk').onclick = () => {
+    clearInterval(M._t);
+    M.classList.remove('on');
+    if (recarrega) return location.reload(); // sai da partida/lobby da conta e volta como visitante
+    try {
+      contaAbre();
+    } catch (e) {}
+  };
+  M.classList.add('on');
+  try {
+    sfx('hurt', 0.6);
+  } catch (e) {}
+}
+// depois de recarregar (por causa da suspensão): já abre a tela de entrar
+setTimeout(() => {
+  let f = null;
+  try {
+    f = sessionStorage.getItem('wb_ban_entrar');
+    sessionStorage.removeItem('wb_ban_entrar');
+  } catch (e) {}
+  if (f)
+    try {
+      contaAbre();
+    } catch (e) {}
+}, 3000);
 
 function init() {
   scene = new THREE.Scene();
@@ -37317,6 +37465,7 @@ function wbSalaServidor(url) {
           return;
         }
         if (m.t === 'rein') return reinSet(m.ate); // v134: o Criador avisou que vai atualizar
+        if (m.t === 'ban') return contaMsg(m); // v139: conta suspensa agora
         if (m.t === 'ct' || m.t === 'conv' || m.t === 'auth' || m.t === 'gch' || m.t === 'ev') {
           if (typeof contaMsg === 'function') contaMsg(m);
           return;
@@ -37388,6 +37537,12 @@ async function contaApi(nome, b) {
     j = await r.json();
   } catch (e) {}
   if (!r.ok) {
+    // v139: conta suspensa -> aviso igual FF (tempo que falta + motivo)
+    if (j.ban) {
+      if (CONTA.tk && nome !== 'entrar' && nome !== 'registrar') banRecebe(j.ban);
+      else banTela(j.ban, false);
+      throw new Error(j.erro || 'Conta suspensa.');
+    }
     if ((r.status === 401 || r.status === 403) && CONTA.tk && nome !== 'entrar' && nome !== 'registrar') {
       contaSair(true);
       toast('🔒 ' + (j.erro || 'Sessão expirou') + ' Entre de novo na sua conta.');
@@ -37554,6 +37709,7 @@ async function contaAtualiza() {
 }
 // mensagens que o servidor manda pela conexão do jogo
 function contaMsg(m) {
+  if (m.t === 'ban' || (m.t === 'auth' && m.ban)) return banRecebe(m.ban || m); // v139: suspenso agora
   if (m.t === 'ev') return evBusca(); // o Criador ligou/desligou um evento
   if (m.t === 'gch') {
     // chat ou mudança na guilda
@@ -38366,9 +38522,46 @@ function admRender() {
     sb.disabled = true;
     chama(sb, { acao: 'senha', nova: sn.value }, 'Senha trocada. Passe a senha nova pra ele.');
   };
-  if (!a.admin) {
-    if (a.banido) bt('✅ Desbanir', '', (b) => chama(b, { acao: 'banir', on: false }, 'Conta desbanida'));
-    else bt('⛔ Banir', 'red', (b) => (confirm('Banir ' + a.nome + '? Ele não consegue mais entrar na conta.') ? chama(b, { acao: 'banir', on: true }, 'Conta banida') : (b.disabled = false)));
+  if (!a.admin && a.banido) {
+    // v139: suspensão com tempo e motivo
+    const B = a.ban || { ate: 0, motivo: '' };
+    G.appendChild(ctEl('p', 'ctInfo')).textContent = '⛔ Suspenso ' + (B.ate ? 'até ' + new Date(B.ate).toLocaleString('pt-BR') : 'para sempre') + (B.motivo ? ' · ' + BAN_NOMES[B.motivo] : '');
+    bt('✅ Tirar suspensão', '', (b) => chama(b, { acao: 'banir', on: false }, 'Suspensão retirada'));
+  } else if (!a.admin) {
+    const ln = G.appendChild(ctEl('div', 'admLine'));
+    const dur = ln.appendChild(ctEl('select'));
+    [
+      [1, '⏱️ 1 hora'],
+      [24, '⏱️ 1 dia'],
+      [72, '⏱️ 3 dias'],
+      [168, '⏱️ 7 dias'],
+      [720, '⏱️ 30 dias'],
+      [0, '♾️ Permanente'],
+    ].forEach(([v, t]) => {
+      const o = dur.appendChild(ctEl('option'));
+      o.value = v;
+      o.textContent = t;
+    });
+    dur.value = 24;
+    const mot = ln.appendChild(ctEl('select'));
+    Object.entries(BAN_NOMES).forEach(([v, t]) => {
+      const o = mot.appendChild(ctEl('option'));
+      o.value = v;
+      o.textContent = t;
+    });
+    bt('⛔ Suspender conta', 'red', (b) => {
+      if (!b._c) {
+        b._c = 1;
+        b.disabled = false;
+        b.textContent = '⚠️ Toque de novo para suspender';
+        setTimeout(() => {
+          b._c = 0;
+          b.textContent = '⛔ Suspender conta';
+        }, 3500);
+        return;
+      }
+      chama(b, { acao: 'banir', on: true, horas: +dur.value, motivo: mot.value }, 'Conta suspensa. Se ele estava jogando, já caiu.');
+    });
   }
 }
 
