@@ -10936,7 +10936,7 @@
   body.fimOn #kills, body.fimOn #pickBtn, body.fimOn #revBtn, body.fimOn #boxBtn, body.fimOn #invBtn, body.fimOn #spec,
   body.fimOn #gearBtn, body.fimOn #killIcon, body.fimOn #feed, body.fimOn #msg, body.fimOn #fps, body.fimOn #tmHud,
   body.fimOn #nadeWarn, body.fimOn #knockBox, body.fimOn #spdo, body.fimOn #carBtn, body.fimOn #carCtl, body.fimOn #ads,
-  body.fimOn #sqHud, body.fimOn #olhoN, body.fimOn #rsHint, body.fimOn #booyah .bt {
+  body.fimOn #sqHud, body.fimOn #olhoN, body.fimOn #rsBar, body.fimOn #booyah .bt {
     display: none !important;
   }
   body.fimOn #endPanel {
@@ -11279,6 +11279,397 @@
   body.semMira:not(.hudedit) #adsBtn {
     display: none !important;
   }
+  /* v145: patentes desenhadas */
+  img.patIc {
+    display: inline-block;
+    width: 1.5em;
+    height: 1.5em;
+    vertical-align: middle;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 2px #0009);
+    pointer-events: none;
+  }
+  .patOn {
+    background: none !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+  }
+  .badge.patOn > img.patIc,
+  .ra-badge.patOn > img.patIc {
+    width: 118%;
+    height: 118%;
+    flex: none;
+  }
+  .badge.patOn {
+    animation: patFlutua 3s ease-in-out infinite;
+  }
+  @keyframes patFlutua {
+    50% {
+      transform: translateY(-4px);
+    }
+  }
+  .fvMbRk img.patIc {
+    width: 40px;
+    height: 40px;
+  }
+  /* ============ v145: tela de recompensa, cartões ============ */
+  #premio {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: radial-gradient(circle at 50% 42%, #2a2140 0%, #0b0912 70%);
+    --pc: #ffd54f;
+    font-family: var(--ffF, system-ui), sans-serif;
+    color: #fff;
+  }
+  #premio.pat {
+    background: radial-gradient(circle at 50% 40%, color-mix(in srgb, var(--pc) 35%, #0b0912) 0%, #07060b 72%);
+  }
+  #premio.on {
+    display: flex;
+    animation: pmEntra 0.35s both;
+  }
+  @keyframes pmEntra {
+    from {
+      opacity: 0;
+    }
+  }
+  .pmRaios {
+    position: absolute;
+    left: 50%;
+    top: 42%;
+    width: 170vmax;
+    height: 170vmax;
+    margin: -85vmax 0 0 -85vmax;
+    background: repeating-conic-gradient(from 0deg, #ffd54f1c 0deg 8deg, transparent 8deg 22deg);
+    animation: pmGira 18s linear infinite;
+    pointer-events: none;
+  }
+  #premio.pat .pmRaios {
+    background: repeating-conic-gradient(from 0deg, color-mix(in srgb, var(--pc) 22%, transparent) 0deg 8deg, transparent 8deg 22deg);
+  }
+  @keyframes pmGira {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  .pmBox {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    max-width: 94vw;
+    max-height: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+  .pmNv {
+    position: relative;
+    width: 108px;
+    height: 108px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    clip-path: polygon(50% 0, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
+    background: linear-gradient(160deg, #fff6c2, #ffc83a 40%, #b97400 70%, #ffd54f);
+    animation: pmPula 0.7s cubic-bezier(0.2, 1.6, 0.4, 1) both;
+    filter: drop-shadow(0 0 18px #ffc83a);
+  }
+  .pmNv::before {
+    content: '';
+    position: absolute;
+    inset: 7px;
+    clip-path: inherit;
+    background: radial-gradient(circle at 50% 30%, #5a3d10, #1c1205);
+  }
+  .pmNv span,
+  .pmNv b {
+    position: relative;
+    color: #ffe082;
+  }
+  .pmNv span {
+    font: 900 11px var(--ffF, system-ui);
+    letter-spacing: 3px;
+    margin-top: 6px;
+  }
+  .pmNv b {
+    font: italic 900 46px/0.95 var(--ffF, system-ui);
+    color: #fff;
+    text-shadow: 0 0 12px #ffc83a;
+  }
+  .pmPat {
+    width: 128px;
+    height: 128px;
+    animation: pmPula 0.7s cubic-bezier(0.2, 1.6, 0.4, 1) both;
+    filter: drop-shadow(0 0 20px var(--pc));
+  }
+  .pmPat img.patIc {
+    width: 100%;
+    height: 100%;
+  }
+  @keyframes pmPula {
+    from {
+      transform: scale(0.2) rotate(-12deg);
+      opacity: 0;
+    }
+  }
+  .pmTit {
+    margin-top: 6px;
+    font: italic 900 30px var(--ffF, system-ui);
+    letter-spacing: 1px;
+    background: linear-gradient(180deg, #fff6c2, #ffd54f 50%, #ff9f1a);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 2px 0 #0009);
+    animation: pmTit 0.5s 0.2s both;
+  }
+  #premio.pat .pmTit {
+    background: linear-gradient(180deg, #fff, var(--pc));
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+  @keyframes pmTit {
+    from {
+      transform: scale(1.6);
+      opacity: 0;
+    }
+  }
+  .pmSub {
+    font-size: 12.5px;
+    opacity: 0.85;
+    text-align: center;
+  }
+  .pmItens {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin: 8px 0 10px;
+  }
+  .pmIt {
+    width: 92px;
+    padding: 8px 4px 6px;
+    text-align: center;
+    background: linear-gradient(180deg, #ffffff1f, #ffffff08);
+    border-bottom: 3px solid #9aa3ad;
+    animation: pmIt 0.45s both;
+  }
+  .pmIt.rar-r {
+    border-color: #4aa3ff;
+  }
+  .pmIt.rar-e {
+    border-color: #b066ff;
+  }
+  .pmIt.rar-l {
+    border-color: #ffc83a;
+    box-shadow: 0 0 14px #ffc83a55;
+  }
+  @keyframes pmIt {
+    from {
+      opacity: 0;
+      transform: translateY(18px) scale(0.8);
+    }
+  }
+  .pmIc {
+    height: 52px;
+    display: grid;
+    place-items: center;
+  }
+  .pmIt small {
+    display: block;
+    margin-top: 4px;
+    font-size: 10.5px;
+    line-height: 1.2;
+  }
+  .pmMoe {
+    font-size: 34px;
+    filter: drop-shadow(0 2px 3px #0008);
+  }
+  .pmSk {
+    display: block;
+    width: 64px;
+    height: 48px;
+    overflow: hidden;
+  }
+  .pmSk > * {
+    max-width: 100%;
+    max-height: 100%;
+  }
+  #pmOk {
+    padding: 10px 38px;
+    border: none;
+    border-radius: 3px;
+    background: linear-gradient(180deg, #ffe082, #ffb300);
+    color: #2a1a00;
+    font: italic 900 16px var(--ffF, system-ui);
+    letter-spacing: 1px;
+    animation: pmIt 0.4s 0.9s both;
+  }
+  /* cartões (arte pequenininha) */
+  .crtArt {
+    position: relative;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 48px;
+    border-radius: 4px;
+    border: 2px solid #ffe082;
+    background: linear-gradient(150deg, #7b3cff, #2b0f6b);
+    box-shadow: inset 0 0 0 2px #0004, 0 2px 6px #0008;
+    color: #fff;
+    line-height: 1;
+  }
+  .crtArt.rp {
+    background: linear-gradient(150deg, #ff4a3a, #6b0f0f);
+  }
+  .crtArt b {
+    font: 900 10px var(--ffF, system-ui);
+  }
+  .crtArt i {
+    font: italic 900 15px var(--ffF, system-ui);
+    color: #ffe082;
+  }
+  #crtBtn {
+    position: fixed;
+    z-index: 30;
+    right: calc(14px + env(safe-area-inset-right, 0px));
+    bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px 4px 6px;
+    border: 1px solid #ffe08288;
+    border-radius: 3px;
+    background: linear-gradient(90deg, #1b1430e6, #2b1d4ae6);
+    color: #fff;
+    font: italic 800 12px var(--ffF, system-ui);
+  }
+  #crtBtn.ativo {
+    border-color: #ffe082;
+    box-shadow: 0 0 12px #ffc83a88;
+    animation: crtPisca 1.6s ease-in-out infinite;
+  }
+  @keyframes crtPisca {
+    50% {
+      box-shadow: 0 0 4px #ffc83a44;
+    }
+  }
+  #crtBtn small {
+    min-width: 16px;
+    padding: 1px 4px;
+    border-radius: 8px;
+    background: #ffc83a;
+    color: #2a1a00;
+    font: 900 10px var(--ffF, system-ui);
+  }
+  .crtMini {
+    width: 14px;
+    height: 19px;
+    border-radius: 2px;
+    border: 1.5px solid #ffe082;
+    background: linear-gradient(150deg, #7b3cff, #ff4a3a);
+    transform: rotate(-8deg);
+  }
+  body.hudedit #crtBtn,
+  body.spec #crtBtn {
+    display: none !important;
+  }
+  #crtPainel {
+    position: fixed;
+    inset: 0;
+    z-index: 70;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: #000a;
+  }
+  #crtPainel.on {
+    display: flex;
+  }
+  .crtBox {
+    width: min(420px, 92vw);
+    max-height: 92vh;
+    overflow: auto;
+    padding: 12px 14px;
+    background: linear-gradient(180deg, #221a38, #120d20);
+    border: 1px solid #ffe08266;
+    color: #fff;
+    font-family: var(--ffF, system-ui), sans-serif;
+  }
+  .crtTop {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    font: italic 900 16px var(--ffF, system-ui);
+    color: #ffe082;
+  }
+  .crtTop button {
+    border: none;
+    background: none;
+    color: #fff;
+    font-size: 18px;
+  }
+  .crtL {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px;
+    margin-bottom: 6px;
+    background: #ffffff0f;
+  }
+  .crtL > div {
+    flex: 1;
+    min-width: 0;
+  }
+  .crtL b {
+    display: block;
+    font-size: 13px;
+  }
+  .crtL small {
+    display: block;
+    font-size: 11px;
+    opacity: 0.8;
+  }
+  .crtL .crtQ em {
+    font-style: normal;
+    color: #4ade80;
+    font-weight: 800;
+  }
+  .crtL button {
+    padding: 7px 14px;
+    border: none;
+    border-radius: 3px;
+    background: linear-gradient(180deg, #ffe082, #ffb300);
+    color: #2a1a00;
+    font: italic 900 12px var(--ffF, system-ui);
+  }
+  .crtL button:disabled {
+    background: #ffffff22;
+    color: #fff9;
+  }
+  .crtNota {
+    margin: 6px 0 0;
+    font-size: 10.5px;
+    opacity: 0.7;
+  }
+  .fimX2 {
+    font-style: normal;
+    color: #4ade80;
+  }
+  .jgSt span img.patIc {
+    width: 1.6em;
+    height: 1.6em;
+  }
 </style>
 </head>
 <body>
@@ -11292,7 +11683,7 @@
     <div class="spLoad"><div class="spTip" id="spTip">Preparando a ilha...</div><div class="spBar"><i id="spFill"></i></div><div class="spPct"><span id="spStep">Carregando</span><b id="spPct">0%</b></div></div>
     <div class="spTap" id="spTap"><b>TOQUE PARA JOGAR</b><div class="spWho" id="spWho"></div></div>
     <div class="spGate" id="spGate"></div>
-    <div class="spVer">v144 · Feito no Amapá 🇧🇷</div>
+    <div class="spVer">v146 · Feito no Amapá 🇧🇷</div>
   </div>
 </div>
 <!-- ===== GIRE O CELULAR: o jogo é só deitado ===== -->
@@ -14737,7 +15128,7 @@ async function admCorreioTodos() {
    - O servidor diz qual é a versão nova; se a sua for velha, aparece "Atualização disponível" no lobby
      (nunca no meio da partida).
    - O Criador pode avisar todo mundo antes de atualizar: "o servidor vai reiniciar em 3 minutos". */
-const WB_VER = 144;
+const WB_VER = 146;
 const VERS = { nova: 0, rein: 0, modalVisto: 0, salvou: 0 };
 function verCheck(v, rein) {
   if (typeof rein === 'number') reinSet(rein);
@@ -15124,8 +15515,8 @@ async function jgPerfil(a) {
     kd = (f.kills || 0) / Math.max(1, (f.matches || 0) - (f.wins || 0));
   G.innerHTML = '';
   const it = [
-    ['🏆', 'Patente BR', R.name],
-    ['⭐', 'Nível', String(1 + Math.floor((f.kills || 0) / 10))],
+    [patHTML(R), 'Patente BR', R.name],
+    ['⭐', 'Nível', String(f.nv || 1 + Math.floor((f.kills || 0) / 10))],
     ['🎮', 'Partidas', String(f.matches || 0)],
     ['👑', 'Booyahs', String(f.wins || 0)],
     ['💀', 'Abates', String(f.kills || 0)],
@@ -15324,13 +15715,14 @@ function rsTick(dt) {
   const mortos = rsMortosAgora(),
     t = performance.now() / 1000;
   for (const T of RS.torres) {
-    const on = !T.usada && mortos > 0;
+    const on = !T.usada && (mortos > 0 || (dead && rsAtivo()));
     T.facho.visible = on;
     T.anel.material.opacity = T.usada ? 0.12 : 0.35 + 0.25 * Math.sin(t * 3);
     T.topo.material.color.setHex(T.usada ? 0x555b66 : 0x29e0ff);
   }
   if (dead || phase !== 'ground' || driving || knock || matchOver || !mortos) {
     RS.prog = 0;
+    if (dead && rsBotTick(dt)) return; // v145: um bot do time está indo te buscar
     return rsUI('');
   }
   const P = player.position,
@@ -15484,6 +15876,72 @@ function specDenuncia() {
   if (pr && pr.u) return denAbre(pr.u, T.name || netName(pr.n));
   // bot (não tem conta): só agradece
   toast('🚩 Denúncia de ' + (T.name || 'jogador') + ' recebida. Valeu por ajudar a manter o jogo limpo!');
+}
+/* ---------- v145: os bots do time te trazem de volta pela torre ----------
+   Você morreu no esquadrão e ainda tem bot do time vivo: o mais perto de uma torre livre
+   larga o que está fazendo (se não estiver no meio do tiroteio), corre até ela, fica 10 s
+   e você volta caindo de paraquedas (junto com quem mais do time tiver morrido). */
+const RSB = { b: null, T: null, t: 0 };
+function rsBotAlvo(b) {
+  if (RSB.b !== b || !RSB.T || !dead) return null;
+  const p = b.group.position,
+    d = Math.hypot(RSB.T.x - p.x, RSB.T.z - p.z);
+  return { x: RSB.T.x, z: RSB.T.z, y: heightAt(RSB.T.x, RSB.T.z), sp: d > 1.4 ? (d > 10 ? 5.4 : 3) : 0 };
+}
+function rsBotTick(dt) {
+  const ok = dead && rsAtivo() && !NET.mid && !matchOver && RS.torres.some((o) => !o.usada);
+  if (!ok) {
+    RSB.b = RSB.T = null;
+    RSB.t = 0;
+    return false;
+  }
+  const B = RSB.b;
+  if (!B || !bots.includes(B) || B.knock || B.drop || B.team !== 0 || !RSB.T || RSB.T.usada) {
+    // escolhe quem vai: o bot do time (em pé) mais perto de uma torre livre
+    let best = null,
+      bt = null,
+      bd = 1e9;
+    for (const o of bots) {
+      if (o.team !== 0 || o.knock || o.drop || o.puppet) continue;
+      const p = o.group.position;
+      for (const T of RS.torres)
+        if (!T.usada) {
+          const d = Math.hypot(T.x - p.x, T.z - p.z);
+          if (d < bd) {
+            bd = d;
+            best = o;
+            bt = T;
+          }
+        }
+    }
+    RSB.b = best;
+    RSB.T = bt;
+    RSB.t = 0;
+    if (!best) return false;
+    if (spec.on && SQ) {
+      spec.target = best; // a câmera acompanha quem foi te buscar
+      const sn = document.getElementById('specName');
+      if (sn) sn.textContent = '👁 ' + best.name;
+    }
+  }
+  const p = RSB.b.group.position,
+    d = Math.hypot(RSB.T.x - p.x, RSB.T.z - p.z);
+  if (d > 3.2) {
+    RSB.t = 0;
+    rsUI('🛰️ ' + RSB.b.name + ' está indo na torre te trazer de volta · ' + Math.round(d) + ' m', 0);
+    return true;
+  }
+  RSB.t += dt;
+  rsUI('🛰️ ' + RSB.b.name + ' está na torre: você volta em ' + Math.max(0, Math.ceil(RS_T - RSB.t)) + ' s', RSB.t / RS_T);
+  if (RSB.t < RS_T) return true;
+  const T = RSB.T,
+    quem = RSB.b.name;
+  T.usada = true;
+  RSB.b = RSB.T = null;
+  RSB.t = 0;
+  for (const m of RS.mortos.splice(0)) rsBotVolta(m.name, T.x, T.z);
+  rsVoltar(T.x, T.z, quem);
+  return true;
 }
 
 /* ============ v144: QUADRINHO DO TIME (igual FF) ============
@@ -15649,7 +16107,7 @@ function fimXP(place, won4) {
     if (place <= 5) xp += 40;
     if (place === 1) xp += 120;
   }
-  return Math.round(xp * evMult('xp2x'));
+  return Math.round(xp * evMult('xp2x') * (cartaoAtivo('xp') ? 2 : 1)); // v145: cartão XP 2x
 }
 function fimShow(title, sub, rankTxt, win) {
   if (NET.obs && NET.obs.on) return obsFim(title); // só estava assistindo
@@ -15683,7 +16141,7 @@ function fimShow(title, sub, rankTxt, win) {
   document.getElementById('endSub').textContent = sub;
   document.getElementById('fimModo').textContent = fimModo();
   const card = document.getElementById('fimCard');
-  avCartao(card, { bn: bnMeu(), av: avMeu(), nome: PROF.name, sub: '🎖️ Passe nível ' + passLv() });
+  avCartao(card, { bn: bnMeu(), av: avMeu(), nome: PROF.name, sub: '⭐ Nível ' + nvInfo().lv + ' · 🎖️ Passe ' + passLv() });
   // números da partida
   const vivo = dead && FIM.tv ? FIM.tv : matchT;
   const tiles = [
@@ -15725,13 +16183,15 @@ function fimShow(title, sub, rankTxt, win) {
   if (rk && !rk.stars) {
     const pp = PLACE_PTS[Math.min(rk.place, PLACE_PTS.length) - 1],
       kp = 3 * Math.min(kills, 10),
-      aj = rk.delta - pp - kp,
       sg = (v) => (v > 0 ? '+' : '') + v;
+    const base = rk.x2 ? rk.delta / 2 : rk.delta,
+      aj2 = base - pp - kp;
     const L = [
       ['Colocação #' + rk.place, pp],
       ['Abates (' + kills + ')', kp],
     ];
-    if (aj) L.push([rk.early ? 'Ajuste do ranque + saiu cedo' : 'Ajuste do ranque', aj]);
+    if (aj2) L.push([rk.early ? 'Ajuste do ranque + saiu cedo' : 'Ajuste do ranque', aj2]);
+    if (rk.x2) L.push(['🃏 Pontos em dobro', base]);
     qb.innerHTML = L.map((l) => '<div><span>' + l[0] + '</span><b class="' + (l[1] < 0 ? 'neg' : '') + '">' + sg(l[1]) + '</b></div>').join('');
   }
   animateRank(null);
@@ -15744,30 +16204,33 @@ function fimShow(title, sub, rankTxt, win) {
     x1 = Math.min(PASS_LV * PASS_XP, x0 + xp),
     lv0 = Math.min(PASS_LV, Math.floor(x0 / PASS_XP)),
     lv1 = Math.min(PASS_LV, Math.floor(x1 / PASS_XP));
+  // v145: a barra é do NÍVEL DA CONTA (o passe ganha o mesmo XP)
+  const na = nvInfo(),
+    nb = nvInfo(na.xp + xp);
   const cx = rw.appendChild(document.createElement('div'));
   cx.className = 'fimC';
   cx.innerHTML =
-    '<div class="fimCh"><i>🎖️</i><span>XP do Passe</span><b>+<u>0</u> XP</b></div><div class="fimBar"><s></s></div><small class="fimLv">Nível ' +
-    lv0 +
-    (lv1 > lv0 ? ' → <b>' + lv1 + '</b> ⬆️' : '') +
+    '<div class="fimCh"><i>🎖️</i><span>EXP' + (cartaoAtivo('xp') ? ' <em class="fimX2">🃏 2x</em>' : '') + '</span><b>+<u>0</u> XP</b></div><div class="fimBar"><s></s></div><small class="fimLv">Nível ' +
+    na.lv +
+    (nb.lv > na.lv ? ' → <b>' + nb.lv + '</b> ⬆️' : '') +
+    ' · Passe nv ' + lv0 + (lv1 > lv0 ? ' → ' + lv1 : '') +
     '</small>';
   fimDepois(rk ? 1100 : 400, () => {
     cx.classList.add('vem');
     fimNum(cx.querySelector('u'), xp, 900);
     const s = cx.querySelector('s');
-    const pct = (x) => (lv0 >= PASS_LV ? 100 : ((x - lv0 * PASS_XP) / PASS_XP) * 100);
     s.style.transition = 'none';
-    s.style.width = Math.min(100, pct(x0)) + '%';
+    s.style.width = Math.round(na.pct * 100) + '%';
     void s.offsetWidth;
     s.style.transition = 'width 1s ease-out';
-    s.style.width = Math.min(100, lv1 > lv0 ? 100 : pct(x1)) + '%';
-    if (lv1 > lv0)
+    s.style.width = (nb.lv > na.lv ? 100 : Math.round(nb.pct * 100)) + '%';
+    if (nb.lv > na.lv)
       fimDepois(1050, () => {
         s.style.transition = 'none';
         s.style.width = '0%';
         void s.offsetWidth;
         s.style.transition = 'width 0.6s ease-out';
-        s.style.width = (lv1 >= PASS_LV ? 100 : ((x1 % PASS_XP) / PASS_XP) * 100) + '%';
+        s.style.width = Math.round(nb.pct * 100) + '%';
         cx.classList.add('subiu');
         sfx('coin', 0.5);
       });
@@ -15854,6 +16317,270 @@ const MIRA_4X = ['ar3'];
     W.zoom = t ? MIRA_ZOOM[t] : 1;
   }
 })();
+
+/* ============ v145: PATENTES COM VISUAL DE VERDADE ============
+   Cada patente virou um emblema desenhado (SVG): escudo de metal, asas que crescem a cada
+   patente, coroa no Mestre e na Lenda, fogo na Lenda, e a fitinha com a divisão (III, II, I).
+   Serve pro BR (RP) e pro 4v4 (estrelas). */
+const PAT_COR = [
+  // claro, médio, escuro, fundo do painel
+  ['#ffe2c4', '#cd8547', '#5c3012', '#2b1406'], // Bronze
+  ['#ffffff', '#b9c5d3', '#4f5b6b', '#1b212b'], // Prata
+  ['#fff7c0', '#f2b62c', '#7a4a00', '#2e1c00'], // Ouro
+  ['#e0fffb', '#3cc9b9', '#0b5357', '#04252a'], // Platina
+  ['#eaf8ff', '#52adff', '#1a3d9e', '#081640'], // Diamante
+  ['#f5e6ff', '#ad5cff', '#43107f', '#1a0533'], // Mestre
+  ['#fff3c4', '#ff6a2a', '#8a0f0f', '#330404'], // Lenda
+];
+const PAT_I = { Bronze: 0, Prata: 1, Ouro: 2, Platinum: 3, Platina: 3, Diamante: 4, Mestre: 5, Lenda: 6 };
+const PAT_C = {};
+function patSvg(t, dv) {
+  const [cl, cm, ce, cf] = PAT_COR[t] || PAT_COR[0];
+  const g = (id, a, b, c, x2, y2) =>
+    '<linearGradient id="' + id + '" x1="0" y1="0" x2="' + (x2 || 0) + '" y2="' + (y2 == null ? 1 : y2) + '"><stop offset="0" stop-color="' + a + '"/><stop offset=".48" stop-color="' + b + '"/><stop offset=".52" stop-color="' + c + '"/><stop offset="1" stop-color="' + b + '"/></linearGradient>';
+  let s =
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><defs>' +
+    g('m', cl, cm, ce) + // metal (brilho no meio)
+    g('w', cl, cm, ce, 1, 0.4) +
+    '<radialGradient id="p" cx="50%" cy="30%" r="75%"><stop offset="0" stop-color="' + cm + '"/><stop offset=".55" stop-color="' + ce + '"/><stop offset="1" stop-color="' + cf + '"/></radialGradient>' +
+    '<radialGradient id="gl"><stop offset="0" stop-color="' + cm + '" stop-opacity=".75"/><stop offset="1" stop-color="' + cm + '" stop-opacity="0"/></radialGradient>' +
+    '<linearGradient id="fo" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#ff2a00"/><stop offset=".6" stop-color="#ff9a1a"/><stop offset="1" stop-color="#ffe680"/></linearGradient>' +
+    '<linearGradient id="ou" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff7c0"/><stop offset=".5" stop-color="#f2b62c"/><stop offset=".52" stop-color="#b07400"/><stop offset="1" stop-color="#f2b62c"/></linearGradient>' +
+    '</defs>';
+  const ST = ' stroke="' + ce + '" stroke-width="2" stroke-linejoin="round"';
+  // brilho atrás (patentes altas)
+  if (t >= 4) s += '<circle cx="64" cy="58" r="58" fill="url(#gl)"/>';
+  // fogo atrás (Lenda)
+  if (t === 6)
+    s +=
+      '<path d="M30 78 C18 56 34 44 30 20 C44 34 44 44 50 46 C48 28 58 18 60 2 C70 18 74 28 72 44 C80 38 82 28 92 16 C94 38 112 52 98 78 Z" fill="url(#fo)" opacity=".95"/>';
+  // asas (a partir da Prata): penas em leque, cada patente ganha mais
+  const NP = [0, 2, 3, 3, 4, 4, 5][t];
+  if (NP) {
+    const pena = (L, w) => 'M0 0 Q' + L * 0.45 + ' ' + -w + ' ' + L + ' 0 Q' + L * 0.45 + ' ' + w + ' 0 0 Z';
+    let asa = '';
+    for (let i = 0; i < NP; i++) {
+      const k = NP === 1 ? 0.5 : i / (NP - 1),
+        a = -42 + k * 62, // de cima para baixo, abrindo pro lado
+        L = 42 - k * 15 + (t >= 5 ? 3 : 0),
+        w = 8 - k * 2;
+      asa = '<path d="' + pena(L, w) + '" transform="translate(80 ' + (44 + k * 22) + ') rotate(' + a + ')" fill="url(#w)" stroke="' + ce + '" stroke-width="1.6"/>' + asa;
+    }
+    s += '<g>' + asa + '</g><g transform="translate(128 0) scale(-1 1)">' + asa + '</g>';
+  }
+  // cristais do lado (Platina)
+  if (t === 3) s += '<path d="M22 44 L30 34 L38 44 L30 58 Z M106 44 L98 34 L90 44 L98 58 Z" fill="url(#m)"' + ST + '/>';
+  // corpo: losango de diamante (Diamante) ou escudo (o resto)
+  if (t === 4) {
+    s += '<path d="M64 10 L100 54 L64 106 L28 54 Z" fill="url(#m)"' + ST + '/>';
+    s += '<path d="M64 20 L90 54 L64 95 L38 54 Z" fill="url(#p)" stroke="' + cl + '" stroke-opacity=".5" stroke-width="1.2"/>';
+    s += '<path d="M64 20 L90 54 L64 54 Z" fill="#fff" opacity=".18"/><path d="M38 54 L64 54 L64 95 Z" fill="#000" opacity=".18"/>';
+    s += '<path d="M64 36 L76 54 L64 74 L52 54 Z" fill="url(#m)" stroke="' + ce + '" stroke-width="1.2"/><path d="M64 36 L76 54 L64 54 Z" fill="#fff" opacity=".45"/>';
+  } else {
+    const esc = 'M64 16 L94 27 L94 56 C94 78 81 93 64 104 C47 93 34 78 34 56 L34 27 Z',
+      dentro = 'M64 25 L86 33 L86 56 C86 73 77 85 64 94 C51 85 42 73 42 56 L42 33 Z';
+    if (t === 2 || t === 3) s += '<path d="M54 20 L64 4 L74 20 Z" fill="url(#m)"' + ST + '/>'; // ponta em cima
+    s += '<path d="' + esc + '" fill="url(#m)"' + ST + '/>';
+    s += '<path d="' + dentro + '" fill="url(#p)" stroke="' + cl + '" stroke-opacity=".45" stroke-width="1.2"/>';
+    s += '<path d="M64 25 L86 33 L86 44 C78 38 70 36 64 36 C58 36 50 38 42 44 L42 33 Z" fill="#fff" opacity=".12"/>';
+    // símbolo no meio
+    const estrela = (cx, cy, R, r) => {
+      let p = '';
+      for (let i = 0; i < 10; i++) {
+        const a = -Math.PI / 2 + (i * Math.PI) / 5,
+          q = i % 2 ? r : R;
+        p += (i ? 'L' : 'M') + (cx + Math.cos(a) * q).toFixed(1) + ' ' + (cy + Math.sin(a) * q).toFixed(1);
+      }
+      return p + 'Z';
+    };
+    if (t <= 2) {
+      s += '<path d="' + estrela(64, 59, 17, 7.2) + '" fill="url(#m)" stroke="' + ce + '" stroke-width="1.5" stroke-linejoin="round"/>';
+      if (t >= 1) s += '<path d="M48 80 L64 88 L80 80" fill="none" stroke="url(#m)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>';
+      if (t >= 2) s += '<path d="M51 88 L64 94.5 L77 88" fill="none" stroke="url(#m)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>';
+    } else if (t === 3) {
+      s += '<path d="M64 38 L80 50 L74 74 L54 74 L48 50 Z" fill="url(#m)" stroke="' + ce + '" stroke-width="1.5" stroke-linejoin="round"/>';
+      s += '<path d="M64 38 L80 50 L64 56 L48 50 Z" fill="#fff" opacity=".45"/><path d="M64 56 L74 74 L54 74 Z" fill="#000" opacity=".15"/>';
+    } else {
+      // Mestre / Lenda: espadas cruzadas + estrela
+      const esp = '<path d="M0 -30 L3.2 -24 L3.2 10 L-3.2 10 L-3.2 -24 Z" fill="url(#m)" stroke="' + ce + '" stroke-width="1.2"/><rect x="-9" y="10" width="18" height="4" rx="1.5" fill="url(#ou)" stroke="' + ce + '" stroke-width="1"/><rect x="-2.2" y="14" width="4.4" height="10" fill="' + ce + '"/><circle cy="26" r="3" fill="url(#ou)"/>';
+      s += '<g transform="translate(64 60) rotate(-38)">' + esp + '</g><g transform="translate(64 60) rotate(38)">' + esp + '</g>';
+      s += '<path d="' + estrela(64, 52, 10, 4.3) + '" fill="url(#ou)" stroke="#7a4a00" stroke-width="1.2" stroke-linejoin="round"/>';
+    }
+  }
+  // coroa (Mestre e Lenda)
+  if (t >= 5) {
+    s += '<path d="M42 26 L44 8 L53 17 L64 3 L75 17 L84 8 L86 26 Z" fill="url(#ou)" stroke="#6b4200" stroke-width="1.8" stroke-linejoin="round"/>';
+    s += '<circle cx="44" cy="8" r="3" fill="#fff3c4"/><circle cx="64" cy="3" r="3.5" fill="' + (t === 6 ? '#ff3b2a' : '#c77dff') + '" stroke="#6b4200"/><circle cx="84" cy="8" r="3" fill="#fff3c4"/>';
+    s += '<rect x="42" y="22" width="44" height="5" rx="1" fill="url(#ou)" stroke="#6b4200" stroke-width="1.2"/>';
+  }
+  // fitinha com a divisão
+  if (dv) {
+    s += '<path d="M30 98 H98 L92 107 L98 116 H30 L36 107 Z" fill="' + ce + '" stroke="' + cl + '" stroke-opacity=".8" stroke-width="1.6" stroke-linejoin="round"/>';
+    s += '<path d="M36 100 H92" stroke="#fff" stroke-opacity=".25" stroke-width="1.2"/>';
+    s +=
+      '<text x="64" y="112" text-anchor="middle" font-family="Georgia,\'Times New Roman\',serif" font-weight="700" font-size="14" letter-spacing="1" fill="' +
+      cl +
+      '" stroke="' +
+      cf +
+      '" stroke-width=".6">' +
+      dv +
+      '</text>';
+  }
+  return s + '</svg>';
+}
+function patUrl(t, dv) {
+  const k = t + '|' + (dv || '');
+  return PAT_C[k] || (PAT_C[k] = 'data:image/svg+xml,' + encodeURIComponent(patSvg(t, dv)));
+}
+// recebe o que o rankInfo / starInfo devolve
+function patDe(info) {
+  const T = (info && info.tier) || info || {},
+    t = PAT_I[T.n] != null ? PAT_I[T.n] : 0;
+  let dv = info && info.div;
+  if (dv == null) {
+    const m = /\s(I{1,3}|IV)$/.exec((info && info.name) || '');
+    dv = m ? m[1] : '';
+  }
+  return { t, dv };
+}
+function patHTML(info, cls) {
+  const p = patDe(info);
+  return '<img class="patIc' + (cls ? ' ' + cls : '') + '" alt="" draggable="false" src="' + patUrl(p.t, p.dv) + '">';
+}
+function patPoe(el, info) {
+  if (!el) return;
+  const p = patDe(info),
+    k = p.t + '|' + p.dv;
+  el.classList.add('patOn');
+  if (el.dataset.pat === k) return;
+  el.dataset.pat = k;
+  el.innerHTML = patHTML(info);
+}
+
+/* ============ v146: ARMAS BALANCEADAS ============
+   Cada tipo com o seu papel (igual FF):
+   - Fuzil: dano bom em qualquer distância.            - Submetralhadora: mais rápida, pra perto.
+   - Pistola: reserva boa no começo. Tucano mata com 2 na cabeça.
+   - Revólver: tiro pesado e lento.                     - Escopeta: de pertinho apaga (Bumba: 2 tiros).
+   - Sniper: Harpia (AWM) derruba com 1 na cabeça sem capacete. */
+(function balanco() {
+  const B = {
+    ar1: { body: [24, 28], head: [58, 66], rate: 0.105, mag: 30, reload: 2.4 },
+    ar2: { body: [20, 23], head: [48, 54], rate: 0.09, mag: 30, reload: 2.0 },
+    ar3: { body: [22, 25], head: [55, 62], rate: 0.1, mag: 25, reload: 2.2 },
+    smg1: { body: [13, 15], head: [30, 34], rate: 0.055, mag: 32, reload: 1.8 },
+    smg2: { body: [18, 21], head: [40, 46], rate: 0.085, mag: 30, reload: 1.9 },
+    smg3: { body: [14, 17], head: [32, 37], rate: 0.067, mag: 50, reload: 2.4 },
+    smg4: { body: [15, 18], head: [33, 38], rate: 0.075, mag: 64, reload: 2.7 },
+    smg5: { body: [13, 15], head: [29, 33], rate: 0.06, mag: 25, reload: 1.6 },
+    pt1: { body: [26, 30], head: [58, 64], rate: 0.2, mag: 12, reload: 1.4 },
+    pt2: { body: [22, 25], head: [48, 54], rate: 0.15, mag: 17, reload: 1.4 },
+    pt3: { body: [44, 50], head: [100, 110], rate: 0.38, mag: 7, reload: 1.7 },
+    rv1: { body: [52, 58], head: [112, 122], rate: 0.55, mag: 6, reload: 2.4 },
+    rv2: { body: [60, 66], head: [128, 138], rate: 0.6, mag: 6, reload: 2.5 },
+    sg1: { body: [14, 16], head: [26, 30], rate: 0.8, mag: 6, reload: 2.6 },
+    sg2: { body: [12, 14], head: [24, 28], rate: 0.7, mag: 6, reload: 2.6 },
+    sg3: { body: [18, 20], head: [32, 36], rate: 0.4, mag: 2, reload: 2.0 },
+    sr1: { body: [95, 105], head: [185, 200], rate: 1.25, mag: 5, reload: 2.8 },
+    sr2: { body: [115, 125], head: [215, 235], rate: 1.6, mag: 5, reload: 3.2 },
+  };
+  for (const id in B) if (WEAPONS[id]) Object.assign(WEAPONS[id], B[id]);
+})();
+
+/* ============ v146: ATROPELAMENTO DE VERDADE ============
+   Quem é atropelado sai voando (pra frente do carro e pra cima, girando) e o dano cresce
+   muito com a velocidade: devagarinho é um empurrão, no talo é quase morte certa. */
+function atropDano(c, v) {
+  const T = (c && c.T) || CAR,
+    s = Math.abs(v || 0),
+    k = Math.min(1, s / (T.max || 14));
+  return Math.round(T.ram * s * (0.3 + 1.6 * Math.pow(k, 1.5)));
+}
+const VOA = [];
+let VOA_EU = null;
+function atropDir(c, v) {
+  const sg = v < 0 ? -1 : 1;
+  return { fx: Math.sin(c.yaw) * sg, fz: Math.cos(c.yaw) * sg, sx: Math.cos(c.yaw), sz: -Math.sin(c.yaw) };
+}
+// bot (ou o corpo dele) sai voando
+function atropVoa(b, c, v) {
+  if (!b || b.puppet || !b.group) return;
+  const s = Math.abs(v),
+    D = atropDir(c, v),
+    lado = (Math.random() < 0.5 ? -1 : 1) * (0.8 + Math.random() * 1.6),
+    g = b.group;
+  g.userData.voa = {
+    vx: D.fx * s * 0.6 + D.sx * lado,
+    vz: D.fz * s * 0.6 + D.sz * lado,
+    vy: 2.5 + s * 0.42,
+    spin: (Math.random() < 0.5 ? -1 : 1) * (4 + s * 0.35),
+    t: 0,
+    b,
+  };
+  g.position.y += 0.3;
+  if (!VOA.includes(g)) VOA.push(g);
+}
+// você sai voando
+function atropVoaEu(c, v) {
+  if (dead) return;
+  const s = Math.abs(v),
+    D = atropDir(c, v);
+  VOA_EU = { vx: D.fx * s * 0.5 + D.sx * (Math.random() < 0.5 ? -1.2 : 1.2), vz: D.fz * s * 0.5 + D.sz * (Math.random() < 0.5 ? -1.2 : 1.2) };
+  velocityY = Math.max(velocityY || 0, 3 + s * 0.38);
+  onGround = false;
+  addShake(Math.min(1, 0.3 + s * 0.04));
+  vib && vib(120);
+}
+function voaTick(dt) {
+  dt = Math.min(dt, 0.05);
+  for (let i = VOA.length - 1; i >= 0; i--) {
+    const g = VOA[i],
+      V = g.userData.voa;
+    if (!V || !g.parent) {
+      if (g.userData) delete g.userData.voa;
+      VOA.splice(i, 1);
+      continue;
+    }
+    V.t += dt;
+    V.vy -= 24 * dt;
+    const p = g.position;
+    p.x += V.vx * dt;
+    p.z += V.vz * dt;
+    p.y += V.vy * dt;
+    try {
+      resolve(p, 0.45); // não atravessa parede
+    } catch (e) {}
+    g.rotation.order = 'YXZ';
+    g.rotation.x += V.spin * dt;
+    const gy = groundAt(p.x, p.z, p.y + 0.6);
+    if ((V.t > 0.08 && p.y <= gy && V.vy < 0) || V.t > 4) {
+      p.y = gy;
+      g.rotation.x = 0;
+      g.rotation.z = 0;
+      delete g.userData.voa;
+      VOA.splice(i, 1);
+      if (V.b && bots.includes(V.b)) V.b.runT = 0.7; // fica tonto um instante
+      try {
+        sfxAt('punch', p, 0.5);
+      } catch (e) {}
+    }
+  }
+  if (VOA_EU) {
+    if (dead || driving || phase !== 'ground') VOA_EU = null;
+    else {
+      const P = player.position;
+      P.x += VOA_EU.vx * dt;
+      P.z += VOA_EU.vz * dt;
+      try {
+        resolve(P, 0.4);
+      } catch (e) {}
+      const k = Math.max(0, 1 - dt * (onGround ? 6 : 0.8));
+      VOA_EU.vx *= k;
+      VOA_EU.vz *= k;
+      if (Math.hypot(VOA_EU.vx, VOA_EU.vz) < 0.3) VOA_EU = null;
+    }
+  }
+}
 
 function init() {
   scene = new THREE.Scene();
@@ -16403,6 +17130,8 @@ function animate() {
   rsTick(Math.min(0.1, ldt || 0.016)); // v143 (cada um se esconde sozinho fora da partida)
   olhoTick();
   sqhTick(); // v144
+  voaTick(ldt || 0.016); // v146: atropelados voando
+  nvTick(); // v145: tela de recompensa e botão dos cartões
   mxfTick(); // personagens completos: copia a pose para o esqueleto inteiro
   if (FT.q.length) fitThumbTick(); // foto da roupa (antes de desenhar a tela)
   renderer.render(scene, camera);
@@ -22347,7 +23076,7 @@ function seasonPopup(r) {
   if (!r) return;
   const D = document.getElementById('dailyBox');
   D.innerHTML =
-    '<div class="dlTit">🗓️ Nova temporada: ' + seasonName() + '!</div><div class="dlSub">A temporada de ' + seasonName(r.old) + ' acabou.<br>Melhor ranque: ' + r.pk.tier.e + ' ' + r.pk.name + ' · 4v4: ' + r.pk4.tier.e + ' ' + r.pk4.name +
+    '<div class="dlTit">🗓️ Nova temporada: ' + seasonName() + '!</div><div class="dlSub">A temporada de ' + seasonName(r.old) + ' acabou.<br>Melhor ranque: ' + patHTML(r.pk) + ' ' + r.pk.name + ' · 4v4: ' + patHTML(r.pk4) + ' ' + r.pk4.name +
     '<br>Prêmio da temporada: <b>⭐ ' + r.prize + ' moedas</b><br><br>O ranque caiu pela metade e o Passe recomeçou do nível 0. Bora subir de novo!</div><button id="dlGet">Bora!</button>';
   document.getElementById('dailyPanel').classList.add('open');
   document.getElementById('dlGet').onclick = () => {
@@ -22363,6 +23092,7 @@ function passMatchXP(place, won4) {
     if (place <= 5) xp += 40;
     if (place === 1) xp += 120;
   }
+  if (cartaoUsa('xp')) xp *= 2; // v145: cartão XP 2x
   passGain(xp);
   return xp;
 }
@@ -28015,7 +28745,7 @@ function pickNear() {
   pickWeapon(L);
 }
 function pickWeapon(L) {
-  if (knock || !L || dead || inLobby || phase !== 'ground' || !WEAPONS[L.id]) return;
+  if (knock || !L || dead || inLobby || phase !== 'ground' || !WEAPONS[L.id] || ESPERA) return;
   const id = L.id,
     W = WEAPONS[id],
     BX = L.box ? BOXES.get(L.box) : null;
@@ -28047,7 +28777,7 @@ function updateLoot(dt, t) {
     if (L.box) continue; // dentro de espólio: abre pela caixa
     L.g.rotation.y += dt * 1.2;
     L.gun.position.y = 0.9 + Math.sin(t * 2 + L.t) * 0.12;
-    if (phase !== 'ground' || dead || inLobby || !inMatch || knock || driving) continue; // dirigindo: não pega nada
+    if (phase !== 'ground' || dead || inLobby || !inMatch || knock || driving || ESPERA) continue; // dirigindo (ou na sala de espera): não pega nada
     if (Math.abs(P.y - L.g.position.y) > 1.5) continue; // loot em outro andar
     const d = Math.hypot(P.x - L.g.position.x, P.z - L.g.position.z);
     if (d > 1.8) continue;
@@ -28361,8 +29091,8 @@ function netCarsTick(dt) {
     const by = netAvatar(N.peer) || { name: netName(pr.n), w: '' };
     if (!dead && !driving && phase === 'ground' && Math.hypot(P.x - c.x, P.z - c.z) < c.T.hitR && Math.abs(P.y - c.y) < 2) {
       c.hitT = 0.6;
-      hurtPlayer(Math.round(sp * c.T.ram), by, 'body');
-      velocityY = 4;
+      hurtPlayer(atropDano(c, sp), by, 'body'); // v146
+      atropVoaEu(c, c.v);
     }
     if (NET.host)
       for (const o of bots.slice()) {
@@ -28370,7 +29100,8 @@ function netCarsTick(dt) {
         const q = o.group.position;
         if (Math.hypot(q.x - c.x, q.z - c.z) < c.T.hitR && Math.abs(q.y - c.y) < 2) {
           c.hitT = 0.6;
-          damageBot(o, Math.round(sp * c.T.ram * 0.85), by);
+          atropVoa(o, c, c.v); // v146
+          damageBot(o, Math.round(atropDano(c, sp) * 0.85), by);
         }
       }
   }
@@ -29324,10 +30055,8 @@ function botDrive(b, dt) {
   b.hitPT = (b.hitPT || 0) - dt;
   if (Math.abs(c.v) > 5 && b.hitPT <= 0) {
     if (pAlive && !driving && Math.hypot(P.x - c.x, P.z - c.z) < c.T.hitR && Math.abs(P.y - c.y) < 2) {
-      hurtPlayer(Math.round(Math.abs(c.v) * 5), b);
-      P.x += Math.cos(c.yaw) * 1.6;
-      P.z -= Math.sin(c.yaw) * 1.6;
-      resolve(P, 0.4);
+      hurtPlayer(atropDano(c, c.v), b); // v146
+      atropVoaEu(c, c.v);
       b.hitPT = 0.8;
       c.v *= 0.8;
     }
@@ -29335,9 +30064,8 @@ function botDrive(b, dt) {
       if (o === b || o.car || o.drop) continue;
       const q = o.group.position;
       if (Math.hypot(q.x - c.x, q.z - c.z) < c.T.hitR && Math.abs(q.y - c.y) < 2) {
-        damageBot(o, Math.round(Math.abs(c.v) * 5), b);
-        q.x += Math.cos(c.yaw) * 1.6;
-        q.z -= Math.sin(c.yaw) * 1.6;
+        atropVoa(o, c, c.v); // v146
+        damageBot(o, atropDano(c, c.v), b);
         b.hitPT = 0.8;
       }
     }
@@ -29413,6 +30141,7 @@ function carAction() {
 }
 function enterCar(c) {
   if (dead || phase !== 'ground' || inLobby || c.dead || c.driver) return;
+  if (ESPERA) return toast('🏝️ Na sala de espera não dá pra dirigir — espere o avião!'); // v146
   driving = c;
   c.driver = 'me';
   c.v = 0;
@@ -29505,11 +30234,9 @@ function driveTick(dt, thr, steer) {
       if (b.drop || b.runT > 0 || b.car) continue;
       const q = b.group.position;
       if (Math.hypot(q.x - c.x, q.z - c.z) > c.T.hitR || Math.abs(q.y - c.g.position.y) > 2) continue;
-      const dmg = Math.round(Math.abs(c.v) * c.T.ram); // jipe: ~85 de dano na velocidade máxima
+      const dmg = atropDano(c, c.v); // v146: quanto mais rápido, mais dano (no talo é quase morte)
       b.runT = 0.6;
-      q.x += Math.sin(c.yaw) * 1.5 + Math.cos(c.yaw) * (Math.random() < 0.5 ? 1.5 : -1.5);
-      q.z += Math.cos(c.yaw) * 1.5;
-      resolve(q, 0.5);
+      atropVoa(b, c, c.v); // v146: sai voando
       dmgNumber(new THREE.Vector3(q.x, q.y + 1.3, q.z), dmg, false);
       MS.dmg = (MS.dmg || 0) + dmg;
       killSrc = 'car';
@@ -29597,7 +30324,7 @@ function spawnNade(from, vel, by) {
 // Você joga a granada para onde a câmera está olhando (~25 m)
 function throwNade() {
   if (knock || swimming) return; // caído ou nadando não dá
-  if (dead || inLobby || matchOver || phase !== 'ground' || paused || driving) return;
+  if (dead || inLobby || matchOver || phase !== 'ground' || paused || driving || ESPERA) return;
   if (nades <= 0) return toast('Sem granada — procure no chão');
   const now = tNow();
   if (now - lastNade < 0.8) return;
@@ -30329,6 +31056,7 @@ function botShoot(b, dist, T) {
 }
 
 function updateBot(b, dt) {
+  if (b.group.userData.voa) return; // v146: voando depois de atropelado
   if (b.dummy) return trDummyTick(b, dt);
   if (b.puppet) return netPuppetTick(b, dt);
   if (ESPERA) return espBotTick(b, dt);
@@ -30484,12 +31212,14 @@ function updateBot(b, dt) {
   let SG = null;
   if (sqOn() && !gn && mode !== 'zone' && !b.wantCar) {
     const R = sqReviveTarget(b);
-    if (R && !(b.los && dist < 16 && b.mem > 0)) {
+    if (R && !(b.los && dist < (R === player ? 9 : 12) && b.mem > 0)) {
       mode = 'revive';
       b.revTgt = R;
     } else {
       b.revT = 0;
-      if (SQ && (mode === 'wander' || (mode === 'loot' && b.w && sqLeaderDist(b) > 28))) SG = sqGoal(b);
+      const RG = rsBotAlvo(b); // v145: indo na torre te trazer de volta
+      if (RG && !(b.los && dist < 12 && b.mem > 0)) SG = RG;
+      else if (SQ && (mode === 'wander' || (mode === 'loot' && b.w && sqLeaderDist(b) > 28))) SG = sqGoal(b);
     }
   }
   const bw = BW[b.w] || BW.none;
@@ -30507,7 +31237,7 @@ function updateBot(b, dt) {
     if (el > 1.5) {
       mx = ex / el;
       mz = ez / el;
-      sp = el > 8 ? 4.8 : 3;
+      sp = el > 8 ? (R === player ? 5.6 : 4.8) : 3;
       face = Math.atan2(mx, mz);
       navG = tp;
       b.revT = 0;
@@ -31610,7 +32340,7 @@ function sqReviveTarget(b) {
     bd = 35;
   if (b.team === 0 && knock && !dead) {
     const d = Math.hypot(player.position.x - p.x, player.position.z - p.z);
-    if (d < bd) {
+    if (d < 60) {
       bd = d;
       best = player;
     }
@@ -31721,7 +32451,7 @@ function startRevive() {
 // todo quadro na partida de esquadrão
 function sqPlayerTick(dt) {
   if (knock && !dead) {
-    knock.hp -= SQ_BLEED * dt;
+    if (!(knock.revAt > clock.elapsedTime - 0.35)) knock.hp -= SQ_BLEED * 0.75 * dt; // v145
     if (knock.hp <= 0 || !teamStanding(0, player)) die();
   }
   if (knock && !dead) {
@@ -32179,6 +32909,291 @@ const ROYALE = {
 };
 const COSM_CAT = { o: OUTFITS, g: GSKINS, p: CHUTES };
 const COSM_N = { o: 'Roupa', g: 'Skin de arma', p: 'Paraquedas', e: 'Emote' };
+/* ============ v145: NÍVEL DA CONTA, RECOMPENSAS E CARTÕES 2x (igual FF) ============
+   - Toda partida dá EXP pro nível da conta (o mesmo XP do passe). Subiu de nível: tela de
+     "SUBIU DE NÍVEL!" com as recompensas (moedas, cartões, tickets e skins de arma exclusivas).
+   - Patente nova na temporada (Prata, Ouro, Platina, Diamante, Mestre, Lenda): tela de
+     "NOVA PATENTE!" com moedas, cartões e uma skin de arma da patente.
+   - Cartões: XP em dobro (1 partida) e Pontos de ranque em dobro (1 ranqueada que der pontos).
+   - Evento novo do painel do criador: Pontos de ranque em dobro. */
+const NV_MAX = 100;
+// skins de arma que só saem por nível e por patente
+GSKINS.push(
+  { id: 'g_pt_prata', name: 'Prata de Lei', rl: 'patente', rar: 'r', c: 0xc0c8d4, chrome: true },
+  { id: 'g_pt_ouro', name: 'Ouro Ranqueado', rl: 'patente', rar: 'e', c: 0xffc83a, gold: true },
+  { id: 'g_pt_platina', name: 'Platina Polar', rl: 'patente', rar: 'e', c: 0x3cc9b9, glow: true },
+  { id: 'g_pt_diamante', name: 'Diamante Bruto', rl: 'patente', rar: 'l', c: 0x52adff, glow: true },
+  { id: 'g_pt_mestre', name: 'Mestre Supremo', rl: 'patente', rar: 'l', c: 0xad5cff, glow: true },
+  { id: 'g_pt_lenda', name: 'Lenda em Chamas', rl: 'patente', rar: 'l', c: 0xff4d2a, glow: true },
+  { id: 'g_nv10', name: 'Veterano', rl: 'nivel', rar: 'r', c: 0x455a64 },
+  { id: 'g_nv25', name: 'Elite Neon', rl: 'nivel', rar: 'e', c: 0x00e5ff, glow: true },
+  { id: 'g_nv50', name: 'Comandante', rl: 'nivel', rar: 'l', c: 0xd4af37, gold: true },
+  { id: 'g_nv100', name: 'Lenda Viva', rl: 'nivel', rar: 'l', rainbow: true, glow: true },
+);
+Object.assign(GUN_PAT, {
+  g_pt_prata: [2, 0xd7dde6, 0x8a96a6],
+  g_pt_ouro: [12, 0xffc83a, 0x8a5a00],
+  g_pt_platina: [10, 0x3cc9b9, 0xe0fffb],
+  g_pt_diamante: [10, 0x52adff, 0xeaf8ff],
+  g_pt_mestre: [5, 0xc98bff, 0x1a0533, 0],
+  g_pt_lenda: [4, 0xff4d2a, 0x1d1d1d, 0],
+  g_nv10: [1, 0x5b6f7a, 0x263238],
+  g_nv25: [3, 0x00e5ff, 0x111111],
+  g_nv50: [6, 0xd4af37, 0x1b1b1b],
+  g_nv100: [11, 0xffffff, 0xffffff],
+});
+const NV_SKIN = { 10: 'g_nv10', 25: 'g_nv25', 50: 'g_nv50', 100: 'g_nv100' };
+// recompensa de cada patente (índice do TIERS)
+const PAT_PREMIO = [
+  null,
+  { c: 300, cx: 1, g: 'g_pt_prata' },
+  { c: 500, cr: 1, g: 'g_pt_ouro' },
+  { c: 800, rl: 1, cx: 1, g: 'g_pt_platina' },
+  { c: 1200, cx: 2, cr: 1, g: 'g_pt_diamante' },
+  { c: 2000, cr: 2, rl: 1, g: 'g_pt_mestre' },
+  { c: 3000, cx: 2, cr: 2, rl: 2, g: 'g_pt_lenda' },
+];
+function nvPrecisa(n) {
+  return 150 + 30 * (n - 1); // XP pra ir do nível n pro n+1
+}
+function nvTotal(n) {
+  let t = 0;
+  for (let i = 1; i < n; i++) t += nvPrecisa(i);
+  return t;
+}
+function nvXP() {
+  if (STATS.nvxp == null) {
+    // quem já jogava começa no nível que tinha (1 a cada 10 abates) e ganha 2 cartões de cada pra testar
+    const velho = Math.min(NV_MAX, 1 + Math.floor((STATS.kills || 0) / 10));
+    STATS.nvxp = nvTotal(velho);
+    STATS.nv = velho;
+    crt();
+  }
+  return STATS.nvxp;
+}
+function nvInfo(xp) {
+  if (xp == null) xp = nvXP();
+  let lv = 1,
+    base = 0;
+  while (lv < NV_MAX && xp >= base + nvPrecisa(lv)) base += nvPrecisa(lv++);
+  const need = nvPrecisa(lv);
+  return { lv, xp, base, need, dentro: xp - base, pct: lv >= NV_MAX ? 1 : Math.min(1, (xp - base) / need) };
+}
+function nvPremio(lv) {
+  const R = { c: Math.min(500, 60 + lv * 10) };
+  if (lv % 5 === 0) R.cx = 1;
+  if (lv % 4 === 0) R.cr = 1;
+  if (lv % 10 === 0) R.rl = 1;
+  if (NV_SKIN[lv]) R.g = NV_SKIN[lv];
+  return R;
+}
+// cartões: n = quantos tem, a = ativado pra próxima partida
+function crt() {
+  if (!STATS.cartoes) STATS.cartoes = { xp: 2, rp: 2, axp: 0, arp: 0 };
+  return STATS.cartoes;
+}
+function cartaoAtivo(k) {
+  return (crt()['a' + k] || 0) > 0;
+}
+function cartaoUsa(k) {
+  const C = crt();
+  if (!(C['a' + k] > 0)) return false;
+  C['a' + k]--;
+  saveStats();
+  return true;
+}
+function cartaoLiga(k) {
+  const C = crt();
+  if (C['a' + k] > 0) return toast('Esse cartão já está ativado pra próxima partida');
+  if (!(C[k] > 0)) return toast('Você não tem esse cartão. Ganhe subindo de nível e de patente!');
+  C[k]--;
+  C['a' + k] = 1;
+  saveStats();
+  sfx('coin', 0.6);
+  toast(k === 'xp' ? '🃏 XP em dobro ativado pra próxima partida!' : '🃏 Pontos em dobro ativados pra próxima ranqueada!');
+  crtBtn();
+  crtPainel();
+}
+// entrega uma recompensa e devolve a lista pra mostrar na tela
+function premioDa(R, porque) {
+  const L = [];
+  if (R.c) {
+    STATS.coins = (STATS.coins || 0) + R.c;
+    L.push({ ic: '<span class="pmMoe">⭐</span>', n: R.c + ' moedas' });
+  }
+  if (R.cx) {
+    crt().xp += R.cx;
+    L.push({ ic: '<span class="crtArt xp"><b>XP</b><i>×2</i></span>', n: 'Cartão XP 2x' + (R.cx > 1 ? ' ×' + R.cx : '') });
+  }
+  if (R.cr) {
+    crt().rp += R.cr;
+    L.push({ ic: '<span class="crtArt rp"><b>PTS</b><i>×2</i></span>', n: 'Cartão Pontos 2x' + (R.cr > 1 ? ' ×' + R.cr : '') });
+  }
+  if (R.rl) {
+    PROF.rlTk = (PROF.rlTk || 0) + R.rl;
+    L.push({ ic: '<span class="pmMoe">🎟️</span>', n: 'Ticket do Royale' + (R.rl > 1 ? ' ×' + R.rl : '') });
+  }
+  if (R.g) {
+    const sk = GSKINS.find((x) => x.id === R.g);
+    if (sk && !PROF.owned.includes(sk.id)) {
+      PROF.owned.push(sk.id);
+      L.push({ ic: '<span class="pmSk">' + cosmPv('g', sk) + '</span>', n: 'Skin de arma: ' + sk.name, rar: sk.rar });
+    } else if (sk) {
+      STATS.coins += 300;
+      L.push({ ic: '<span class="pmMoe">⭐</span>', n: '300 moedas (já tinha a skin ' + sk.name + ')' });
+    }
+  }
+  saveProf();
+  saveStats();
+  return L;
+}
+// EXP do fim da partida (chamado no endMatch)
+function nvGanha(xp) {
+  const a = nvInfo(),
+    b = nvInfo(Math.max(0, a.xp + Math.round(xp || 0)));
+  STATS.nvxp = b.xp;
+  STATS.nv = b.lv;
+  if (STATS.nvGot == null) STATS.nvGot = a.lv;
+  for (let lv = STATS.nvGot + 1; lv <= b.lv; lv++) {
+    const L = premioDa(nvPremio(lv));
+    PREMIO.fila.push({ tipo: 'nivel', lv, itens: L });
+    STATS.nvGot = lv;
+  }
+  saveStats();
+  patChecaPremio();
+}
+// patente nova nesta temporada?
+function patChecaPremio() {
+  const id = seasonId();
+  if (!STATS.patGot || STATS.patGot.s !== id) {
+    // temporada nova (ou primeira vez com o sistema): começa do zero se nunca pegou nada,
+    // senão parte da patente que já tem agora (o ranque cai pela metade na virada)
+    STATS.patGot = { s: id, t: STATS.patGot ? rankInfo(STATS.rp || 0).ti : 0 };
+  }
+  const ti = rankInfo(STATS.rp || 0).ti;
+  for (let t = STATS.patGot.t + 1; t <= ti; t++) {
+    const P = PAT_PREMIO[t];
+    STATS.patGot.t = t;
+    if (!P) continue;
+    PREMIO.fila.push({ tipo: 'patente', ti: t, itens: premioDa(P) });
+  }
+  saveStats();
+}
+/* ---------- tela de recompensa (SUBIU DE NÍVEL / NOVA PATENTE) ---------- */
+const PREMIO = { fila: [], aberto: false, t: 0 };
+function premioTick() {
+  if (PREMIO.aberto || !PREMIO.fila.length || !inLobby || matchOver) return;
+  const now = performance.now();
+  if (now - PREMIO.t < 600) return;
+  PREMIO.t = now;
+  const bloq = ['dailyPanel', 'splash', 'loadScr', 'endPanel'].some((id) => {
+    const e = document.getElementById(id);
+    return e && (e.classList.contains('open') || (id !== 'dailyPanel' && e.offsetParent !== null && getComputedStyle(e).display !== 'none'));
+  });
+  if (bloq) return;
+  premioMostra(PREMIO.fila.shift());
+}
+function premioMostra(P) {
+  PREMIO.aberto = true;
+  let E = document.getElementById('premio');
+  if (!E) {
+    E = document.createElement('div');
+    E.id = 'premio';
+    document.body.appendChild(E);
+  }
+  const nv = P.tipo === 'nivel';
+  let topo;
+  if (nv) topo = '<div class="pmNv"><span>NÍVEL</span><b>' + P.lv + '</b></div>';
+  else topo = '<div class="pmPat">' + patHTML({ tier: TIERS[P.ti], div: '' }) + '</div>';
+  E.className = nv ? 'nv' : 'pat';
+  if (!nv) E.style.setProperty('--pc', TIERS[P.ti].c);
+  E.innerHTML =
+    '<div class="pmRaios"></div><div class="pmBox">' +
+    topo +
+    '<div class="pmTit">' + (nv ? 'SUBIU DE NÍVEL!' : 'NOVA PATENTE!') + '</div>' +
+    '<div class="pmSub">' + (nv ? 'Você chegou no nível ' + P.lv + '. Recompensas:' : 'Você chegou em ' + TIERS[P.ti].n + ' nesta temporada. Recompensas:') + '</div>' +
+    '<div class="pmItens">' +
+    P.itens.map((it, i) => '<div class="pmIt' + (it.rar ? ' rar-' + it.rar : '') + '" style="animation-delay:' + (0.45 + i * 0.18) + 's"><div class="pmIc">' + it.ic + '</div><small>' + it.n + '</small></div>').join('') +
+    '</div><button id="pmOk">COLETAR</button></div>';
+  E.classList.add('on');
+  vib && vib([60, 40, 120]);
+  sfx('coin', 0.9);
+  setTimeout(() => sfx('coin', 0.6), 450);
+  document.getElementById('pmOk').onclick = () => {
+    E.classList.remove('on');
+    PREMIO.aberto = false;
+    PREMIO.t = performance.now();
+    try {
+      if (typeof avLobby === 'function') avLobby();
+      if (typeof refreshLobbyHUD === 'function') refreshLobbyHUD();
+    } catch (e) {}
+    crtBtn();
+  };
+}
+/* ---------- botão dos cartões no lobby ---------- */
+function crtBtn() {
+  let B = document.getElementById('crtBtn');
+  const lob = typeof inLobby !== 'undefined' && inLobby;
+  if (!B) {
+    if (!lob) return;
+    B = document.createElement('button');
+    B.id = 'crtBtn';
+    B.onclick = crtPainel.bind(null, true);
+    (document.getElementById('lobby') || document.body).appendChild(B); // fica dentro do lobby (some junto)
+  }
+  const C = crt(),
+    on = [cartaoAtivo('xp') && 'XP 2x', cartaoAtivo('rp') && 'PTS 2x'].filter(Boolean);
+  B.innerHTML = '<span class="crtMini"></span><b>' + (on.length ? on.join(' · ') : 'Cartões') + '</b><small>' + (C.xp + C.rp) + '</small>';
+  B.classList.toggle('ativo', !!on.length);
+}
+function crtPainel(abrir) {
+  let P = document.getElementById('crtPainel');
+  if (!P && !abrir) return;
+  if (!P) {
+    P = document.createElement('div');
+    P.id = 'crtPainel';
+    P.onclick = (e) => e.target === P && P.classList.remove('on');
+    document.body.appendChild(P);
+  }
+  if (abrir) P.classList.add('on');
+  const C = crt();
+  const linha = (k, nome, desc) =>
+    '<div class="crtL"><span class="crtArt ' + k + '"><b>' + (k === 'xp' ? 'XP' : 'PTS') + '</b><i>×2</i></span><div><b>' + nome + '</b><small>' + desc + '</small><small class="crtQ">Você tem: ' + C[k] + (cartaoAtivo(k) ? ' · <em>ATIVADO</em>' : '') + '</small></div><button data-k="' + k + '"' + (cartaoAtivo(k) || !C[k] ? ' disabled' : '') + '>' + (cartaoAtivo(k) ? '✓ Ativo' : 'Usar') + '</button></div>';
+  P.innerHTML =
+    '<div class="crtBox"><div class="crtTop"><b>🃏 CARTÕES</b><button class="crtX">✕</button></div>' +
+    linha('xp', 'XP em dobro', 'A próxima partida dá o dobro de EXP (nível e passe).') +
+    linha('rp', 'Pontos em dobro', 'A próxima ranqueada que der pontos dá o dobro de RP.') +
+    '<p class="crtNota">Ganhe cartões subindo de nível e de patente. Evento de dobro ativo vale junto com o cartão de XP; nos pontos, se tiver evento, o cartão fica guardado.</p></div>';
+  P.querySelector('.crtX').onclick = () => P.classList.remove('on');
+  P.querySelectorAll('button[data-k]').forEach((b) => (b.onclick = () => cartaoLiga(b.dataset.k)));
+}
+const NVI = { t0: 0, ok: false };
+function nvTick() {
+  // primeira vez no lobby: confere patente (quem já é Ouro, por exemplo, ganha as recompensas de Prata e Ouro)
+  if (!NVI.ok && inLobby) {
+    if (!NVI.t0) NVI.t0 = performance.now();
+    else if (performance.now() - NVI.t0 > 6000) {
+      NVI.ok = true;
+      nvXP();
+      patChecaPremio();
+    }
+  }
+  premioTick();
+  const B = document.getElementById('crtBtn');
+  const lob = inLobby && !matchOver;
+  if (lob && !B) crtBtn();
+  if (B) {
+    B.style.display = lob ? '' : 'none';
+    // logo em cima do cartão do modo (SOLO · BATTLE ROYALE), do lado direito
+    const mb = lob && document.getElementById('lbModeBtn'),
+      r = mb && mb.getBoundingClientRect();
+    if (r && r.width) {
+      B.style.right = Math.round(innerWidth - r.right) + 'px';
+      B.style.bottom = Math.round(innerHeight - r.top + 6) + 'px';
+    }
+  }
+}
+
 /* ============ v133: AVATAR E BANNER (igual o cartão do Free Fire) ============
    Avatar = foto quadrada do jogador. Banner = faixa com arte atrás do nome.
    Aparecem no topo do lobby, no Perfil, na lista de amigos e no cartão de quem você vê.
@@ -33508,6 +34523,7 @@ function endMatch() {
     Object.assign({}, MS, { matches: 1, top5: place <= 5 ? 1 : 0, wins: place === 1 && !dead ? 1 : 0 }),
   );
   const pxp = passMatchXP(place, TM && TM.score[0] >= TM_WIN);
+  nvGanha(pxp * evMult('xp2x')); // v145: EXP do nível da conta (tela de subiu de nível no lobby)
   saveStats();
   if (isRank() && !rkApplied)
     rkResult = applyRanked(Math.max(1, bots.length + 1), !dead && !matchOver);
@@ -34668,6 +35684,8 @@ function applyRanked(place, quit) {
   const early = !quit && place >= 7 && matchT < 80;
   if (early) d -= 14 * Math.max(lm, 0.5);
   d = Math.round(d) || 0;
+  let x2 = false;
+  if (d > 0 && (evAtivo('pontos2x') || cartaoUsa('rp'))) (d *= 2), (x2 = true); // v145: pontos em dobro (evento ou cartão)
   STATS.rp = Math.max(0, STATS.rp + d);
   const rk = STATS.rk;
   rk.m++;
@@ -34677,7 +35695,7 @@ function applyRanked(place, quit) {
   rk.peak = Math.max(rk.peak, STATS.rp);
   rkApplied = true;
   saveStats();
-  return { delta: d, before: before, after: rankInfo(STATS.rp), place: place, early: early };
+  return { delta: d, before: before, after: rankInfo(STATS.rp), place: place, early: early, x2 };
 }
 
 function rkLines(r) {
@@ -34706,7 +35724,7 @@ function animateStars(r, el) {
     st = document.getElementById('raRP'),
     dl = document.getElementById('raDelta'),
     show = (I, lit) => {
-      bd.textContent = I.tier.e;
+      patPoe(bd, I); // v145
       bd.style.borderColor = I.tier.c;
       bd.style.background = 'radial-gradient(circle at 30% 30%,#ffffff88,' + I.tier.c + ')';
       nm.textContent = I.name;
@@ -34772,7 +35790,7 @@ function animateRank(r) {
       clearInterval(window.raT);
       return;
     }
-    bd.textContent = info.tier.e;
+    patPoe(bd, info); // v145
     bd.style.borderColor = info.tier.c;
     bd.style.background = 'radial-gradient(circle at 30% 30%,#ffffff88,' + info.tier.c + ')';
     const nm = document.getElementById('raName');
@@ -34835,10 +35853,7 @@ function renderRank4() {
     T = si.tier,
     rk = STATS.rk4 || { m: 0, w: 0, k: 0, peak: 0 };
   const bd = document.getElementById('rkBadge');
-  bd.textContent = T.e;
-  bd.style.borderColor = T.c;
-  bd.style.background = 'radial-gradient(circle at 30% 30%,#ffffff88,' + T.c + ')';
-  bd.style.boxShadow = '0 0 24px ' + T.c + '99';
+  patPoe(bd, si); // v145
   const nm = document.getElementById('rkName');
   nm.textContent = si.name;
   nm.style.color = T.c;
@@ -34863,7 +35878,7 @@ function renderRank4() {
       s = document.createElement('small');
     row.className = 'rk-row' + (i === si.ti ? ' cur' : '');
     e.className = 'e';
-    e.textContent = t.e;
+    e.innerHTML = patHTML({ tier: t, div: '' }); // v145
     b.textContent = t.n;
     b.style.color = t.c;
     s.textContent = t.div ? t.div + ' divisões · ' + t.st + ' ⭐ cada' : 'estrelas sem limite';
@@ -34888,10 +35903,7 @@ function renderRank() {
     T = ri.tier,
     rk = STATS.rk;
   const bd = document.getElementById('rkBadge');
-  bd.textContent = T.e;
-  bd.style.borderColor = T.c;
-  bd.style.background = 'radial-gradient(circle at 30% 30%,#ffffff88,' + T.c + ')';
-  bd.style.boxShadow = '0 0 24px ' + T.c + '99';
+  patPoe(bd, ri); // v145
   const nm = document.getElementById('rkName');
   nm.textContent = ri.name;
   nm.style.color = T.c;
@@ -34912,7 +35924,7 @@ function renderRank() {
       s = document.createElement('small');
     row.className = 'rk-row' + (i === ri.ti ? ' cur' : '');
     e.className = 'e';
-    e.textContent = t.e;
+    e.innerHTML = patHTML({ tier: t, div: '' }); // v145
     b.textContent = t.n;
     b.style.color = t.c;
     const nx = TIERS[i + 1];
@@ -35223,7 +36235,7 @@ function refreshLobbyHUD() {
   document.getElementById('lbPName').textContent = PROF.name;
   verMark(document.getElementById('lbPName'), VER.me);
   const ri = rankInfo(STATS.rp);
-  document.getElementById('lbLvl').textContent = 'Nv. ' + lvl + ' · ' + ri.tier.e + ' ' + ri.name;
+  document.getElementById('lbLvl').innerHTML = 'Nv. ' + nvInfo().lv + ' · ' + patHTML(ri) + ' ' + ri.name; // v145
   avLobby(); // v133: avatar e banner no topo
   updateMisBadge();
   refreshStoreBadges();
@@ -35234,7 +36246,7 @@ function refreshLobbyHUD() {
     const sk = OUTFITS.find((o) => o.id === PROF.outfit);
     document.getElementById('lbCharTxt').textContent = sk && sk.id !== 'none' ? sk.name : 'Recruta';
   }
-  document.getElementById('lbRankIc').textContent = ri.tier.e;
+  patPoe(document.getElementById('lbRankIc'), ri); // v145
   document.getElementById('lbRankTxt').textContent = ri.name;
   {
     const M = MODES.find((m) => m.id === PROF.mode) || MODES[0],
@@ -35252,7 +36264,7 @@ function refreshLobbyHUD() {
   } else pb.classList.remove('wait');
   if (isTeam()) {
     const r4 = starInfo(STATS.st4);
-    document.getElementById('lbRankIc').textContent = r4.tier.e;
+    patPoe(document.getElementById('lbRankIc'), r4); // v145
     document.getElementById('lbRankTxt').textContent = '4v4 · ' + r4.name + ' ' + r4.txt;
   }
   document.getElementById('lbSub').textContent = lastResult
@@ -35481,7 +36493,7 @@ function fvTempo(ms) {
   return d ? d + 'd ' + h + 'h' : h ? h + 'h ' + m + 'm' : m + 'm';
 }
 function fvLevel() {
-  return 1 + Math.floor((STATS.kills || 0) / 10);
+  return nvInfo().lv; // v145: nível da conta por EXP
 }
 function fvTemporadaN() {
   const d = new Date(Date.now() - 3 * 3600e3);
@@ -35614,9 +36626,12 @@ function fvTick() {
       r4 = typeof starInfo === 'function' ? starInfo(STATS.st4 || 0) : null,
       md = PROF.mode;
     const rk = document.getElementById('fvRkI');
-    if (rk) rk.textContent = ri.tier.e;
+    patPoe(rk, ri); // v145: patente desenhada
     const mi = document.getElementById('fvMbRkI');
-    if (mi) mi.textContent = md === 'tdmrank' || md === 'tdm' ? (r4 && r4.tier && r4.tier.e) || '⭐' : md === 'treino' ? '🎯' : ri.tier.e;
+    if (mi) {
+      if (md === 'treino') (mi.textContent = '🎯'), delete mi.dataset.pat, mi.classList.remove('patOn');
+      else patPoe(mi, md === 'tdmrank' || md === 'tdm' ? r4 : ri);
+    }
     const cn = document.getElementById('fvCuboN');
     if (cn) cn.textContent = md === 'tdm' || md === 'tdmrank' ? 4 : PROF.team || 1;
     const pb = document.getElementById('playBtn');
@@ -35873,14 +36888,14 @@ function fvPerfil(aba) {
     const bd = card.appendChild(fvEl('div', 'fvBadges'));
     const bg = (ic, t, s) => {
       const d = bd.appendChild(fvEl('div', 'fvBadge'));
-      d.appendChild(fvEl('span')).textContent = ic;
+      d.appendChild(fvEl('span')).innerHTML = patHTML(ic); // v145
       d.appendChild(fvEl('b')).textContent = t;
       d.appendChild(fvEl('small')).textContent = s;
     };
-    bg(ri.tier.e, ri.name, 'BATTLE ROYALE');
-    bg((r4.tier && r4.tier.e) || '⭐', r4.name || 'Bronze', '4v4');
+    bg(ri, ri.name, 'BATTLE ROYALE');
+    bg(r4, r4.name || 'Bronze', '4v4');
     const pk = rankInfo((STATS.rk && STATS.rk.peak) || STATS.rp || 0);
-    bg(pk.tier.e, pk.name, 'MELHOR PATENTE');
+    bg(pk, pk.name, 'MELHOR PATENTE');
   }
   const S = card.appendChild(fvEl('div', 'fvStats'));
   const st = (n, v) => {
@@ -36022,9 +37037,9 @@ function fvEvLista() {
       L.push({
         k: 'e' + e.id,
         n: e.nome,
-        ic: { moedas2x: '🪙', xp2x: '⭐', presente: '🎁' }[e.tipo] || '🎉',
+        ic: { moedas2x: '🪙', xp2x: '⭐', pontos2x: '🏆', presente: '🎁' }[e.tipo] || '🎉',
         cor: ['#ff9800', '#7c4dff'],
-        d: { moedas2x: 'Toda partida dá o DOBRO de moedas!', xp2x: 'Toda partida dá o DOBRO de XP no Passe!', presente: 'Entre com a sua conta e ganhe um presente.' }[e.tipo] || 'Evento especial!',
+        d: { moedas2x: 'Toda partida dá o DOBRO de moedas!', xp2x: 'Toda partida dá o DOBRO de EXP (nível e Passe)!', pontos2x: 'Ranqueada que der pontos dá o DOBRO de RP!', presente: 'Entre com a sua conta e ganhe um presente.' }[e.tipo] || 'Evento especial!',
         t: e.fim - Date.now() - EVT.delta,
         go: null,
       }),
@@ -36553,8 +37568,8 @@ function ffModeCard(M, big) {
   c.className = 'ffMc' + (big ? ' big' : '') + (PROF.mode === M.id ? ' sel' : '') + (M.rank || M.star ? ' rk' : '');
   c.style.backgroundImage = 'linear-gradient(0deg,#000e 8%,#0000 62%),url(' + FF_ART[M.id] + ')';
   let badge = '';
-  if (ri) badge = '<span class="ffRk"><i>' + ri.tier.e + '</i><b>' + ri.name + '</b><small>' + (STATS[M.rank] || 0) + ' RP</small></span>';
-  else if (si) badge = '<span class="ffRk"><i>' + si.tier.e + '</i><b>' + si.name + '</b><small>' + si.txt + '</small></span>';
+  if (ri) badge = '<span class="ffRk"><i>' + patHTML(ri) + '</i><b>' + ri.name + '</b><small>' + (STATS[M.rank] || 0) + ' RP</small></span>';
+  else if (si) badge = '<span class="ffRk"><i>' + patHTML(si) + '</i><b>' + si.name + '</b><small>' + si.txt + '</small></span>';
   c.innerHTML =
     (M.tagTop ? '<span class="ffTag">' + M.tagTop + '</span>' : '') +
     badge +
@@ -37048,6 +38063,7 @@ function espTick(dt) {
 }
 function espEnd() {
   if (!ESPERA) return;
+  if (driving) exitCar(true); // v146: ninguém vai pro avião dentro do carro
   ESPERA = null;
   const H = document.getElementById('espHud');
   if (H) H.classList.remove('on');
@@ -40152,10 +41168,10 @@ async function rkTopBusca() {
 function rkPat(tab, r) {
   if (tab === 'br') {
     const i = rankInfo(r.rp);
-    return { e: i.tier.e, n: i.name, v: r.rp + ' RP', c: i.tier.c };
+    return { e: patHTML(i), n: i.name, v: r.rp + ' RP', c: i.tier.c };
   }
   const i = starInfo(r.st4);
-  return { e: i.tier.e, n: i.name, v: '⭐ ' + r.st4, c: i.tier.c };
+  return { e: patHTML(i), n: i.name, v: '⭐ ' + r.st4, c: i.tier.c };
 }
 function rkTopRender() {
   const P = document.getElementById('rkTopP');
@@ -40236,7 +41252,7 @@ function rkTopRender() {
   } else {
     const pos = RKT.d.eu ? RKT.d.eu[RKT.tab] : 0,
       pt = rkPat(RKT.tab, { rp: STATS.rp || 0, st4: STATS.st4 || 0 });
-    me.appendChild(ctEl('span', '', '')).textContent = (pos ? 'Você está em #' + pos : 'Você ainda não está no ranking') + ' · ' + pt.e + ' ' + pt.n + ' · ' + pt.v;
+    me.appendChild(ctEl('span', '', '')).innerHTML = (pos ? 'Você está em #' + pos : 'Você ainda não está no ranking') + ' · ' + pt.e + ' ' + pt.n + ' · ' + pt.v;
   }
   const at = box.appendChild(ctEl('small', 'rkAt'));
   at.textContent = 'Atualiza a cada minuto · ' + (RKT.d.total || 0) + ' jogadores no ranking';
@@ -41079,14 +42095,14 @@ function evBar() {
     document.body.appendChild(B);
     B.onclick = evInfo;
   }
-  const ic = { moedas2x: '🪙', xp2x: '⭐', presente: '🎁' };
+  const ic = { moedas2x: '🪙', xp2x: '⭐', pontos2x: '🏆', presente: '🎁' };
   const e = A[Math.floor(Date.now() / 4000) % A.length];
   B.textContent = (ic[e.tipo] || '🎉') + ' ' + e.nome.toUpperCase() + ' · termina em ' + socTempo(e.fim - Date.now() - EVT.delta) + (A.length > 1 ? ' · +' + (A.length - 1) : '');
 }
 function evInfo() {
   const box = socAbre('evP');
   box.appendChild(ctEl('div', 'ctLogo', '🎉 EVENTOS'));
-  const desc = { moedas2x: 'Toda partida dá o dobro de moedas.', xp2x: 'Toda partida dá o dobro de XP no Passe.', presente: 'Quem entrar com conta durante o evento ganha um presente.' };
+  const desc = { moedas2x: 'Toda partida dá o dobro de moedas.', xp2x: 'Toda partida dá o dobro de EXP (nível e Passe).', pontos2x: 'Ranqueada que der pontos dá o dobro de RP.', presente: 'Quem entrar com conta durante o evento ganha um presente.' };
   EVT.list.forEach((e) => {
     const r = box.appendChild(ctEl('div', 'giftR'));
     r.appendChild(ctEl('b')).textContent = e.nome + (e.premio ? ' — ' + e.premio : '');
@@ -41137,6 +42153,7 @@ async function admEventos() {
   [
     ['moedas2x', '🪙 Moedas em dobro'],
     ['xp2x', '⭐ XP em dobro'],
+    ['pontos2x', '🏆 Pontos de ranque em dobro'],
     ['presente', '🎁 Presente para quem entrar'],
   ].forEach(([v, t]) => {
     const o = tipo.appendChild(ctEl('option'));
