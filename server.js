@@ -719,11 +719,30 @@ class Erro extends Error {
     this.st = st;
   }
 }
+// v129: as roupas saíram do jogo — quem comprou com diamante recebe os diamantes de volta (uma vez)
+const ROUPAS_VELHAS = { 'o:elfo': 25, 'o:noel': 30, 'o:deserto': 35, 'o:artico': 40, 'o:ops': 50, 'o:neon': 80, 'o:lenda': 150, 'o:cangaceiro': 350, 'o:samurai': 220, 'o:galaxia': 220, 'o:lava': 220, 'o:carnaval': 120, 'o:fantasma': 120, 'o:pirata': 120, 'o:amazonia': 120 };
+async function devolveRoupas(r) {
+  if (!r || !arr(r.itens_pagos).some((k) => String(k).startsWith('o:'))) return r;
+  try {
+    return await filaDm(r.uid, async () => {
+      const a = await DB.get(r.uid); // lê de novo dentro da fila
+      const ks = arr(a && a.itens_pagos).filter((k) => String(k).startsWith('o:'));
+      if (!a || !ks.length) return a || r;
+      const volta = ks.reduce((t, k) => t + (ROUPAS_VELHAS[k] || 0), 0);
+      const a2 = await DB.update(a.uid, { diamantes: n0(a.diamantes) + volta, itens_pagos: arr(a.itens_pagos).filter((k) => !String(k).startsWith('o:')) });
+      console.log('💎 roupas devolvidas', a.uid, ks.join(','), '+' + volta);
+      return a2 || a;
+    });
+  } catch (e) {
+    console.warn('devolveRoupas', e.message);
+    return r;
+  }
+}
 // a conta ganhou ID novo (6 números)? a sessão com o ID antigo ainda acha ela
 async function contaDoToken(uid) {
   let r = await DB.get(uid);
   if (!r && !ID6.test(uid)) r = await DB.byOld(uid);
-  return r;
+  return devolveRoupas(r);
 }
 async function quem(b) {
   const uid = leToken(b.token);
@@ -840,21 +859,6 @@ const ITENS_D = {
   'ch:f_scifi': [250, 'Sci-Fi'],
   'ch:f_medieval': [300, 'Medieval'],
   'ch:f_bruxa': [400, 'Bruxa'],
-  'o:elfo': [25, "Elfo"],
-  'o:noel': [30, "Papai Noel"],
-  'o:deserto': [35, "Deserto"],
-  'o:artico': [40, "Ártico"],
-  'o:ops': [50, "Operações Especiais"],
-  'o:neon': [80, "Neon"],
-  'o:lenda': [150, "Dourado Lendário"],
-  'o:cangaceiro': [350, "Cangaceiro"],
-  'o:samurai': [220, "Samurai"],
-  'o:galaxia': [220, "Galáxia"],
-  'o:lava': [220, "Lava"],
-  'o:carnaval': [120, "Carnaval"],
-  'o:fantasma': [120, "Fantasma"],
-  'o:pirata': [120, "Pirata"],
-  'o:amazonia': [120, "Tropa da Amazônia"],
   'g:camo': [20, "Camuflada"],
   'g:carbono': [35, "Carbono"],
   'g:neve': [30, "Neve"],
@@ -884,10 +888,7 @@ const ITENS_D = {
   'e:flexao': [35, 'Flexão'],
   'e:ginga': [40, 'Ginga de Capoeira'],
   'e:samba': [40, 'Samba no Pé'],
-  'e:guitarra': [50, 'Guitarra no Ar'],
-  'e:meditar': [60, 'Meditação'],
   'e:frevo': [70, 'Frevo'],
-  'e:bandeira': [90, 'Bandeira do Brasil'],
 };
 const pacoteDe = (id) => PACOTES.find((p) => p.id === id);
 // uma mexida de diamantes por vez por conta (duas compras juntas não somem com nada)

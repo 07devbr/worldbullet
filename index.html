@@ -12,6 +12,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>WorldBullet</title>
 <style>
+  body:not(.inlobby) .fvSlotB { display: none !important; } /* v129: "CONVIDAR" não aparece na partida */
   /* ============================================================
      1. BASE — Cores do tema, reset e elementos gerais
      ============================================================ */
@@ -10002,7 +10003,7 @@
     <div class="spLoad"><div class="spTip" id="spTip">Preparando a ilha...</div><div class="spBar"><i id="spFill"></i></div><div class="spPct"><span id="spStep">Carregando</span><b id="spPct">0%</b></div></div>
     <div class="spTap" id="spTap"><b>TOQUE PARA JOGAR</b><div class="spWho" id="spWho"></div></div>
     <div class="spGate" id="spGate"></div>
-    <div class="spVer">v128 · Feito no Amapá 🇧🇷</div>
+    <div class="spVer">v129 · Feito no Amapá 🇧🇷</div>
   </div>
 </div>
 <!-- ===== GIRE O CELULAR: o jogo é só deitado ===== -->
@@ -10153,7 +10154,7 @@
 <!-- ===== LOJA E MISSÕES ===== -->
 <div id="shop" class="sheetBg"><div class="sheet">
   <div class="ash"><b>🛒 Loja <span id="shopCoins" class="coinTag"></span></b><button class="shClose" data-c="shop">✕</button></div>
-  <div class="shTabs"><button data-t="d" class="on">⭐ Destaques</button><button data-t="o">👕 Roupas</button><button data-t="g">🔫 Armas</button><button data-t="p">🪂 Paraq.</button><button data-t="e">😄 Emotes</button></div>
+  <div class="shTabs"><button data-t="d" class="on">⭐ Destaques</button><button data-t="g">🔫 Armas</button><button data-t="p">🪂 Paraq.</button><button data-t="e">😄 Emotes</button></div>
   <div class="shBody" id="shopList"></div>
   <div class="asf"><button id="shopAct">Equipar</button></div>
 </div></div>
@@ -10166,7 +10167,7 @@
 <div id="rlSpin"><div class="rlStrip" id="rlStrip"><div id="rlTrack"></div><i class="rlMark"></i></div><div id="rlRes"></div><div class="rlBtnRow"><button id="rlEq">Equipar</button><button id="rlOk">OK</button></div></div>
 <div id="vault" class="sheetBg"><div class="sheet">
   <div class="ash"><b>🗄️ Cofre <span id="vCount" class="coinTag"></span></b><button class="shClose" data-c="vault">✕</button></div>
-  <div class="shTabs" id="vTabs"><button data-v="o" class="on">👕</button><button data-v="g">🔫</button><button data-v="p">🪂</button><button data-v="e">😀</button><button data-v="c" style="display:none">🧍</button></div>
+  <div class="shTabs" id="vTabs"><button data-v="g" class="on">🔫</button><button data-v="p">🪂</button><button data-v="e">😀</button><button data-v="c" style="display:none">🧍</button></div>
   <div class="shBody" id="vBody"></div>
 </div></div>
 <div id="missions" class="sheetBg"><div class="sheet">
@@ -10804,6 +10805,29 @@ try {
   if (j) Object.assign(STATS, JSON.parse(j));
 } catch (e) {}
 STATS.rp = STATS.rp || 0;
+// v129: as roupas saíram do jogo — quem tinha ganha as moedas de volta (uma vez)
+if (!PROF.r129) {
+  PROF.r129 = 1;
+  const RV = { c: 50, r: 150, e: 400, l: 1000 };
+  let mo = 0;
+  PROF.owned = (PROF.owned || []).filter((id) => {
+    const O = OUTFITS.find((x) => x.id === id && x.id !== 'none');
+    if (O) mo += O.p || RV[O.rar] || 100;
+    return !O;
+  });
+  PROF.outfit = 'none';
+  // quem já pegou o nível 30 do Passe (era a roupa Guardião) ganha o emote Booyah! no lugar
+  if (STATS.pass && (STATS.pass.got || []).includes(30) && !PROF.owned.includes('booyah')) PROF.owned.push('booyah');
+  if (mo) {
+    STATS.coins = (STATS.coins || 0) + mo;
+    setTimeout(() => typeof toast === 'function' && toast('👕 As roupas saíram do jogo: você recebeu ⭐ ' + mo + ' moedas de volta'), 9000);
+  }
+  try {
+    localStorage.setItem('br3d_profile', JSON.stringify(PROF));
+    localStorage.setItem('br3d_stats', JSON.stringify(STATS));
+  } catch (e) {}
+}
+if (PROF.outfit && PROF.outfit !== 'none' && OUTFITS.some((x) => x.id === PROF.outfit)) PROF.outfit = 'none';
 // modo antigo "Esquadrão" virou Battle Royale Clássico em esquadrão
 if (PROF.mode === 'squad') {
   PROF.mode = 'casual';
@@ -19181,7 +19205,7 @@ function seasonDaysLeft() {
 function passReward(lv) {
   if (lv === 10) return { t: 'g', id: 'g_tucuju', ic: '🔫', n: 'Skin Tucuju' };
   if (lv === 20) return { t: 'p', id: 'pc_amapa', ic: '🪂', n: 'Paraquedas Amapá' };
-  if (lv === 30) return { t: 'o', id: 'fortaleza', ic: '🛡️', n: 'Traje Guardião' };
+  if (lv === 30) return { t: 'e', id: 'booyah', ic: '🏆', n: 'Emote Booyah!' };
   if (lv % 5 === 0) return { t: 'rl', n: 'Giro do Royale', ic: '🎰' };
   return { t: 'c', v: 40 + lv * 8, ic: '⭐', n: 40 + lv * 8 + ' moedas' };
 }
@@ -19260,7 +19284,7 @@ function renderPass() {
       got = P.got.includes(l),
       ok = l <= lv,
       c = document.createElement('button');
-    c.className = 'psIt' + (got ? ' got' : ok ? ' ok' : '') + (R.t === 'o' || R.t === 'g' || R.t === 'p' ? ' ex' : '');
+    c.className = 'psIt' + (got ? ' got' : ok ? ' ok' : '') + (R.t === 'e' || R.t === 'g' || R.t === 'p' ? ' ex' : '');
     c.innerHTML = '<small>Nv ' + l + '</small><span>' + R.ic + '</span><b>' + R.n + '</b><em>' + (got ? '✓ pego' : ok ? 'PEGAR' : '🔒') + '</em>';
     c.disabled = got || !ok;
     c.addEventListener('click', () => passClaim(l));
@@ -21331,7 +21355,9 @@ function buildCharacter(o) {
   head.add(headM);
   // só existem os personagens FBX: o modelo vem do personagem escolhido (ou do pedido, se for um deles)
   o = Object.assign({}, o, { model: MX_DATA[o.model] ? o.model : MX_DATA[o.ch] ? o.ch : Q_CHARS[0] });
-  // roupa da loja ou cor de time: pinta cada parte do personagem (camisa, colete, calça, sapato...)
+  // v129: as roupas saíram do jogo (os personagens já vêm vestidos) — quem ainda mandar roupa aparece normal
+  if (o.fit && OUTFITS.some((x) => x.id === o.fit)) o = Object.assign({}, o, { fit: null, tint: false });
+  // cor de time: pinta cada parte do personagem (camisa, colete, calça, sapato...)
   const tinta = MXF_DATA[o.model] ? fitLookOf(o) : null;
   const mx = o.model && o.model !== 'recruta' && typeof MX_DATA !== 'undefined' && MX_DATA[o.model];
   // colete, bolsos e mochila (só no Recruta)
@@ -21931,7 +21957,7 @@ if (!PROF.q117) {
   PROF.q117 = 1;
   try {
     localStorage.setItem('br3d_profile', JSON.stringify(PROF));
-    setTimeout(() => typeof toast === 'function' && inLobby && toast('🧍 11 personagens novos! Veja no Cofre → Roupas'), 7000);
+    setTimeout(() => typeof toast === 'function' && inLobby && toast('🧍 Personagens novos! Veja em Personagens'), 7000);
   } catch (e) {}
 }
 // v128: as 10 personagens femininas
@@ -22488,7 +22514,7 @@ Object.assign(EMOTES, {
   guitarra: {
     n: 'Guitarra no Ar',
     ic: '🎸',
-    p: 500,
+    rl: 'ouro', // só no Royale de Ouro
     rar: 'e',
     d: 4.4,
     cyc: 0.3,
@@ -22556,7 +22582,7 @@ Object.assign(EMOTES, {
   meditar: {
     n: 'Meditação',
     ic: '☯️',
-    p: 600,
+    rl: 'ouro', // só no Royale de Ouro
     rar: 'e',
     d: 0,
     loop: true, // flutua até você se mexer
@@ -22569,7 +22595,7 @@ Object.assign(EMOTES, {
   bandeira: {
     n: 'Bandeira do Brasil',
     ic: '🇧🇷',
-    p: 900,
+    rl: 'ouro', // prêmio principal do Royale de Ouro
     rar: 'l',
     prop: 'bandeira',
     d: 4.6,
@@ -22581,15 +22607,33 @@ Object.assign(EMOTES, {
       { t: 1.2, b: [-0.05, 0.15, 0], h: [-0.25, 0.2, 0], aR: [-2.75, 0.3, -0.35], fR: -0.2, aL: [-0.3, 0, 0.9], fL: -0.9, kL: 0.1, kR: 0.1 },
     ],
   },
+  booyah: {
+    n: 'Booyah!',
+    ic: '🏆',
+    rl: 'passe', // prêmio do nível 30 do Passe
+    rar: 'l',
+    d: 3.2,
+    k: [
+      { t: 0 },
+      { t: 0.25, y: -0.18, lL: [-0.6, 0, 0], lR: [-0.6, 0, 0], kL: 1.1, kR: 1.1, b: [0.3, 0, 0], aL: [-0.3, 0, 0.4], fL: -1.6, aR: [-0.3, 0, -0.4], fR: -1.6, h: [0.2, 0, 0] },
+      { t: 0.55, y: 0.38, lL: [-0.3, 0, 0.1], lR: [0.2, 0, -0.1], kL: 0.9, kR: 0.4, b: [-0.15, 0, 0], aL: [-0.2, 0, 2.6], fL: -0.2, aR: [-0.2, 0, -2.6], fR: -0.2, h: [-0.35, 0, 0] },
+      { t: 0.85, y: -0.08, kL: 0.5, kR: 0.5, lL: [-0.3, 0, 0.08], lR: [-0.3, 0, -0.08], aL: [-0.2, 0, 2.4], fL: -0.4, aR: [-0.2, 0, -2.4], fR: -0.4, h: [-0.3, 0, 0] },
+      { t: 1.2, aR: [-1.0, 0, -0.9], fR: -2.2, aL: [-0.1, 0, 0.5], fL: -0.4, b: [0.1, 0, 0], h: [0.1, 0, 0], kL: 0.2, kR: 0.2 },
+      { t: 1.45, aR: [-2.7, 0, -0.3], fR: -0.2, aL: [-0.1, 0, 0.5], fL: -0.4, h: [-0.3, 0, 0] },
+      { t: 1.7, aR: [-1.0, 0, -0.9], fR: -2.2, aL: [-0.1, 0, 0.5], fL: -0.4, b: [0.1, 0, 0], h: [0.1, 0, 0], kL: 0.2, kR: 0.2 },
+      { t: 1.95, aR: [-2.7, 0, -0.3], fR: -0.2, aL: [-0.1, 0, 0.5], fL: -0.4, h: [-0.3, 0, 0] },
+      { t: 2.9, aL: [-0.2, 0, 2.5], fL: -0.3, aR: [-0.2, 0, -2.5], fR: -0.3, h: [-0.25, 0, 0], b: [-0.08, 0, 0] },
+    ],
+  },
 });
 function emoOwned(id) {
   const E = EMOTES[id];
-  return !!E && !E.hide && (!E.p || (PROF.owned || []).includes(id));
+  return !!E && !E.hide && ((!E.p && !E.rl) || (PROF.owned || []).includes(id));
 }
 // catálogo da Loja (aba Emotes)
 const EMO_CAT = Object.keys(EMOTES)
-  .filter((id) => EMOTES[id].p)
-  .map((id) => ({ id, name: EMOTES[id].n, p: EMOTES[id].p, rar: EMOTES[id].rar || 'c', ic: EMOTES[id].ic }));
+  .filter((id) => EMOTES[id].p || EMOTES[id].rl)
+  .map((id) => ({ id, name: EMOTES[id].n, p: EMOTES[id].p || 0, rl: EMOTES[id].rl, rar: EMOTES[id].rar || 'c', ic: EMOTES[id].ic }));
 // objetos na mão (sombrinha do frevo, bandeira)
 const EMO_PROP = {
   sombrinha() {
@@ -29046,7 +29090,7 @@ const RL_RAR = { l: 0.02, e: 0.1, r: 0.28, c: 0.6 }, // chance de cada raridade
   RL_DUP = { c: 0, r: 15, e: 40, l: 150 }, // item repetido vira essas moedas
   RL_PITY = 40; // lendário garantido a cada 40 giros
 const ROYALE = {
-  ouro: { n: 'Royale de Ouro', ic: '👑', p1: 60, p10: 540, grand: 'cangaceiro', coins: [20, 30, 50], d: 'Roupas e paraquedas que não existem na loja' },
+  ouro: { n: 'Royale de Ouro', ic: '👑', p1: 60, p10: 540, grand: 'bandeira', coins: [20, 30, 50], d: 'Emotes e paraquedas que não existem na loja' },
   armas: { n: 'Royale de Armas', ic: '🔫', p1: 80, p10: 720, grand: 'dragao', coins: [25, 40, 60], d: 'Skins de arma exclusivas' },
 };
 const COSM_CAT = { o: OUTFITS, g: GSKINS, p: CHUTES };
@@ -29445,7 +29489,7 @@ function dailyDeals() {
   const R = mulberry32([...dayKey()].reduce((a, c) => a * 31 + c.charCodeAt(0), 7) >>> 0),
     pick = (arr) => arr[Math.floor(R() * arr.length)];
   const all = [];
-  ['o', 'g', 'p'].forEach((cat) => COSM_CAT[cat].forEach((it) => it.p && !it.rl && all.push({ cat, it })));
+  ['g', 'p', 'e'].forEach((cat) => COSM_CAT[cat].forEach((it) => it.p && !it.rl && all.push({ cat, it })));
   const fresh = all.filter((x) => !ownsCosm(x.it)),
     src = fresh.length >= 3 ? fresh : all,
     offers = [];
@@ -29453,7 +29497,7 @@ function dailyDeals() {
     const x = pick(src);
     if (!offers.includes(x)) offers.push(x);
   }
-  const pack = ['o', 'g', 'p'].map((cat) => {
+  const pack = ['g', 'p', 'e'].map((cat) => {
     const l = all.filter((x) => x.cat === cat && !offers.includes(x)),
       lf = l.filter((x) => !ownsCosm(x.it));
     return pick(lf.length ? lf : l);
@@ -29525,7 +29569,7 @@ function renderShop() {
     // banner do Royale
     const ban = document.createElement('button');
     ban.className = 'rlBanner';
-    ban.innerHTML = '<b>🎰 ROYALE</b><span>Gire e ganhe roupas e skins que não existem na loja!</span><em>' + (PROF.rlFree !== dayKey() ? '🎁 1 giro grátis hoje' : 'Ver prêmios ›') + '</em>';
+    ban.innerHTML = '<b>🎰 ROYALE</b><span>Gire e ganhe emotes e skins que não existem na loja!</span><em>' + (PROF.rlFree !== dayKey() ? '🎁 1 giro grátis hoje' : 'Ver prêmios ›') + '</em>';
     ban.onclick = () => {
       closeShop();
       openRoyale('ouro');
@@ -29547,8 +29591,7 @@ function renderShop() {
       '</div>';
     pk.onclick = () => {
       shopSel = { pack: D.pack, price: D.packPrice };
-      shopPrevO = D.pack[0].it.id;
-      shopPrevG = D.pack[1].it.id;
+      shopPrevG = D.pack[0].it.id; // a skin de arma do pacote aparece na mão
       makePlayer();
       renderShop();
     };
@@ -29640,7 +29683,7 @@ let rlTab = 'ouro',
   rlBusy = false;
 function rlPool(k) {
   const it = [];
-  ['o', 'g', 'p'].forEach((cat) => COSM_CAT[cat].forEach((x) => x.rl === k && it.push({ t: cat, id: x.id, rar: x.rar, name: x.name, it: x })));
+  ['e', 'g', 'p'].forEach((cat) => COSM_CAT[cat].forEach((x) => x.rl === k && it.push({ t: cat, id: x.id, rar: x.rar, name: x.name, it: x })));
   ROYALE[k].coins.forEach((n) => it.push({ t: 'c', n, rar: 'c', name: n + ' moedas', it: { n } }));
   return it;
 }
@@ -29690,6 +29733,7 @@ function rlPreviewGrand() {
   if (cosmFind('o', g)) shopPrevO = g;
   if (cosmFind('g', g)) shopPrevG = g;
   makePlayer();
+  if (EMOTES[g] && inLobby) setTimeout(() => playEmote(g), 300); // o prêmio principal (emote) aparece no personagem
 }
 function rlCardHTML(p, big) {
   const R = RAR_N[p.rar || 'c'];
@@ -29750,6 +29794,7 @@ function renderRoyale() {
         d.className = 'rlItem';
         d.innerHTML = rlCardHTML(p) + (p.t !== 'c' && PROF.owned.includes(p.id) ? '<i class="ok">✓</i>' : '');
         d.onclick = () => {
+          if (p.t === 'e') return playEmote(p.id);
           if (p.t === 'o') shopPrevO = p.id;
           if (p.t === 'g') shopPrevG = p.id;
           if (p.t === 'o' || p.t === 'g') makePlayer();
@@ -29855,9 +29900,10 @@ function closeRlSpin() {
 }
 
 /* ---------- Cofre ---------- */
-let vTab = 'o';
+let vTab = 'g';
 function openVault(t) {
   vTab = t || vTab;
+  if (vTab === 'o') vTab = 'g'; // v129: não tem mais roupas
   document.getElementById('vault').classList.add('open');
   renderVault();
 }
@@ -29958,10 +30004,12 @@ function renderVault() {
         tem = emoOwned(id),
         b = document.createElement('button');
       b.className = 'shCard r-' + (E.rar || 'c') + (tem ? '' : ' lock');
-      b.innerHTML = '<div class="pv">' + emoteArt({ ic: E.ic, rar: E.rar || 'c' }) + '</div>' + E.n + (tem ? '<small class="own">▶ Fazer</small>' : '<small>🔒 ⭐ ' + E.p + '</small>');
+      b.innerHTML = '<div class="pv">' + emoteArt({ ic: E.ic, rar: E.rar || 'c' }) + '</div>' + E.n + (tem ? '<small class="own">▶ Fazer</small>' : '<small>🔒 ' + (E.rl === 'ouro' ? 'Royale' : E.rl === 'passe' ? 'Passe nv 30' : '⭐ ' + E.p) + '</small>');
       b.onclick = () => {
         closeVault();
         if (tem) return playEmote(id);
+        if (E.rl === 'ouro') return openRoyale('ouro');
+        if (E.rl === 'passe') return openPass();
         openShop();
         shopTab = 'e';
         shopSel = { cat: 'e', it: EMO_CAT.find((x) => x.id === id), price: E.p };
@@ -32997,6 +33045,12 @@ function ffCam(dt, t) {
 function ffHideStage() {
   if (FF.stage) FF.stage.visible = false;
   if (FF.pet) FF.pet.visible = false;
+  // v129: o portal, as plataformas das vagas e os botões "CONVIDAR" ficavam na partida
+  if (FF.portal) FF.portal.visible = false;
+  if (typeof FV === 'object') {
+    (FV.discos || []).forEach((d) => d && (d.visible = false));
+    (FV.slotB || []).forEach((b) => b && (b.style.display = 'none'));
+  }
 }
 function ffBanner() {
   const b = document.getElementById('ffBan');
@@ -35263,7 +35317,7 @@ function botLook(n) {
 // alguns bots usam roupas da loja (dá vontade de ter também)
 function fitLook(L, R) {
   R = R || Math.random;
-  if (R() > 0.3) return L;
+  return L; // v129: bots sem roupa (só os personagens)
   const pool = OUTFITS.filter((x) => x.c),
     O = pool[Math.floor(R() * pool.length)];
   return Object.assign(L, { shirt: O.c[0], pants: O.c[1], vest: O.c[2], cap: O.c[3], fit: O.id });
@@ -38073,6 +38127,7 @@ function dmJuntaItens(d) {
   let mudou = false;
   for (const k of d.itensPagos) {
     const [cat, id] = String(k).split(':');
+    if (cat === 'o') continue; // v129: roupas saíram do jogo (o servidor devolve os diamantes)
     if (cat === 'ch') {
       PROF.chars = PROF.chars || [];
       if (!PROF.chars.includes(id)) PROF.chars.push(id), (mudou = true);
@@ -38153,7 +38208,6 @@ function lojaRender() {
     };
     const grupos = [
       ['ch', '🧍 Personagens'],
-      ['o', '👕 Roupas'],
       ['g', '🔫 Skins de arma'],
       ['p', '🪂 Paraquedas'],
       ['e', '😄 Emotes'],
